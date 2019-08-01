@@ -1,0 +1,10 @@
+
+node_modules
+./functions/node_modules
+*.js.map
+
+# Typescript v1 declaration files
+typings/
+
+node_modules/
+../node_modules/

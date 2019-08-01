@@ -1,0 +1,16 @@
+{
+    "firebase":{
+        "firebaseAccountFilePath":"./trackingpopodevaca.json",
+        "databaseURL":"https://trackingpopodevaca.firebaseio.com",
+        "sumagro":{
+            "admin": "ignacio_triplex-8@hotmail.com.ar"
+        },
+        "env":{
+            "TABLES":{
+                "orders":"ORDERS"
+            }
+        }
+    }
+    
+    
+}
