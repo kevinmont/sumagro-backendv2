@@ -17,40 +17,56 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('intansit',{
     id:{
-      type:'int',
-      primaryKey:true,
-      notNull:true
+      type: 'int',
+      unsigned: true,
+      notNull: true,
+      primaryKey: true,
+      length: 11
     },
     description:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     ingenioid:{
-      type:'int',
-      foreignKey:{
-        name:'ingenioid',
-        table:'ingenios',
-        mapping:'id'
-      },
-      operator:{
-        type:'varchar',
-        length:255
-      },
-      operationunit:{
-        type:'varchar',
-        length:255
-      },
-      plates:{
-        type:'varchar',
-        length:255
-      },
-      orderid:{
-        type:'int',
-        foreignKey:{
-          name:'irderid',
-          table:'orders',
-          mapping:'id'
-        }
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_INTRANCE_INGENIOS',
+        table: 'ingenios',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
+      }
+    },
+    operator:{
+      type: 'string',
+      length: 255
+    },
+    operationunit:{
+      type:'string',
+      length:255
+    },
+    plates:{
+      type:'string',
+      length:255
+    },
+    orderid:{
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_INTRANCE_ORDERS',
+        table: 'orders',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     }
   })

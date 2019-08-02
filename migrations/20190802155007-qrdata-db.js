@@ -17,44 +17,51 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('qrdata',{
     id:{
-      type:'int',
-      primaryKey:true,
-      notNull:true
+      type: 'int',
+      unsigned: true,
+      notNull: true,
+      primaryKey: true,
+      length: 11
     },
     bultos:{
-      type:'int'
+      type:'int',
+      length: 11
     },
     codigo:{
-      type:'varchar',
-      length:255
-    },
-    curp:{
-      type:'varchar',
-      length:255
+      type:'string',
+      length: 255
     },
     fechadeemision:{
-      type:'date',
-      length:255
+      type:'string',
+      length: 255
     },
     formula:{
-      type:'varchar',
-      length:255
+      type:'string',
+      length: 255
     },
-    coordenatesid:{
-      type:'int',
-      foreignKey:{
-        name:'coordenatesid',
-        table:'coordenates',
-        mapping:'id'
+    coordenateid:
+    {
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_COORDENATES',
+        table: 'coordenates',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     productor:{
-      type:'varchar',
-      length:255
+      type:'string',
+      length: 255
     },
     superficie:{
-      type:'varchar',
-      length:255
+      type:'string',
+      length: 255
     }
   })
 };

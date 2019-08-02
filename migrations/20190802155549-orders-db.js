@@ -17,80 +17,92 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('orders',{
     id:{
-      type:'int',
-      primaryKey:true,
-      notNull:true
+      type: 'int',
+      unsigned: true,
+      notNull: true,
+      primaryKey: true,
+      length: 11
     },
     ingenioid:{
-      type:'int',
-      foreignKey:{
-        name:'ingenioid',
-        table:'ingenio',
-        mapping:'id'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_INGENIOS_ORDES',
+        table: 'ingenios',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     shippingdate:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     status:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     client:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     addressid:{
-      type:'int',
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
       foreignKey: {
-        name: 'addressid',
-        table: 'coordenates',
+        name: 'FK_ADDRESS_ORDER',
+        table: 'address',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
         mapping: 'id'
       }
     },
     dateentrance:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     dateoutput:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     flet:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     isshowed:{
       type:'boolean'
     },
     mark:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     modelunit:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     operationunit:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     operator:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     plates:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     remissionnumber:{
       type:'int',
-      foreignKey:{
-        name:'remissionsnumber',
-        table:'remissions',
-        mapping:'count'
-      }
+      length:11
     }
   })
 };

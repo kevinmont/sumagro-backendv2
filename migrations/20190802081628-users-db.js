@@ -18,27 +18,36 @@ exports.up = function(db, callback) {
 
   db.createTable('users',{
     id:{
-      type:'int',
-      primaryKey: true
+      type: 'string',
+      notNull: true,
+      primaryKey: true,
+      length: 255
     },
     email:{
-      type:'varchar',
+      type:'string',
       length: 255
     },
     ingenioid:{
-      type:'int',
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
       foreignKey: {
-        name: 'ingenioid',
-        table: 'ingenio',
+        name: 'FK_INGENIOS',
+        table: 'ingenios',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
         mapping: 'id'
       }
     },
     rol:{
-      type:'varchar',
+      type:'string',
       length: 255
     },
     token:{
-      type:'varchar',
+      type:'string',
       length: 255
     }
   })

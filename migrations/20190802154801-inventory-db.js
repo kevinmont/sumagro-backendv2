@@ -17,24 +17,34 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('inventory',{
     id:{
-      type:'int',
-      primaryKey:true,
-      notNull:true
+      type: 'int',
+      unsigned: true,
+      notNull: true,
+      primaryKey: true,
+      length: 11
     },
-    ingenioid:{
-      type:'int',
-      foreignKey:{
-        name:'ingeniosid',
-        table:'ingenios',
-        mapping:'id'
+    ingenioid:
+    {
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_INGENIOS_INVENTORY',
+        table: 'ingenios',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     description:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     operator:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     date:{

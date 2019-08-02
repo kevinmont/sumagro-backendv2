@@ -17,39 +17,52 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('sumagrooutputs',{
     id:{
-      type:'int',
-      primaryKey:true,
-      notNull:true
+      type: 'int',
+      unsigned: true,
+      notNull: true,
+      primaryKey: true,
+      length: 11
     },
     date:{
-      type:'date'
+      type:'string',
+      length:255
     },
     description:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     ingenioid:{
-      type:'int',
-      foreignKey:{
-        name:'ingenioid',
-        table:'ingenio',
-        mapping:'id'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_INGENIOS_SUMAGROOUTPUTS',
+        table: 'ingenios',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
-    ingenioname:{
-      type:'varchar',
-      length:255
-    },
     operator:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     orderid:{
-      type:'int',
-      foreignKey:{
-        name:'orderid',
-        table:'orders',
-        mapping:'id'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_SUMAGROOUTPUTS_ORDES',
+        table: 'orders',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     }
   })

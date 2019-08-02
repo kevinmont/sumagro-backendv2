@@ -17,28 +17,30 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('address',{
     id:{
-      type:'int',
+      type: 'int',
+      unsigned: true,
       notNull: true,
-      primaryKey:true,
+      primaryKey: true,
+      length: 11
     },
     calle:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     numero:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     ciudad:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     localidad:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     municipio:{
-      type:'varchar',
+      type:'string',
       length:255
     }
   })

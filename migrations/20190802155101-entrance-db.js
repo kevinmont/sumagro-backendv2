@@ -17,48 +17,62 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('entrance',{
     id:{
-      type:'int',
-      primaryKey:true,
-      notNull:true
+      type: 'int',
+      unsigned: true,
+      notNull: true,
+      primaryKey: true,
+      length: 11
     },
     date:{
-      type:'date'
+      type:'string',
+      length:255
     },
     description:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     ingenioid:{
-      type:'int',
-      foreignKey:{
-        name:'ingenioid',
-        table:'ingenios',
-        mapping:'id'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_ENTRANCE_INGENIOS',
+        table: 'ingenios',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     operatorid:{
-      type:'int',
-      foreignKey:{
-        name:'operator',
-        table:'users',
-        mapping:'id'
+      type: 'string',
+      length: 255,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_ENTRANCE_USERS',
+        table: 'users',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     orderid:{
-      type:'int',
-      foreignKey:{
-        name:'orderid',
-        table:'orders',
-        mapping:'id'
-      }
-    },
-    operator:{
-      type:'varchar',
-      length:255,
-      foreignKey:{
-        name:'operator',
-        table:'users',
-        mapping:'email'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_ENTRANCE_ORDES',
+        table: 'orders',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     }
   })

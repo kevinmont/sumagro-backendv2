@@ -17,40 +17,64 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('outputs',{
     id:{
-      type:'int',
-      primaryKey:true,
-      notNull:true,
+      type: 'int',
+      unsigned: true,
+      notNull: true,
+      primaryKey: true,
+      length: 11
     },
     description:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     operator:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     userid:{
-      type:'varchar',
-      foreignKey:{
-        name:'userid',
-        table:'users',
-        mapping:'id'
-      },
-      ingenioid:{
-        type:'int',
-        foreignKey:{
-          name:'ingenioid',
-          table:'ingenios',
-          mapping:'id'
-        }
-      },
-      qrdataid:{
-        type:'int',
-        foreignKey:{
-          name:'qrdataid',
-          table:'qrdata',
-          mapping:'id'
-        }
+      type: 'string',
+      length: 255,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_USERS',
+        table: 'users',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
+      }
+    },
+    ingenioid:
+    {
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_INGENIOS_OUTPUTS',
+        table: 'ingenios',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
+      }
+    },
+    qrdataid:
+    {
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_QRDATA',
+        table: 'qrdata',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     }
   })

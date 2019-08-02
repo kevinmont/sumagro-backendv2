@@ -17,24 +17,34 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('ingenios',{
     id:{
-      type:'int',
+      type: 'int',
+      unsigned: true,
+      notNull: true,
       primaryKey: true,
-      notNull:true
+      length: 11
     },
-    addressid:{
-      type:'int',
+    addressid:
+    {
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
       foreignKey: {
-        name: 'addressid',
-        table: 'coordenates',
+        name: 'FK_ADDRESS',
+        table: 'address',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
         mapping: 'id'
       }
     },
     email:{
-      type:'varchar',
+      type:'string',
       length: 255
     },
     name:{
-      type:'varchar',
+      type:'string',
       length: 255
     }
   })

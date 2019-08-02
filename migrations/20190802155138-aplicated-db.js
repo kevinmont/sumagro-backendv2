@@ -17,20 +17,29 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('aplicated',{
     id:{
-      type:'int',
-      primaryKey:true,
-      notNull:true
+      type: 'int',
+      unsigned: true,
+      notNull: true,
+      primaryKey: true,
+      length: 11
     },
     coordenatesid:{
-      type:'int',
-      foreignKey:{
-        name:'coordenatesid',
-        table:'coordenates',
-        mapping:'id'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_COORDENATES_APLICATED',
+        table: 'coordenates',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     description:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     inplot:{
@@ -39,33 +48,28 @@ exports.up = function(db) {
     used:{
       type:'boolean'
     },
-    userid:{
-      type:'int',
-      foreignKey:{
-        name:'userid',
-        table:'users',
-        mapping:'id'
-      }
-    },
     dateaplicated:{
-      type:'date'
+      type:'string',
+      length:255
     },
     ingenioid:{
-      type:'int',
-      foreignKey:{
-        name:'ingenioid',
-        table:'ingenio',
-        mapping:'id'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_INGENIOS_APLICATED',
+        table: 'ingenios',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     operator:{
-      type:'varchar',
-      length:255,
-      foreignKey:{
-        name:'operator',
-        table:'users',
-        mapping:'email'
-      }
+      type:'string',
+      length:255
     }
   })
 };

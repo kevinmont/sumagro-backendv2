@@ -17,50 +17,71 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('sacks',{
     id:{
-      type:'int',
-      primaryKey:true,
-      notNull:true
+      type: 'int',
+      unsigned: true,
+      notNull: true,
+      primaryKey: true,
+      length: 11
     },
     description:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     used:{
       type:'boolean'
     },
     userid:{
-      type:'int',
-      foreignKey:{
-        name:'userid',
-        table:'users',
-        mapping:'id'
+      type: 'string',
+      length: 255,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_SACKS_USERS',
+        table: 'users',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     coordenatesid:{
-      type:'int',
-      foreignKey:{
-        name:'coordenatesid',
-        table:'coordenates',
-        mapping:'id'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_COORDENATES_SAKCS',
+        table: 'coordenates',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     dateaplicated:{
-      type:'date'
+      type:'string',
+      length:255
     },
     inplot:{
       type:'boolean'
     },
     operator:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     clave:{
-      type:'varchar',
-      length:255,
-      foreignKey:{
-        name:'clave',
-        table:'database',
-        mapping:'codigo'
+      type: 'string',
+      length: 255,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_SACKS_DATABASE',
+        table: 'database',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'codigo'
       }
     }
   })

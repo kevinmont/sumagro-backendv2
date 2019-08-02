@@ -17,135 +17,158 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('database',{
     codigo:{
-      type:'varchar',
-      primaryKey:true,
-      notNull:true
+      type: 'string',
+      notNull: true,
+      primaryKey: true,
+      length: 255
     },
     campo:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     productor:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     curp:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     rfc:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     addressid:{
-      type:'int',
-      foreignKey:{
-        name:'addressid',
-        table:'address',
-        mapping:'id'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_ADDRESS_DATABSE',
+        table: 'address',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     ciclo:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     nombreciclo:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     order:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     fechasiembra:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     ejidolocalidad:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     lote:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     nombrelote:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     superficie:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     superficieautorizada:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     rendimientoha:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     toneladas:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     variedad:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     agr:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     tabla:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     fechacosecha:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     toneladascosechadas:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     datosarcgis:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     coordenatesid:{
-      type:'int',
-      foreignKey:{
-        name:'coordenatesid',
-        table:'coordenates',
-        mapping:'id'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_ICOORDENATES_DATABASE',
+        table: 'coordenates',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     },
     conceptoapoyo:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     formula:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     pesos:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     bultos:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     fechaemision:{
-      type:'date'
+      type:'string',
+      length:255
     },
     ingenioid:{
-      type:'int',
-      foreignKey:{
-        name:'ingenioid',
-        table:'ingenio',
-        mapping:'id'
+      type: 'int',
+      unsigned: true,
+      length: 11,
+      notNull: true,
+      foreignKey: {
+        name: 'FK_INGENIOS_DATABASE',
+        table: 'ingenios',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping: 'id'
       }
     }
   })

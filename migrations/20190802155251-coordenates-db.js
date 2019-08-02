@@ -17,16 +17,18 @@ exports.setup = function(options, seedLink) {
 exports.up = function(db) {
   db.createTable('coordenates',{
     id:{
-      type:'int',
-      primaryKey:true,
-      notNull:true
+      type: 'int',
+      unsigned: true,
+      notNull: true,
+      primaryKey: true,
+      length: 11
     },
     latitud:{
-      type:'varchar',
+      type:'string',
       length:255
     },
     longotud:{
-      type:'varchar',
+      type:'string',
       length:255
     }
   })
