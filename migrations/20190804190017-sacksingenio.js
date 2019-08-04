@@ -15,22 +15,36 @@ exports.setup = function(options, seedLink) {
 };
 
 exports.up = function(db) {
-  db.createTable('coordenates',{
+  db.createTable('sacksingenio',{
     id:{
-      type: 'int',
+      type:'int',
       unsigned: true,
       notNull: true,
       primaryKey: true,
-      autoIncrement:true,
       length: 11
     },
-    latitud:{
+    clave:{
       type:'string',
       length:255
     },
-    longotud:{
+    description:{
       type:'string',
       length:255
+    },
+    ingenioid:{
+      type:'int',
+      unsigned:true,
+      length:11,
+      notNull:true,
+      foreignKey:{
+        name:'FK_INGENIOS_SACKSINGENIOS',
+        table:'ingenios',
+        rules: {
+          onDelete: 'CASCADE',
+          onUpdate: 'RESTRICT'
+        },
+        mapping:'id'
+      }
     }
   })
 };

@@ -1,10 +1,10 @@
 {
     "dev": {
       "driver": "mysql",
-      "host": "localhost",
+      "host": "sumagro-dev.csdxmz0vjytf.us-east-1.rds.amazonaws.com",
       "port": "3306",
-      "user": "root",
-      "password": "cheko00",
-      "database": "sumagro"
+      "user": "superUsuario",
+      "password": "Dist2019",
+      "database": "sumagro-dev"
     }
   }

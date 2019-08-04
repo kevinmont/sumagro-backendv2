@@ -21,6 +21,7 @@ exports.up = function(db) {
       unsigned: true,
       notNull: true,
       primaryKey: true,
+      autoIncrement:true,
       length: 11
     },
     orderid:{
