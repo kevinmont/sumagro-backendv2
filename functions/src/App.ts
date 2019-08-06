@@ -2,16 +2,20 @@ import * as functions from 'firebase-functions';
 import * as express from 'express';
 import * as bodyparser from 'body-parser';
 import PinRoute from './routes/pinRoute';
+import OrderRoute from './routes/orderRoute';
 //import errorMiddleware from './exceptions/error.middleware';
 const json2xls = require('json2xls');
 class App{
     public app: express.Application;
     public pinRoute: PinRoute;
+    public orderRoute: OrderRoute;
     constructor(){
         this.app = express();
         this.pinRoute = new PinRoute();
+        this.orderRoute = new OrderRoute();
         this.config();
         this.pinRoute.addRoutes(this.app);
+        this.orderRoute.addRoutes(this.app);
     }
     config(){
         this.app.use(function(req, res, next) {

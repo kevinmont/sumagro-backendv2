@@ -4,19 +4,17 @@ import * as log4js from 'log4js';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
-export default class PinDao{
+export default class PinDao {
     public mysql: Mysql;
-    constructor(){
+    constructor() {
         this.mysql = new Mysql();
     }
 
-    async getPin(){
+    async getPin() {
         logger.info('DAO: Method getpin Startting');
-        let sql = `SELECT * from pin`;
+        let sql = `SELECT * from ingenios`;
         logger.debug('DAO: Method getPin Ending');
-        return await this.mysql.query(sql); 
-        
-    }
+        return await this.mysql.query(sql);
+    } 
 
-    
 }
