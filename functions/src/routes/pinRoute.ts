@@ -7,6 +7,7 @@ export default class PinRoute{
     constructor(){
         this.pinController = new PinController();
     }
+    
     addRoutes(app: express.Application){
 
         app.route('/sumagro-app/getpin')
