@@ -76,6 +76,39 @@ export default class UserDao{
         (count < 1)?  false : true; 
     }
 
+    async getUserFirebase(userId:string){
+        logger.info(`Dao: Method getUserFirebase startting`);
+        let ref= this.db.ref(`/sumagro/users/${userId}`);
+        return new Promise((resolve,reject)=>{ ref.once("value",(snapshot:any)=>{
+            console.log(snapshot.val());
+            if(snapshot.val()==null) {resolve({});}
+           else{ 
+            logger.info(`Dao: Method getUserFirebase Ending`);
+            resolve(snapshot.val());
+           }
+        })
+        });
+    }
+
+    async getUserByEmail(email:string){
+        logger.info(`Dao: Method getUserByEmail startting`);
+        let sql:string = `SELECT * FROM users where email = "${email}"`;
+        logger.debug('DAO: Method getUserByEmail Ending');
+        return await this.mysql.query(sql);
+    }
+
+    async deleteUserFirebase(userId: string){
+        logger.info(`Dao: Method deleteUserFirebase startting`);
+        await this.db.ref(`/sumagro/users`).child(userId).remove()
+        .then(function() {
+            logger.debug(`Dao: Method deleteUserFirebase Ending`);
+          return "USUARIO ELIMINADO CON EXITO";
+        })
+        .catch(function(err:any) {
+         return `ERROR AL ELIMINAR USUARIO CON UID:${userId}, msg: ` + err.message;
+        });
+    }
+
     async deleteUser(userId: any){
         logger.info(`Dao: Method deleteUser Startting`);
         let sql= `DELETE FROM users WHERE id='${userId}'`;

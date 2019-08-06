@@ -8,11 +8,7 @@ const json2xls = require('json2xls');
 class App{
     public app: express.Application;
     public pinRoute: PinRoute;
-<<<<<<< HEAD
     public userRoute:UserRoute;
-=======
-    public userRoute: UserRoute;
->>>>>>> master
     constructor(){
         this.app = express();
         this.pinRoute = new PinRoute();

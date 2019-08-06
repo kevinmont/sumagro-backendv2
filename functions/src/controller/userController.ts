@@ -75,15 +75,20 @@ export default class UserController{
     
     async deleteUser( req: Request , res:Response ){
         logger.info(`Controller: Method deleteUser startting`);
-        let userid: any= req.params.userId;
-        let value = this.userDao.getUser(userid);
 
-        if(value){
-            await this.userDao.deleteUser(userid);
-            res.status(200).send(`{}`);  
+        if(req.headers.email == "sumagro.distribucion@gmail.com"){
+            if(!req.params.userId) throw res.status(400).send(`{"msg": "userId is required"}`);
+            let userid: any= req.params.userId;
+
+            let userFirebase:any = await this.userDao.getUserFirebase(userid);
+            let userRds:any = await this.userDao.getUserByEmail(userFirebase.email)
+            await this.userDao.deleteUser(userRds[0].id);
+            await this.userDao.deleteUserFirebase(userid)
+            res.status(200).send(`{}`);
         }else{
-            res.status(400).send(`{"msg": "Error in parameters"}`);
+            res.status(401).send({msg:"USUARIO NO AUTORIZADO"});
         }
+
         logger.debug(`Controller: Method deleteUser Ending`);
     }
 }
