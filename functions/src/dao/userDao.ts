@@ -25,7 +25,6 @@ export default class UserDao{
 
     async createUserFirebase(user:any){
         logger.info('DAO: Method createUserFirebase Starting')
-        console.log(this.config);
         return new Promise(async(resolve,reject)=>{
             await admin.auth().createUser({email: user.email, password: user.password})
                .then(async (userRecord:any)=> {
