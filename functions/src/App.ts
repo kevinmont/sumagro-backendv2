@@ -3,19 +3,23 @@ import * as express from 'express';
 import * as bodyparser from 'body-parser';
 import PinRoute from './routes/pinRoute';
 import UserRoute from './routes/userRoute';
+import NotificationRoute from './routes/notificationRoute';
 //import errorMiddleware from './exceptions/error.middleware';
 const json2xls = require('json2xls');
 class App{
     public app: express.Application;
     public pinRoute: PinRoute;
     public userRoute:UserRoute;
+    public notificationRoute:NotificationRoute;
     constructor(){
         this.app = express();
         this.pinRoute = new PinRoute();
         this.userRoute = new UserRoute();
+        this.notificationRoute = new NotificationRoute();
         this.config();
         this.pinRoute.addRoutes(this.app);
         this.userRoute.addRoutes(this.app);
+        this.notificationRoute.addRoutes(this.app);
     }
     config(){
         this.app.use(function(req, res, next) {
