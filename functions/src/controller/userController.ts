@@ -2,6 +2,7 @@ import {Request, Response} from 'express';
 import UserDao from '../dao/userDao';
 import {User} from '../models/user';
 import { Nodemailers } from '../utils/Nodemailer-helper';
+import Firebase from '../utils/firebase';
 import config from '../models/config';
 import * as log4js from 'log4js';
 const logger = log4js.getLogger();
@@ -10,11 +11,13 @@ logger.level = 'debug';
 export default class UserController{
     public userDao: UserDao;
     public nodemailers: Nodemailers;
+    public firebase: Firebase;
     public config:any;
 
     constructor(){
         this.config= config;
-        this.userDao = new UserDao(this.config);
+        this.userDao = new UserDao();
+        this.firebase = new Firebase(this.config);
         this.nodemailers = new Nodemailers(this.config);
     }
 
@@ -53,7 +56,7 @@ export default class UserController{
     
         try {
         await this.userDao.createUser(user);
-        let response = await this.userDao.createUserFirebase(user);
+        let response = await this.firebase.createUserFirebase(user);
         await this.nodemailers.sendMailNewAccount(email,{email: user.email,password});
         logger.info(response);
         res.status(200).send({msg:"Usuario registrado"});
@@ -80,15 +83,26 @@ export default class UserController{
             if(!req.params.userId) throw res.status(400).send(`{"msg": "userId is required"}`);
             let userid: any= req.params.userId;
 
-            let userFirebase:any = await this.userDao.getUserFirebase(userid);
+            let userFirebase:any = await this.firebase.getUserFirebase(userid);
             let userRds:any = await this.userDao.getUserByEmail(userFirebase.email)
             await this.userDao.deleteUser(userRds[0].id);
-            await this.userDao.deleteUserFirebase(userid)
+            await this.firebase.deleteUserFirebase(userid)
             res.status(200).send(`{}`);
         }else{
             res.status(401).send({msg:"USUARIO NO AUTORIZADO"});
         }
 
         logger.debug(`Controller: Method deleteUser Ending`);
+    }
+
+    async notificationPush(req: Request,res: Response){
+        logger.info("Controller: Methos notificationPush Starting");
+        let tokens = req.body.tokens;
+        let notify = req.body.notify;
+        if(!tokens) throw res.status(400).send('request is required');
+        let response = await this.firebase.notification(tokens,notify);
+        logger.info(response);
+        logger.debug("Controller: Methos notificationPush Ending");
+        res.send(response);
     }
 }

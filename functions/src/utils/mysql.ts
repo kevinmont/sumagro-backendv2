@@ -7,9 +7,9 @@ export default class Mysql{
 
     constructor(){
         this.connection = mysql.createPool({
-            host: 'sumagro-dev.csdxmz0vjytf.us-east-1.rds.amazonaws.com',
-            user: 'superUsuario',
-            password: 'Dist2019',
+            host: '127.0.0.1',
+            user: 'root',
+            password: '',
             database: 'sumagro-dev'
             });
         this.connection.getConnection((err:any,c:any) => {

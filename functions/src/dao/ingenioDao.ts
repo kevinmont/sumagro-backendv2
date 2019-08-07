@@ -3,17 +3,17 @@ import * as log4js from 'log4js';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
-export default class OrderDao{
+export default class IngenioDao{
     public mysql: Mysql;
 
     constructor(){
         this.mysql = new Mysql();
     }
 
-    async deleteOrderById(orderId:string){
-        logger.info('DAO: Method deleteOrderById Starting');
-        let sql = `DELETE FROM orders WHERE id = ${orderId}`;
-        logger.debug('DAO: Method deleteOrderById Ending');
+    async deleteIngeniosById(ingenioId:string){
+        logger.info('DAO: Method deleteIngeniosById Starting');
+        let sql = `DELETE FROM ingenios WHERE id = ${ingenioId}`;
+        logger.debug('DAO: Method deleteIngeniosById Ending');
         return await this.mysql.query(sql);
         
     }

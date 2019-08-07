@@ -1,16 +1,13 @@
 import {Request, Response} from 'express';
 import OrderDao from '../dao/orderDao';
-import config from '../models/config';
 import * as log4js from 'log4js';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
 export default class OrderController{
     public orderDao : OrderDao;
-    public config:any;
     constructor(){
-        this.config = config;
-        this.orderDao = new OrderDao(this.config);
+        this.orderDao = new OrderDao();
     } 
 
     async deleteOrderByOrderId(req:Request, res:Response){

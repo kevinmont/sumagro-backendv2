@@ -3,27 +3,27 @@ import * as express from 'express';
 import * as bodyparser from 'body-parser';
 import PinRoute from './routes/pinRoute';
 import UserRoute from './routes/userRoute';
-import NotificationRoute from './routes/notificationRoute';
 import OrderRoute from './routes/orderRoute';
+import IngenioRoute from './routes/ingenioRoute';
 //import errorMiddleware from './exceptions/error.middleware';
 const json2xls = require('json2xls');
 class App{
     public app: express.Application;
     public pinRoute: PinRoute;
     public userRoute:UserRoute;
-    public notificationRoute:NotificationRoute;
     public orderRoute:OrderRoute;
+    public ingenioRoute:IngenioRoute;
     constructor(){
         this.app = express();
         this.pinRoute = new PinRoute();
         this.userRoute = new UserRoute();
-        this.notificationRoute = new NotificationRoute();
         this.orderRoute = new OrderRoute();
+        this.ingenioRoute = new IngenioRoute();
         this.config();
         this.pinRoute.addRoutes(this.app);
         this.userRoute.addRoutes(this.app);
-        this.notificationRoute.addRoutes(this.app);
         this.orderRoute.addRoutes(this.app);
+        this.ingenioRoute.addRoutes(this.app);
     }
     config(){
         this.app.use(function(req, res, next) {

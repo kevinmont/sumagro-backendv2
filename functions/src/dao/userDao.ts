@@ -1,5 +1,3 @@
-import * as admin from 'firebase-admin';
-import credentials from '../models/trackingpopodevaca';
 import Mysql from '../utils/mysql';
 import * as log4js from 'log4js';
 const logger = log4js.getLogger();
@@ -7,49 +5,9 @@ logger.level = 'debug';
 
 export default class UserDao{
     public mysql: Mysql;
-    public config: any;
-    public db: any;
-    public tables : any;
 
-    constructor(config:any){
+    constructor(){
         this.mysql = new Mysql();
-        this.config = config.firebase;
-        let credents:any = credentials;
-        this.tables = this.config.env.TABLES;
-        admin.initializeApp({
-            credential: admin.credential.cert(credents),
-            databaseURL: config.firebase.databaseURL
-        });
-        this.db = admin.database();
-    }
-
-    async createUserFirebase(user:any){
-        logger.info('DAO: Method createUserFirebase Starting')
-        return new Promise(async(resolve,reject)=>{
-            await admin.auth().createUser({email: user.email, password: user.password})
-               .then(async (userRecord:any)=> {
-                 // See the UserRecord reference doc for the contents of userRecord.
-                 logger.info('Successfully created new user:', userRecord.uid);
-                 let key = userRecord.uid;
-                 delete user.password;
-                 user.uid = key;
-                 await this.db.ref(`/sumagro/users`).child(key).set(user,(err:any)=>{
-                   if(err) {
-                       logger.info(err); reject("Usuario ya existente");
-                   }else{
-                        resolve("Usuario registrado");
-                   }
-                   
-               }
-               );
-   
-               })
-               .catch(function(error:any) {
-                 resolve("Error creating new user:"+error);
-               });
-               
-               logger.debug('DAO: Method createUserFirebase Ending')
-           })
     }
 
     async createUser(user:any){
@@ -76,20 +34,6 @@ export default class UserDao{
         (count < 1)?  false : true; 
     }
 
-    async getUserFirebase(userId:string){
-        logger.info(`Dao: Method getUserFirebase startting`);
-        let ref= this.db.ref(`/sumagro/users/${userId}`);
-        return new Promise((resolve,reject)=>{ ref.once("value",(snapshot:any)=>{
-            console.log(snapshot.val());
-            if(snapshot.val()==null) {resolve({});}
-           else{ 
-            logger.info(`Dao: Method getUserFirebase Ending`);
-            resolve(snapshot.val());
-           }
-        })
-        });
-    }
-
     async getUserByEmail(email:string){
         logger.info(`Dao: Method getUserByEmail startting`);
         let sql:string = `SELECT * FROM users where email = "${email}"`;
@@ -97,17 +41,6 @@ export default class UserDao{
         return await this.mysql.query(sql);
     }
 
-    async deleteUserFirebase(userId: string){
-        logger.info(`Dao: Method deleteUserFirebase startting`);
-        await this.db.ref(`/sumagro/users`).child(userId).remove()
-        .then(function() {
-            logger.debug(`Dao: Method deleteUserFirebase Ending`);
-          return "USUARIO ELIMINADO CON EXITO";
-        })
-        .catch(function(err:any) {
-         return `ERROR AL ELIMINAR USUARIO CON UID:${userId}, msg: ` + err.message;
-        });
-    }
 
     async deleteUser(userId: any){
         logger.info(`Dao: Method deleteUser Startting`);
