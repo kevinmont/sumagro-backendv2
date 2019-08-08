@@ -77,7 +77,7 @@ export default class OrderController{
         let status= req.query.status;
         let orderId= req.params.orderId;
         let exists = await this.orderDao.getOrderById(orderId);
-        if(!exists) throw res.status(400).send('{"msg":"order not found"}');
+        if(!exists) throw res.status(404).send('{"msg":"order not found"}');
         await this.orderDao.updateStatus(orderId, status);
         logger.debug('CONTROLLER: Method getOrder Ending');
         res.status(200).send(`{}`);
