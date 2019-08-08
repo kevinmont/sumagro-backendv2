@@ -105,4 +105,17 @@ export default class UserController{
         logger.debug("Controller: Methos notificationPush Ending");
         res.send(response);
     }
+
+    async saveToken(req: any,res: Response){
+        logger.info("Controller: Methos saveToken Starting");
+        let token = req.body.token;
+        let uid = req.headers.uid;
+        logger.info("TOKEN A REGISTRAR...",token)
+        let userFirebase:any = await this.firebase.getUserFirebase(uid);
+        let userRds:any = await this.userDao.getUserByEmail(userFirebase.email)
+        await this.userDao.saveToken(userRds[0].id,token)
+        let response = await this.firebase.saveToken(uid,token);
+        logger.debug("Controller: Methos saveToken Ending");
+        res.send(response);
+    }
 }

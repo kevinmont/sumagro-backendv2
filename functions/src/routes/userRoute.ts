@@ -22,5 +22,10 @@ export default class UserRoute{
         app.post('/sumagro-app/notification',(req: express.Request ,res: express.Response)=>{
             this.userController.notificationPush(req,res);
         });
+
+        app.route('/sumagro-app/token')
+        .post((req:express.Request,res:express.Response)=>{
+            this.userController.saveToken(req,res);
+        })
     }
 }

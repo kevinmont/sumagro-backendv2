@@ -94,4 +94,17 @@ export default class Firebase{
            })
     }
 
+    async saveToken(uid:string,token: string){
+
+      await this.db.ref(`/sumagro/users`).child(uid).update({token},(err:any)=>{
+          if(err) {
+              logger.error(err); return "Token Registrado";
+          }else{
+               return "ERROR al registrar token";
+          }
+          
+      }
+      );
+  }
+
 }
