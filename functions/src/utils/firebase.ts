@@ -105,6 +105,18 @@ export default class Firebase{
           
       }
       );
-  }
+    }
+
+    async deleteToken(uid:string){
+      await this.db.ref(`/sumagro/users`).child(uid).update({token:null},(err:any)=>{
+          if(err) {
+              console.log(err); return "Token Registrado";
+          }else{
+               return "ERROR al registrar token";
+          }
+          
+      }
+      );
+    }
 
 }
