@@ -1,18 +1,23 @@
 import * as express from 'express';
-import OrdersController from '../controller/ordersController';
+import OrderController from '../controller/orderController';
 
 export default class OrderRoute{
-    public ordersController: OrdersController;
+    public orderController: OrderController;
 
     constructor(){
-        this.ordersController = new OrdersController();
+        this.orderController = new OrderController();
     }
     addRoutes(app: express.Application){
 
         app.route('/sumagro-app/postorder')
         .post((req: express.Request,res:express.Response)=>{
-            this.ordersController.postOrder(req,res);
+            this.orderController.postOrder(req,res);
         })
 
-    }
+        app.route('/sumagro-app/order/:orderId')
+        .delete((req: express.Request,res:express.Response)=>{
+            this.orderController.deleteOrderByOrderId(req,res);
+        })
+
+        }
 }

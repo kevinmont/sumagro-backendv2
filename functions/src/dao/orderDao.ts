@@ -18,8 +18,6 @@ export default class OrderDao{
         ${object.addressid}, ${object.remissionNumber})`;
         let t:any= await this.mysql.query(sql);
         logger.info('Dao: Method saveOrder Ending');
-            console.log(`t: ${typeof JSON.stringify(t)}`);
-            console.log(`t: ${ JSON.stringify(t)}`);
         return t.insertId;
     }
 
@@ -29,4 +27,14 @@ export default class OrderDao{
         logger.info('Dao: Method getOrder Ending');
         return await this.mysql.query(sql);
     }
+
+    async deleteOrderById(orderId:string){
+        logger.info('DAO: Method deleteOrderById Starting');
+        let sql = `DELETE FROM orders WHERE id = ${orderId}`;
+        logger.debug('DAO: Method deleteOrderById Ending');
+        return await this.mysql.query(sql);
+        
+    }
+
+    
 }

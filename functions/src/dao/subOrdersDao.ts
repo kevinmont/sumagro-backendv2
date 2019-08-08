@@ -9,12 +9,16 @@ export default class SubOrdersDao {
         this.mysql = new Mysql();
     }
 
-    async saveSubOrders(subOrders: any) {
-        let sql = `INSERT INTO suborder(orderid,description,quantity,captured,received,status)
-        values(${subOrders.orderid}, '${subOrders.description}', ${subOrders.quantity},
-        ${subOrders.captured},${subOrders.received},${subOrders.status})`;
-        console.log("consulta: " + sql);
-        return await this.mysql.query(sql);
+    async saveSubOrders(subOrders: any, orderidreceived:any) {
+        logger.info('Dao: Method saveSubOrders Startting');
+        let orderid:any= orderidreceived;
+        return await Promise.all(subOrders.map((subOrder:any) => {
+            let sql = `INSERT INTO suborder(orderid,description,quantity,captured,received,status)
+            values(${orderid}, '${subOrder.description}', ${subOrder.quantity},
+            ${subOrder.captured},${subOrder.received},${subOrder.status})`;
+            logger.debug('Dao: Method saveSubOrders Ending');
+            return this.mysql.query(sql);
+        }));
     }
 
 }

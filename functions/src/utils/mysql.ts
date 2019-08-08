@@ -21,7 +21,10 @@ export default class Mysql{
     async query(query:any){
         return new Promise((resolve:any,reject:any)=>{
             this.connection.query(query, (err:any, result:any)=>{
-                if(err) logger.error("");
+                if(err) {
+                    logger.error("Error");
+                    reject(err);
+                }
                 resolve(result);
             })
         })
