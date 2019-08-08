@@ -35,6 +35,18 @@ export default class OrderDao{
         return await this.mysql.query(sql);
         
     }
-
+    async getOrderById(orderId:any){
+        logger.info('DAO: Method getOrderById Startting');
+        let sql= `SELECT EXISTS(SELECT * FROM orders WHERE id=${orderId})`;
+        let exisis: any= await this.mysql.query(sql);
+        logger.debug('DAO: Method getOrderById Ending');
+        return exisis[0][`EXISTS(SELECT * FROM orders WHERE id=${orderId})`];
+    }
     
+    async updateStatus(orderId: any, status:string){
+        logger.info('DAO: Method updateStatus Startting');        
+        let sql = `update orders set status='${status}' WHERE id=${orderId}`;
+        logger.debug('DAO: Method updateStatus Ending');
+        return await this.mysql.query(sql);
+    }
 }
