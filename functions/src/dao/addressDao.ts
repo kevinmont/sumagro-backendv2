@@ -1,6 +1,5 @@
 import Mysql from '../utils/mysql';
 import * as log4js from 'log4js';
-
 const logger =log4js.getLogger();
 logger.level='debug';
 
@@ -11,17 +10,25 @@ export default class AddressDao{
         this.mysql= new Mysql();
     }
 
-    // async saveAddress(address:any){
-    //     let sql= `INSERT INTO address(localidad) values(${address});`;
-    //     return await this.mysql.query(sql);
-    // }
-
     async getAddress(address:any){
         logger.info(`Dao: statting getAdress`);
         logger.info(`Dao: address: ${address}`);
-
         let sql=`SELECT id FROM address where localidad='${address}'`;
         logger.info(`Dao: ending getAdress`);
+        return await this.mysql.query(sql);
+    }
+
+    async CreateAddress(address:any){
+        logger.info('DAO: Method CreateAddress Starting');
+        let sql = `INSERT INTO address(calle,numero,ciudad,localidad,municipio) VALUES(${address.street},${address.number},"${address.city}","${address.location}","${address.municipality}");`;
+        logger.debug('DAO: Method CreateAddress Ending');
+        return await this.mysql.query(sql);
+    }
+
+    async getAddresByAttributes(address:any){
+        logger.info('DAO: Method CreateAddress Starting');
+        let sql = `SELECT * FROM address WHERE calle = ${address.street} AND numero = ${address.number} AND ciudad = "${address.city}" AND localidad = "${address.location}" AND municipio = "${address.municipality}"`;
+        logger.debug('DAO: Method CreateAddress Ending');
         return await this.mysql.query(sql);
     }
 }

@@ -26,5 +26,19 @@ export default class ingenioDao {
         
     }
 
+    async createIngenio(ingenio:any){
+        logger.info('DAO: Method createIngenio Starting');
+        let sql = `INSERT INTO ingenios(addressid,email,name) VALUES(${ingenio.addressid},"${ingenio.email}","${ingenio.name}")`;
+        logger.debug('DAO: Method createIngenio Ending');
+        return await this.mysql.query(sql);
+    }
+
+    async getIngenioByEmail(email:any){
+        logger.info('DAO: Method getIngenioByEmail Starting');
+        let sql = `SELECT * FROM ingenios WHERE email = "${email}"`;
+        logger.debug('DAO: Method getIngenioByEmail Ending');
+        return await this.mysql.query(sql);
+    }
+
     
 }
