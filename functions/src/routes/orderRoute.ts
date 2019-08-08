@@ -9,7 +9,7 @@ export default class OrderRoute{
     }
     addRoutes(app: express.Application){
 
-        app.route('/sumagro-app/postorder')
+        app.route('/sumagro-app/order')
         .post((req: express.Request,res:express.Response)=>{
             this.orderController.postOrder(req,res);
         })
