@@ -15,5 +15,11 @@ export default class OrderRoute{
             this.ingenioController.deleteIngenioById(req,res);
         })
 
+        app.route('/sumagro-app/ingenio/register')
+        .post((req: express.Request,res:express.Response)=>{
+            this.ingenioController.createeIngenio(req,res);
+        })
+
+
     }
 }
