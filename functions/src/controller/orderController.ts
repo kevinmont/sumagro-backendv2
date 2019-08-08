@@ -70,6 +70,17 @@ export default class OrderController{
         logger.debug('CONTROLLER: method postOrder Ending');
     }
 
-
+    async getOrder(req:Request, res: Response){
+        logger.info('CONTROLLER: Method getOrder Startting');
+        if(!req.params.orderId) throw res.status(400).send('{"msg":"orderId is required"}');
+        if(!req.query.status) throw res.status(400).send('{"msg":"status is required"}');
+        let status= req.query.status;
+        let orderId= req.params.orderId;
+        let exists = await this.orderDao.getOrderById(orderId);
+        if(!exists) throw res.status(400).send('{"msg":"order not found"}');
+        await this.orderDao.updateStatus(orderId, status);
+        logger.debug('CONTROLLER: Method getOrder Ending');
+        res.status(200).send(`{}`);
+    }
     
 }

@@ -18,6 +18,9 @@ export default class OrderRoute{
         .delete((req: express.Request,res:express.Response)=>{
             this.orderController.deleteOrderByOrderId(req,res);
         })
+        .patch((req:express.Request, res: express.Response)=>{
+            this.orderController.getOrder(req,res);
+        })
+    }
 
-        }
 }
