@@ -20,6 +20,11 @@ export default class OrderRoute{
             this.ingenioController.createeIngenio(req,res);
         })
 
+        app.route('/sumagro-app/send-pdf/:orderId')
+            .post((req:express.Request, res: express.Response)=>{
+                this.ingenioController.sendEmail(req,res);
+            })
+
 
     }
 }

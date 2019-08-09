@@ -4,7 +4,6 @@ import * as log4js from 'log4js';
 import IngenioDao from '../dao/ingenioDao';
 import AddressDao from '../dao/addressDao';
 import SubOrdersDao from '../dao/subOrdersDao';
-import Order from '../models/Order';
 
 const logger = log4js.getLogger();
 logger.level = 'debug';
@@ -44,7 +43,7 @@ export default class OrderController {
         let addressid: any = await this.addressDao.getAddress(address);
         if (!addressid) res.status(400).send('Error in parameters');
 
-        let object: Order = {
+        let object: any = {
             client: req.body.client,
             addressid: addressid[0].id,
             remissionNumber: req.body.remissionNumber,

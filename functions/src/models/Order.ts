@@ -1,8 +1,20 @@
-
-export default interface Order{
+import { SubOrders } from './SubOrders';
+export interface Order{
+   
     client: string,
-    addressid: string,
+    clientAddress: string,
     remissionNumber: number,
     shippingDate: Date,
-    ingenioId: number,
+    subOrders: SubOrders[],
+    status: string,
+    operator: string,
+    operationUnit: string,
+    plates: string,
+    ingenioId: string,
+}
+
+export const STATUS ={
+    PENDING: "PENDING",
+    TRANSIT: "TRANSIT",
+    DELIVERED: "DELIBERED"
 }

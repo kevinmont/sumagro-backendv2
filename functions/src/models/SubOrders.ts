@@ -1,7 +1,7 @@
 export interface SubOrders{
     quantity: number,
+    unit: string,
     description: string,
-    captured:string,
-    received:string,
-    status:string
+    unitPrice: number,
+    total: number
 }
