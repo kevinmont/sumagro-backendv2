@@ -89,13 +89,13 @@ export default class OrderController {
         if (!status) throw res.status(400).send('status is required');
         let resquery: any = await this.orderDao.getOrdersByStatus(status);
         let orders: any = [];
-        
-        for(let order of resquery){
-           let address:any = await this.addressDao.getAddressById(order.addressid);
-            let subOrder:any = await this.subOrdersDao.getsubOrdersById(order.id);
-            let sub: any =[];
-           
-            subOrder.forEach((i:any) => {
+
+        for (let order of resquery) {
+            let address: any = await this.addressDao.getAddressById(order.addressid);
+            let subOrder: any = await this.subOrdersDao.getsubOrdersById(order.id);
+            let sub: any = [];
+
+            subOrder.forEach((i: any) => {
                 sub.push({
                     id: `${i.id}`,
                     captured: `${i.captured}`,
@@ -103,8 +103,8 @@ export default class OrderController {
                     quantity: `${i.quantity}`,
                     received: `${i.received}`,
                     status: `${i.status}`
-                    });    
-               });
+                });
+            });
 
             orders.push({
                 id: `${order.id}`,
@@ -123,5 +123,45 @@ export default class OrderController {
         }
         logger.debug('CONTROLLER: Method getOrders Ending');
         res.status(200).send(orders);
+    }
+
+    async getOrderById(req: Request, res: Response) {
+        logger.info('CONTROLLER: Method getOrderById Startting');
+        let orderId = req.params.orderId;
+        if (!orderId) throw res.status(400).send('{ "msg":"orderId is required"}');
+        let dataOrder:any = await this.orderDao.orderById(orderId);
+        if(!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
+        let address: any = await this.addressDao.getAddressById(orderId);
+        let subOrder: any = await this.subOrdersDao.getsubOrdersById(orderId);
+        let order: any = {};
+        let sub: any = [];
+
+        subOrder.forEach((i: any) => {
+            sub.push({
+                id: `${i.id}`,
+                captured: `${i.captured}`,
+                description: `${i.description}`,
+                quantity: `${i.quantity}`,
+                received: `${i.received}`,
+                status: `${i.status}`
+            })
+        });
+
+        order = {
+            id: `${dataOrder[0].id}`,
+            client: `${dataOrder[0].client}`,
+            shippingdate: `${dataOrder[0].shippingdate}`,
+            dateentrance: `${dataOrder[0].dateentrance}`,
+            clientAddress: `${address[0].localidad}`,
+            operationUnit: `${dataOrder[0].operationunit}`,
+            operator: `${dataOrder[0].operator}`,
+            plates: `${dataOrder[0].plates}`,
+            remissionNumber: `${dataOrder[0].remissionnumber}`,
+            shippingDate: `${dataOrder[0].shippingdate}`,
+            status: `${dataOrder[0].status}`,
+            subOrders: sub
+        }
+        logger.debug('CONTROLLER: Method getOrderById Ending');
+        res.status(200).send(order);
     }
 }

@@ -55,4 +55,11 @@ export default class OrderDao{
         logger.debug('DAO: Method getOrders Ending');
         return await this.mysql.query(sql);
     }
+
+    async orderById(orderId:number){
+        logger.info('DAO: Method orderById Startting');
+        let sql=`SELECT * FROM orders WHERE id=${orderId}`;
+        logger.debug('DAO: Method orderById Ending');
+        return await this.mysql.query(sql);
+    }
 }
