@@ -13,6 +13,9 @@ export default class OrderRoute{
         .post((req: express.Request,res:express.Response)=>{
             this.orderController.postOrder(req,res);
         })
+        .get((req: express.Request, res:express.Response)=>{
+            this.orderController.getOrders(req,res);
+        })
 
         app.route('/sumagro-app/order/:orderId')
         .delete((req: express.Request,res:express.Response)=>{
