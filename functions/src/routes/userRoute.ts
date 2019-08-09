@@ -27,5 +27,8 @@ export default class UserRoute{
         .post((req:express.Request,res:express.Response)=>{
             this.userController.saveToken(req,res);
         })
+        .delete((req:express.Request,res:express.Response)=>{
+            this.userController.deleteToken(req,res);
+        })
     }
 }

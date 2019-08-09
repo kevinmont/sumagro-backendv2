@@ -118,4 +118,15 @@ export default class UserController{
         logger.debug("Controller: Methos saveToken Ending");
         res.send(response);
     }
+
+    async deleteToken(req: any,res: Response){
+        logger.info("Controller: Methos deleteToken Starting");
+        let uid = req.headers.uid;
+        let userFirebase:any = await this.firebase.getUserFirebase(uid);
+        let userRds:any = await this.userDao.getUserByEmail(userFirebase.email);
+        await this.userDao.deleteToken(userRds[0].id)
+        let response = await this.firebase.deleteToken(uid);
+        logger.debug("Controller: Methos deleteToken Ending");
+        res.send(response);
+    }
 }

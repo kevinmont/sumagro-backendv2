@@ -56,4 +56,11 @@ export default class UserDao{
         return await this.mysql.query(sql);
     }
 
+    async deleteToken(userId: any){
+        logger.info(`Dao: Method saveToken Startting`);
+        let sql= `UPDATE users SET token = "${null}" where id = "${userId}"`;
+        logger.debug(`Dao: Method saveToken Ending`);
+        return await this.mysql.query(sql);
+    }
+
 }
