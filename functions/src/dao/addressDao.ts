@@ -18,6 +18,13 @@ export default class AddressDao{
         return await this.mysql.query(sql);
     }
 
+    async getAddressById(addressId: number){
+        logger.info('DAO:Method getAddressById Startting');
+        let sql= `SELECT localidad FROM address WHERE id=${addressId}`;
+        logger.debug('DAO: Method getAddressById Ending');
+        return await this.mysql.query(sql);
+    }
+
     async CreateAddress(address:any){
         logger.info('DAO: Method CreateAddress Starting');
         let sql = `INSERT INTO address(calle,numero,ciudad,localidad,municipio) VALUES(${address.street},${address.number},"${address.city}","${address.location}","${address.municipality}");`;
