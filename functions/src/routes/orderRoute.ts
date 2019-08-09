@@ -24,6 +24,9 @@ export default class OrderRoute{
         .patch((req:express.Request, res: express.Response)=>{
             this.orderController.getOrder(req,res);
         })
+        .get((req:express.Request, res:express.Response)=>{
+            this.orderController.getOrderById(req,res);
+        })
     }
 
 }
