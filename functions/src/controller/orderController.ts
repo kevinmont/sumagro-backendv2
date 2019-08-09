@@ -42,7 +42,8 @@ export default class OrderController{
 
 
         let addressid:any = await this.addressDao.getAddress(address);
-        if (!addressid) res.status(400).send('Error in parameters');
+        logger.info(`address controller: ${addressid[0].id}`);
+        if (!addressid[0].id) res.status(404).send('Address not found');
 
         let object: Order = {
             client: req.body.client,
@@ -58,7 +59,8 @@ export default class OrderController{
 
 
         let resquery: any = await this.ingenioDao.getIngenio(object.ingenioId);
-        if (!resquery) res.status(400).send(`Error in parameters`);
+        logger.info(`resquery: ${resquery}`);
+        if (!resquery) res.status(404).send(`Ingenio not found`);
 
         let orderidquery: any = await this.orderDao.saveOrder(object);
         if (orderidquery) {
