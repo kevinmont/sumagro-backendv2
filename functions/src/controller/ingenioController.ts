@@ -137,5 +137,31 @@ export default class IngenioController{
     logger.debug('CONTROLLER: method sendEmail Ending');
     }
 
-    
+    async getIngenios(req:Request, res:Response){
+        logger.info('CONTROLLER: Method getIngenios Stratting');
+        let ingenios:any = await this.ingenioDao.getAllIngenios();
+        let structureIngenios:any=[];
+
+        for(let ingenio of ingenios){
+            let addressid:any= ingenio.addressid;
+            let dataAddress:any = await this.addressDao.getAddressById(addressid);
+            let structureaddress:any={};
+            structureaddress={
+                calle: JSON.parse(dataAddress[0].calle),
+                numero: JSON.parse(dataAddress[0].numero),
+                ciudad: `${dataAddress[0].ciudad}`,
+                localidad: `${dataAddress[0].localidad}`,
+                municipio: `${dataAddress[0].municipio}`
+            } 
+            structureIngenios.push({
+                id:`${ingenio.id}`,
+                email:`${ingenio.email}`,
+                name:`${ingenio.name}`,
+                address:structureaddress
+            })
+        }
+        logger.debug('CONTROLLER: Method getIngenios Ending');
+        res.status(200).send(structureIngenios);
+    }
+
 }
