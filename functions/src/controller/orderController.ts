@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
+import AddressDao from '../dao/addressDao';
 import OrderDao from '../dao/orderDao';
+import SubOrdersDao from '../dao/subOrdersDao';
 import * as log4js from 'log4js';
 import IngenioDao from '../dao/ingenioDao';
-import AddressDao from '../dao/addressDao';
-import SubOrdersDao from '../dao/subOrdersDao';
+import PdfHelper from '../utils/Pdf-Helper';
+import * as pdf from 'html-pdf';
 
 const logger = log4js.getLogger();
 logger.level = 'debug';
@@ -11,7 +13,7 @@ logger.level = 'debug';
 export default class OrderController {
     public orderDao: OrderDao;
     public ingenioDao: IngenioDao;
-
+    public pdfHelper: PdfHelper;
     public addressDao: AddressDao;
     public subOrdersDao: SubOrdersDao;
     constructor() {
@@ -19,6 +21,7 @@ export default class OrderController {
         this.ingenioDao = new IngenioDao();
         this.addressDao = new AddressDao();
         this.subOrdersDao = new SubOrdersDao();
+        this.pdfHelper = new PdfHelper();
     }
 
     async deleteOrderByOrderId(req: Request, res: Response) {
@@ -163,4 +166,56 @@ export default class OrderController {
         logger.debug('CONTROLLER: Method getOrderById Ending');
         res.status(200).send(order);
     }
+
+    async generatePdf(req:any,res:Response){
+        logger.info('CONTROLLER: method generatePdf Starting');
+        if(!req.params.orderId) throw res.status(400).send("orderId is required");
+        let orderId = req.params.orderId;
+        let dataOrder:any = await this.orderDao.orderById(orderId);
+        if(!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
+        let response = parseInt(dataOrder[0].addressid)
+        logger.info(response)
+        let address: any = await this.addressDao.getAddressById(response);
+        let subOrder: any = await this.subOrdersDao.getsubOrdersById(orderId);
+        let order: any = {};
+        let sub: any = [];
+
+        subOrder.forEach((i: any) => {
+            sub.push({
+                id: `${i.id}`,
+                captured: `${i.captured}`,
+                description: `${i.description}`,
+                quantity: `${i.quantity}`,
+                received: `${i.received}`,
+                status: `${i.status}`
+            })
+        });
+
+        order = {
+            id: `${dataOrder[0].id}`,
+            client: `${dataOrder[0].client}`,
+            shippingdate: `${dataOrder[0].shippingdate}`,
+            dateentrance: `${dataOrder[0].dateentrance}`,
+            clientAddress: `${address[0].localidad}`,
+            operationUnit: `${dataOrder[0].operationunit}`,
+            operator: `${dataOrder[0].operator}`,
+            plates: `${dataOrder[0].plates}`,
+            remissionNumber: `${dataOrder[0].remissionnumber}`,
+            shippingDate: `${dataOrder[0].shippingdate}`,
+            status: `${dataOrder[0].status}`,
+            subOrders: sub
+        }
+        let report =await this.pdfHelper.getRemissionDocument(order);
+        logger.info(report);
+        pdf.create(report).toStream((function(err,stream){
+                res.writeHead(200, {
+                  'Content-Type': 'application/pdf',
+                  'responseType': 'blob',
+                  'Content-disposition': `attachment; filename=${orderId}.pdf`
+              });
+              stream.pipe(res);
+      }))
+    logger.debug('CONTROLLER: method generatePdf Ending');
+    }
+
 }

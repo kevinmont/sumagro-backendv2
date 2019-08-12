@@ -27,6 +27,11 @@ export default class OrderRoute{
         .get((req:express.Request, res:express.Response)=>{
             this.orderController.getOrderById(req,res);
         })
+
+        app.route('/sumagro-app/generate-pdf/:orderId')
+            .get((req: express.Request,res: express.Response)=>{
+                this.orderController.generatePdf(req,res);
+        })
     }
 
 }
