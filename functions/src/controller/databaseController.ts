@@ -27,10 +27,7 @@ export default class DatabaseController{
         let error:any=[];
         for(let record of records){
             let address= record[5];
-            console.log(`Address1: ${record[5]}`);
             let addressId:any= await this.addressDao.createAddressByLocalidad(address);
-            console.log(`AddressId: ${typeof addressId}`);
-            console.log(`AddressId 2: ${ addressId}`);
             let coordenatesId:any= await this.coordenatesDao.registeringCoordenates(record[22],record[23]);
             logger.info("coordenatesId: " + typeof coordenatesId);
             logger.info("coordenatesId 2: " + coordenatesId);
