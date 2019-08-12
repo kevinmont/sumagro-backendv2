@@ -47,5 +47,11 @@ export default class ingenioDao {
         return await this.mysql.query(sql);
     }
 
+    async getAllIngenios(){
+        logger.info('DAO: Method getAllIngenios Stratting');
+        let sql = `SELECT * FROM ingenios`;
+        logger.debug('DAO: Method getAllIngenios Ending');
+        return await this.mysql.query(sql);
+    }
     
 }

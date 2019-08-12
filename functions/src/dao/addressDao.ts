@@ -18,10 +18,10 @@ export default class AddressDao{
         return await this.mysql.query(sql);
     }
 
-    async getAddressById(addressId: number){
-        logger.info('DAO:Method getAddressById Startting');
+    async getLocalidadAddressById(addressId: number){
+        logger.info('DAO:Method getLocalidadAddressById Startting');
         let sql= `SELECT localidad FROM address WHERE id=${addressId}`;
-        logger.debug('DAO: Method getAddressById Ending');
+        logger.debug('DAO: Method getLocalidadAddressById Ending');
         return await this.mysql.query(sql);
     }
 
@@ -37,5 +37,11 @@ export default class AddressDao{
         let sql = `SELECT * FROM address WHERE calle = ${address.street} AND numero = ${address.number} AND ciudad = "${address.city}" AND localidad = "${address.location}" AND municipio = "${address.municipality}"`;
         logger.debug('DAO: Method CreateAddress Ending');
         return await this.mysql.query(sql);
+    }
+    async getAddressById(addressId:number){
+        logger.info('DAO: Method getAddressById Starting');
+        let sql= `SELECT * FROM address WHERE id= ${addressId}`;
+        logger.debug('DAO: Method getAddressById Ending');
+    return await this.mysql.query(sql);
     }
 }
