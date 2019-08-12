@@ -189,7 +189,7 @@ export default class PdfHelper{
                     <tr><td colspan="5" style="height: 20px;"> </td></tr>
                     <tr>
                             <td  > <strong>MODELO: </strong></td>
-                            <td>${order.modelUnit}</td>
+                            <td>${order.modelunit}</td>
                             <td   style="text-align: right;"> <strong>PLACAS: </strong></td>
                             <td colspan="2" style="padding-left : 5%;">  ${order.plates}</td>
                         

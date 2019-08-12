@@ -32,6 +32,12 @@ export default class OrderRoute{
             .get((req: express.Request,res: express.Response)=>{
                 this.orderController.generatePdf(req,res);
         })
+
+        app.route('/sumagro-app/generate-charge-pdf/chargeformat/:orderId')
+            .get((req: express.Request, res: express.Response)=>{
+                    this.orderController.getChargeData(req,res)
+                }
+        )
     }
 
 }

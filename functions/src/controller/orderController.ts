@@ -218,4 +218,61 @@ export default class OrderController {
     logger.debug('CONTROLLER: method generatePdf Ending');
     }
 
+    async getChargeData(req: any,res: Response){
+        logger.info('CONTROLLER: method getChargeData Ending');
+        if(!req.params.orderId) throw res.status(400).send("orderId is required");
+        let orderId = req.params.orderId;
+        let dataOrder:any = await this.orderDao.orderById(orderId);
+        if(!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
+        let response = parseInt(dataOrder[0].addressid)
+        logger.info(response)
+        let address: any = await this.addressDao.getAddressById(response);
+        let subOrder: any = await this.subOrdersDao.getsubOrdersById(orderId);
+        let order: any = {};
+        let sub: any = [];
+
+        subOrder.forEach((i: any) => {
+            sub.push({
+                id: `${i.id}`,
+                captured: `${i.captured}`,
+                description: `${i.description}`,
+                quantity: `${i.quantity}`,
+                received: `${i.received}`,
+                status: `${i.status}`
+            })
+        });
+
+        order = {
+            id: `${dataOrder[0].id}`,
+            client: `${dataOrder[0].client}`,
+            shippingdate: `${dataOrder[0].shippingdate}`,
+            dateentrance: `${dataOrder[0].dateentrance}`,
+            clientAddress: `${address[0].localidad}`,
+            operationUnit: `${dataOrder[0].operationunit}`,
+            operator: `${dataOrder[0].operator}`,
+            plates: `${dataOrder[0].plates}`,
+            remissionNumber: `${dataOrder[0].remissionnumber}`,
+            shippingDate: `${dataOrder[0].shippingdate}`,
+            status: `${dataOrder[0].status}`,
+            modelunit : `${dataOrder[0].modelunit}`,
+            mark : `${dataOrder[0].mark}`,
+            subOrders: sub
+        }
+        let chargeData =await this.pdfHelper.getChargeFormat(order);
+        logger.info(chargeData);
+        pdf.create(chargeData,{ format: 'Letter',border: {
+            top: "1in",            // default is 0, units: mm, cm, in, px
+            right: "0in",
+            bottom: "1in",
+            left: "0in"
+          } }).toStream((function(err,stream){
+            res.writeHead(200, {
+              'Content-Type': 'application/pdf',
+              'Content-disposition': `attachment; filename=SUMAGRO.pdf`
+          });
+          stream.pipe(res);
+        }))
+        logger.debug('CONTROLLER: method getChargeData Ending');
+    }
+
 }
