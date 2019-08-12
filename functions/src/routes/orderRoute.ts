@@ -38,6 +38,11 @@ export default class OrderRoute{
                     this.orderController.getChargeData(req,res)
                 }
         )
+
+        app.route('/sumagro-app/order/status/:orderId')
+            .get((req: express.Request, res: express.Response) =>{
+                this.orderController.getStatusOrder( req, res )
+        })
     }
 
 }

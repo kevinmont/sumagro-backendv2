@@ -219,7 +219,7 @@ export default class OrderController {
     }
 
     async getChargeData(req: any,res: Response){
-        logger.info('CONTROLLER: method getChargeData Ending');
+        logger.info('CONTROLLER: method getChargeData Starting');
         if(!req.params.orderId) throw res.status(400).send("orderId is required");
         let orderId = req.params.orderId;
         let dataOrder:any = await this.orderDao.orderById(orderId);
@@ -273,6 +273,19 @@ export default class OrderController {
           stream.pipe(res);
         }))
         logger.debug('CONTROLLER: method getChargeData Ending');
+    }
+
+    async getStatusOrder(req: Request,res: Response){
+        logger.info('CONTROLLER: method getStatusOrder Starting');
+        let orderId = req.params.orderId;
+        if(!orderId) throw res.status(400).send('orderId is required');
+        let data:any = await this.orderDao.orderById(orderId);
+        if(!data.length) { throw res.status(404).send('order not found'); }
+        let status = {
+            status: data[0].status
+        };
+        res.status(200).send(status);
+        logger.debug('CONTROLLER: method getStatusOrder Ending');
     }
 
 }
