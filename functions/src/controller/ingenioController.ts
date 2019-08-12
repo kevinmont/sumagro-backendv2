@@ -138,13 +138,12 @@ export default class IngenioController{
     }
 
     async getIngenios(req:Request, res:Response){
+        logger.info('CONTROLLER: Method getIngenios Stratting');
         let ingenios:any = await this.ingenioDao.getAllIngenios();
         let structureIngenios:any=[];
 
         for(let ingenio of ingenios){
-            console.log(ingenio);
             let addressid:any= ingenio.addressid;
-            console.log(`AddressId: ${addressid}`);
             let dataAddress:any = await this.addressDao.getAddressById(addressid);
             let structureaddress:any={};
             structureaddress={
@@ -161,6 +160,7 @@ export default class IngenioController{
                 address:structureaddress
             })
         }
+        logger.debug('CONTROLLER: Method getIngenios Ending');
         res.status(200).send(structureIngenios);
     }
 
