@@ -1,0 +1,223 @@
+[debug] [2019-08-13T15:15:24.990Z] ----------------------------------------------------------------------
+[debug] [2019-08-13T15:15:24.994Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Usuario\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --only functions
+[debug] [2019-08-13T15:15:24.995Z] CLI Version:   7.0.0
+[debug] [2019-08-13T15:15:24.995Z] Platform:      win32
+[debug] [2019-08-13T15:15:24.995Z] Node Version:  v10.16.0
+[debug] [2019-08-13T15:15:24.996Z] Time:          Tue Aug 13 2019 10:15:24 GMT-0500 (GMT-05:00)
+[debug] [2019-08-13T15:15:24.997Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-08-13T15:15:25.015Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-08-13T15:15:25.016Z] > authorizing via signed-in user
+[debug] [2019-08-13T15:15:25.019Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2019-08-13T15:15:25.020Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2019-08-13T15:15:36.454Z] <<< HTTP RESPONSE 200
+[debug] [2019-08-13T15:15:36.476Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/sumagro-backend  
+ 
+[debug] [2019-08-13T15:15:37.032Z] <<< HTTP RESPONSE 200
+[info] i  Starting emulators: ["functions"]
+[warn] !  Your requested "node" version "8" doesn't match your global version "10"
+[debug] [2019-08-13T15:15:37.115Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/1016153454511:getServerAppConfig  
+ 
+[debug] [2019-08-13T15:15:37.513Z] <<< HTTP RESPONSE 200
+[info] +  functions: Emulator started at http://localhost:5001
+[info] i  functions: Watching "C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions" for Cloud Functions...
+[debug] [2019-08-13T15:15:38.323Z] Functions runtime initialized.
+[debug] [2019-08-13T15:15:38.324Z] Disabled runtime features: undefined
+[debug] [2019-08-13T15:15:38.837Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-13T15:15:38.837Z] Outgoing network have been stubbed.
+[debug] [2019-08-13T15:15:38.915Z] Checked functions.config()
+[debug] [2019-08-13T15:15:38.923Z] firebase-admin has been stubbed.
+[info] i  functions: HTTP trigger initialized at http://localhost:5001/sumagro-backend/us-central1/app
+[debug] [2019-08-13T15:17:03.534Z] Accepted request OPTIONS /sumagro-backend/us-central1/app/sumagro-app/ingenio/register --> app
+[debug] [2019-08-13T15:17:04.266Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "app"
+[debug] [2019-08-13T15:17:04.270Z] Disabled runtime features: undefined
+[debug] [2019-08-13T15:17:04.766Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-13T15:17:04.766Z] Outgoing network have been stubbed.
+[debug] [2019-08-13T15:17:04.855Z] Checked functions.config()
+[debug] [2019-08-13T15:17:04.863Z] firebase-admin has been stubbed.
+[debug] [2019-08-13T15:17:05.970Z] Trigger "app" has been found, beginning invocation!
+[debug] [2019-08-13T15:17:05.970Z] 
+[debug] [2019-08-13T15:17:05.970Z] Running app in mode HTTPS
+[debug] [2019-08-13T15:17:05.977Z] {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\14116"}
+[debug] [2019-08-13T15:17:05.979Z] [functions] Runtime ready! Sending request! {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\14116"}
+[debug] [2019-08-13T15:17:06.046Z] Ephemeral server used!
+[debug] [2019-08-13T15:17:06.047Z] Bodyundefined
+[debug] [2019-08-13T15:17:06.052Z] Ephemeral server survived.
+[info] i  functions: Finished "app" in ~1s
+[debug] [2019-08-13T15:17:06.105Z] Accepted request POST /sumagro-backend/us-central1/app/sumagro-app/ingenio/register --> app
+[debug] [2019-08-13T15:17:06.861Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "app"
+[debug] [2019-08-13T15:17:06.865Z] Disabled runtime features: undefined
+[debug] [2019-08-13T15:17:07.358Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-13T15:17:07.358Z] Outgoing network have been stubbed.
+[debug] [2019-08-13T15:17:07.445Z] Checked functions.config()
+[debug] [2019-08-13T15:17:07.454Z] firebase-admin has been stubbed.
+[debug] [2019-08-13T15:17:08.552Z] Trigger "app" has been found, beginning invocation!
+[debug] [2019-08-13T15:17:08.552Z] 
+[debug] [2019-08-13T15:17:08.552Z] Running app in mode HTTPS
+[debug] [2019-08-13T15:17:08.559Z] {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\14108"}
+[debug] [2019-08-13T15:17:08.560Z] [functions] Runtime ready! Sending request! {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\14108"}
+[debug] [2019-08-13T15:17:08.660Z] Ephemeral server used!
+[debug] [2019-08-13T15:17:08.661Z] Body{"ingenio":{"name":"No se","address":{"street":"10","number":"13","city":"Orizaba","location":"Orizaba","municipality":"Orizaba "},"email":"Sumagrov2@yopmail.com"}}
+[info] >  [2019-08-13T10:17:08.666] [INFO] default - CONTROLLER: method createeIngenio Starting
+[debug] [2019-08-13T15:17:08.676Z] Ephemeral server survived.
+[info] i  functions: Finished "app" in ~1s
+[info] >  (node:14108) UnhandledPromiseRejectionWarning: #<ServerResponse>
+[info] >  (node:14108) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). (rejection id: 1)
+[info] >  (node:14108) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+[debug] [2019-08-13T15:20:31.201Z] Accepted request OPTIONS /sumagro-backend/us-central1/app/sumagro-app/ingenio/register --> app
+[debug] [2019-08-13T15:20:31.978Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "app"
+[debug] [2019-08-13T15:20:31.983Z] Disabled runtime features: undefined
+[debug] [2019-08-13T15:20:32.487Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-13T15:20:32.487Z] Outgoing network have been stubbed.
+[debug] [2019-08-13T15:20:32.567Z] Checked functions.config()
+[debug] [2019-08-13T15:20:32.574Z] firebase-admin has been stubbed.
+[debug] [2019-08-13T15:20:33.879Z] Trigger "app" has been found, beginning invocation!
+[debug] [2019-08-13T15:20:33.879Z] 
+[debug] [2019-08-13T15:20:33.880Z] Running app in mode HTTPS
+[debug] [2019-08-13T15:20:33.885Z] {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\13208"}
+[debug] [2019-08-13T15:20:33.887Z] [functions] Runtime ready! Sending request! {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\13208"}
+[debug] [2019-08-13T15:20:33.959Z] Ephemeral server used!
+[debug] [2019-08-13T15:20:33.960Z] Bodyundefined
+[debug] [2019-08-13T15:20:33.964Z] Ephemeral server survived.
+[info] i  functions: Finished "app" in ~1s
+[debug] [2019-08-13T15:20:34.086Z] Accepted request POST /sumagro-backend/us-central1/app/sumagro-app/ingenio/register --> app
+[debug] [2019-08-13T15:20:34.869Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "app"
+[debug] [2019-08-13T15:20:34.874Z] Disabled runtime features: undefined
+[debug] [2019-08-13T15:20:35.373Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-13T15:20:35.374Z] Outgoing network have been stubbed.
+[debug] [2019-08-13T15:20:35.451Z] Checked functions.config()
+[debug] [2019-08-13T15:20:35.459Z] firebase-admin has been stubbed.
+[debug] [2019-08-13T15:20:36.449Z] Trigger "app" has been found, beginning invocation!
+[debug] [2019-08-13T15:20:36.449Z] 
+[debug] [2019-08-13T15:20:36.449Z] Running app in mode HTTPS
+[debug] [2019-08-13T15:20:36.455Z] {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\9180"}
+[debug] [2019-08-13T15:20:36.457Z] [functions] Runtime ready! Sending request! {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\9180"}
+[debug] [2019-08-13T15:20:36.546Z] Ephemeral server used!
+[debug] [2019-08-13T15:20:36.547Z] Body{"name":"Incenio","address":{"street":"A","number":"2w","city":"No se","location":"Loc","municipality":"Mun"},"email":"Sumagrov2@yopmail.com"}
+[info] >  [2019-08-13T10:20:36.551] [INFO] default - CONTROLLER: method createeIngenio Starting
+[info] >  [2019-08-13T10:20:36.555] [INFO] default - DAO: Method getIngenioByEmail Starting
+[info] >  [2019-08-13T10:20:36.556] [DEBUG] default - DAO: Method getIngenioByEmail Ending
+[info] >  [2019-08-13T10:20:36.556] [INFO] default - Calling query method
+[debug] [2019-08-13T15:20:36.564Z] Ephemeral server survived.
+[info] >  [2019-08-13T10:20:36.595] [INFO] default - object
+[info] >  [2019-08-13T10:20:36.595] [INFO] default - Cerrando cliente object
+[info] >  [2019-08-13T10:20:36.596] [INFO] default - DAO: Method CreateAddress Starting
+[info] >  [2019-08-13T10:20:36.596] [DEBUG] default - DAO: Method CreateAddress Ending
+[info] >  [2019-08-13T10:20:36.596] [INFO] default - Calling query method
+[info] >  [2019-08-13T10:20:36.606] [ERROR] default - Error in query { Error: ER_BAD_FIELD_ERROR: Unknown column 'A' in 'field list'
+[info] >      at Query.Sequence._packetToError (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\sequences\Sequence.js:47:14)
+[info] >      at Query.ErrorPacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\sequences\Query.js:77:18)
+[info] >      at Protocol._parsePacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:291:23)
+[info] >      at Parser._parsePacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Parser.js:433:10)
+[info] >      at Parser.write (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Parser.js:43:10)
+[info] >      at Protocol.write (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:38:16)
+[info] >      at Socket.<anonymous> (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:91:28)
+[info] >      at Socket.<anonymous> (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:525:10)
+[info] >      at Socket.emit (events.js:198:13)
+[info] >      at addChunk (_stream_readable.js:288:12)
+[info] >      --------------------
+[info] >      at Protocol._enqueue (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:144:48)
+[info] >      at PoolConnection.query (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:201:25)
+[info] >      at connection.getConnection (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\utils\mysql.js:23:23)
+[info] >      at Ping.onOperationComplete (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Pool.js:110:5)
+[info] >      at Ping.<anonymous> (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:525:10)
+[info] >      at Ping._callback (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:491:16)
+[info] >      at Ping.Sequence.end (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\sequences\Sequence.js:83:24)
+[info] >      at Ping.Sequence.OkPacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\sequences\Sequence.js:92:8)
+[info] >      at Protocol._parsePacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:291:23)
+[info] >      at Parser._parsePacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Parser.js:433:10)
+[info] >    code: 'ER_BAD_FIELD_ERROR',
+[info] >    errno: 1054,
+[info] >    sqlMessage: 'Unknown column \'A\' in \'field list\'',
+[info] >    sqlState: '42S22',
+[info] >    index: 0,
+[info] >    sql:
+[info] >     'INSERT INTO address(calle,numero,ciudad,localidad,municipio) VALUES(A,2w,"No se","Loc","Mun");' }
+[info] >  (node:9180) UnhandledPromiseRejectionWarning: Error: ER_BAD_FIELD_ERROR: Unknown column 'A' in 'field list'
+[info] >      at Query.Sequence._packetToError (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\sequences\Sequence.js:47:14)
+[info] >      at Query.ErrorPacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\sequences\Query.js:77:18)
+[info] >      at Protocol._parsePacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:291:23)
+[info] >      at Parser._parsePacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Parser.js:433:10)
+[info] >      at Parser.write (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Parser.js:43:10)
+[info] >      at Protocol.write (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:38:16)
+[info] >      at Socket.<anonymous> (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:91:28)
+[info] >      at Socket.<anonymous> (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:525:10)
+[info] >      at Socket.emit (events.js:198:13)
+[info] >      at addChunk (_stream_readable.js:288:12)
+[info] >      --------------------
+[info] >      at Protocol._enqueue (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:144:48)
+[info] >      at PoolConnection.query (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:201:25)
+[info] >      at connection.getConnection (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\utils\mysql.js:23:23)
+[info] >      at Ping.onOperationComplete (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Pool.js:110:5)
+[info] >      at Ping.<anonymous> (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:525:10)
+[info] >      at Ping._callback (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:491:16)
+[info] >      at Ping.Sequence.end (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\sequences\Sequence.js:83:24)
+[info] >      at Ping.Sequence.OkPacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\sequences\Sequence.js:92:8)
+[info] >      at Protocol._parsePacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:291:23)
+[info] >      at Parser._parsePacket (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Parser.js:433:10)
+[info] >  (node:9180) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). (rejection id: 1)
+[info] >  (node:9180) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+[warn] !  Your function timed out after ~60s. To configure this timeout, see
+      https://firebase.google.com/docs/functions/manage-functions#set_timeout_and_memory_allocation.
+[debug] [2019-08-13T15:22:57.423Z] Accepted request OPTIONS /sumagro-backend/us-central1/app/sumagro-app/ingenio/register --> app
+[debug] [2019-08-13T15:22:58.203Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "app"
+[debug] [2019-08-13T15:22:58.205Z] Disabled runtime features: undefined
+[debug] [2019-08-13T15:22:58.691Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-13T15:22:58.692Z] Outgoing network have been stubbed.
+[debug] [2019-08-13T15:22:58.768Z] Checked functions.config()
+[debug] [2019-08-13T15:22:58.775Z] firebase-admin has been stubbed.
+[debug] [2019-08-13T15:23:00.429Z] Trigger "app" has been found, beginning invocation!
+[debug] [2019-08-13T15:23:00.429Z] 
+[debug] [2019-08-13T15:23:00.429Z] Running app in mode HTTPS
+[debug] [2019-08-13T15:23:00.435Z] {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\13664"}
+[debug] [2019-08-13T15:23:00.436Z] [functions] Runtime ready! Sending request! {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\13664"}
+[debug] [2019-08-13T15:23:00.503Z] Ephemeral server used!
+[debug] [2019-08-13T15:23:00.505Z] Bodyundefined
+[debug] [2019-08-13T15:23:00.508Z] Ephemeral server survived.
+[info] i  functions: Finished "app" in ~1s
+[debug] [2019-08-13T15:23:00.618Z] Accepted request POST /sumagro-backend/us-central1/app/sumagro-app/ingenio/register --> app
+[debug] [2019-08-13T15:23:01.459Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "app"
+[debug] [2019-08-13T15:23:01.461Z] Disabled runtime features: undefined
+[debug] [2019-08-13T15:23:01.980Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-13T15:23:01.980Z] Outgoing network have been stubbed.
+[debug] [2019-08-13T15:23:02.056Z] Checked functions.config()
+[debug] [2019-08-13T15:23:02.063Z] firebase-admin has been stubbed.
+[debug] [2019-08-13T15:23:03.039Z] Trigger "app" has been found, beginning invocation!
+[debug] [2019-08-13T15:23:03.039Z] 
+[debug] [2019-08-13T15:23:03.039Z] Running app in mode HTTPS
+[debug] [2019-08-13T15:23:03.046Z] {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\13216"}
+[debug] [2019-08-13T15:23:03.047Z] [functions] Runtime ready! Sending request! {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\13216"}
+[debug] [2019-08-13T15:23:03.141Z] Ephemeral server used!
+[debug] [2019-08-13T15:23:03.142Z] Body{"name":"No se","address":{"street":"12","number":"12","city":"Orizaba","location":"Orizaba","municipality":"Orizaba"},"email":"Sumagrov2@yopmail.com "}
+[info] >  [2019-08-13T10:23:03.147] [INFO] default - CONTROLLER: method createeIngenio Starting
+[info] >  [2019-08-13T10:23:03.152] [INFO] default - DAO: Method getIngenioByEmail Starting
+[info] >  [2019-08-13T10:23:03.152] [DEBUG] default - DAO: Method getIngenioByEmail Ending
+[info] >  [2019-08-13T10:23:03.152] [INFO] default - Calling query method
+[debug] [2019-08-13T15:23:03.156Z] Ephemeral server survived.
+[info] >  [2019-08-13T10:23:03.174] [INFO] default - object
+[info] >  [2019-08-13T10:23:03.174] [INFO] default - Cerrando cliente object
+[info] >  [2019-08-13T10:23:03.175] [INFO] default - DAO: Method CreateAddress Starting
+[info] >  [2019-08-13T10:23:03.175] [DEBUG] default - DAO: Method CreateAddress Ending
+[info] >  [2019-08-13T10:23:03.175] [INFO] default - Calling query method
+[info] >  [2019-08-13T10:23:03.192] [INFO] default - object
+[info] >  [2019-08-13T10:23:03.192] [INFO] default - Cerrando cliente object
+[info] >  [2019-08-13T10:23:03.193] [INFO] default - DAO: Method CreateAddress Starting
+[info] >  [2019-08-13T10:23:03.193] [DEBUG] default - DAO: Method CreateAddress Ending
+[info] >  [2019-08-13T10:23:03.193] [INFO] default - Calling query method
+[info] >  [2019-08-13T10:23:03.196] [INFO] default - object
+[info] >  [2019-08-13T10:23:03.196] [INFO] default - Cerrando cliente object
+[info] >  [2019-08-13T10:23:03.196] [INFO] default - 52
+[info] >  [2019-08-13T10:23:03.197] [INFO] default - DAO: Method createIngenio Starting
+[info] >  [2019-08-13T10:23:03.197] [DEBUG] default - DAO: Method createIngenio Ending
+[info] >  [2019-08-13T10:23:03.197] [INFO] default - Calling query method
+[info] >  [2019-08-13T10:23:03.203] [INFO] default - object
+[info] >  [2019-08-13T10:23:03.204] [INFO] default - Cerrando cliente object
+[info] >  [2019-08-13T10:23:03.209] [DEBUG] default - CONTROLLER: method createeIngenio Ending
+[info] i  functions: Finished "app" in ~1s

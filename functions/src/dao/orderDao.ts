@@ -7,8 +7,8 @@ logger.level='debug';
 export default class OrderDao{
     public mysql: Mysql;
 
-    constructor(){
-        this.mysql= new Mysql();
+    constructor(mysql: Mysql){
+        this.mysql= mysql;
     }
 
     async saveOrder(object: any) {

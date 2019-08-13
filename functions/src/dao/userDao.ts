@@ -6,13 +6,13 @@ logger.level = 'debug';
 export default class UserDao{
     public mysql: Mysql;
 
-    constructor(){
-        this.mysql = new Mysql();
+    constructor(mysql: Mysql){
+        this.mysql = mysql;
     }
 
     async createUser(user:any){
         logger.info('DAO: Method createUser Starting');
-        let sql = `INSERT INTO users VALUES("${user.uid}","${user.email}","${user.ingenioId}","${user.rol}",${null})`;
+        let sql = `INSERT INTO users VALUES("${user.uid}","${user.email}","${(user.ingenioId)?user.ingenioId:0}","${user.rol}",${null})`;
         logger.debug('DAO: Method createUser Ending');
         return await this.mysql.query(sql);
     }
@@ -21,7 +21,12 @@ export default class UserDao{
         logger.info('DAO: Method getUserById Starting');
         let sql = `SELECT * FROM users where email = "${email}"`;
         logger.debug('DAO: Method getUserById Ending');
+        try{
         return await this.mysql.query(sql);
+        }catch(err){
+            logger.error("ERROR",err);
+            return ;
+        }
     }
 
     async getUser(userId:any){

@@ -1,11 +1,13 @@
 import * as express from 'express';
 import OrderController from '../controller/orderController';
+import Mysql from '../utils/mysql';
+
 
 export default class OrderRoute{
     public orderController: OrderController;
 
-    constructor(){
-        this.orderController = new OrderController();
+    constructor(mysql: Mysql){
+        this.orderController = new OrderController(mysql);
     }
     addRoutes(app: express.Application){
 

@@ -6,6 +6,7 @@ import * as log4js from 'log4js';
 import IngenioDao from '../dao/ingenioDao';
 import PdfHelper from '../utils/Pdf-Helper';
 import * as pdf from 'html-pdf';
+import Mysql from '../utils/mysql';
 
 const logger = log4js.getLogger();
 logger.level = 'debug';
@@ -16,11 +17,11 @@ export default class OrderController {
     public pdfHelper: PdfHelper;
     public addressDao: AddressDao;
     public subOrdersDao: SubOrdersDao;
-    constructor() {
-        this.orderDao = new OrderDao();
-        this.ingenioDao = new IngenioDao();
-        this.addressDao = new AddressDao();
-        this.subOrdersDao = new SubOrdersDao();
+    constructor(mysql: Mysql) {
+        this.orderDao = new OrderDao(mysql);
+        this.ingenioDao = new IngenioDao(mysql);
+        this.addressDao = new AddressDao(mysql);
+        this.subOrdersDao = new SubOrdersDao(mysql);
         this.pdfHelper = new PdfHelper();
     }
 

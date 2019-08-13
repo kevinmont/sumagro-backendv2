@@ -72,18 +72,8 @@ export default class Firebase{
                .then(async (userRecord:any)=> {
                  // See the UserRecord reference doc for the contents of userRecord.
                  logger.info('Successfully created new user:', userRecord.uid);
-                 let key = userRecord.uid;
-                 delete user.password;
-                 user.uid = key;
-                 await this.db.ref(`/sumagro/users`).child(key).set(user,(err:any)=>{
-                   if(err) {
-                       logger.info(err); reject("Usuario ya existente");
-                   }else{
-                        resolve("Usuario registrado");
-                   }
-                   
-               }
-               );
+                 
+                 resolve(userRecord.uid);
    
                })
                .catch(function(error:any) {

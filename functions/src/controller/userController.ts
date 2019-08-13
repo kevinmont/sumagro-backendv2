@@ -5,6 +5,8 @@ import { Nodemailers } from '../utils/Nodemailer-helper';
 import Firebase from '../utils/firebase';
 import config from '../models/config';
 import * as log4js from 'log4js';
+import Mysql from '../utils/mysql';
+
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -14,9 +16,9 @@ export default class UserController{
     public firebase: Firebase;
     public config:any;
 
-    constructor(){
+    constructor(mysql: Mysql){
         this.config= config;
-        this.userDao = new UserDao();
+        this.userDao = new UserDao(mysql);
         this.firebase = new Firebase(this.config);
         this.nodemailers = new Nodemailers(this.config);
     }
@@ -55,8 +57,11 @@ export default class UserController{
         
     
         try {
+            let response:any = await this.firebase.createUserFirebase(user);
+            logger.info("USER DATA",response);
+            user.uid = response;
         await this.userDao.createUser(user);
-        let response = await this.firebase.createUserFirebase(user);
+        
         await this.nodemailers.sendMailNewAccount(email,{email: user.email,password});
         logger.info(response);
         res.status(200).send({msg:"Usuario registrado"});

@@ -1,11 +1,13 @@
 import * as express from 'express';
 import UserController from '../controller/userController';
+import Mysql from '../utils/mysql';
+
 
 export default class UserRoute{
     public userController: UserController;
 
-    constructor(){
-        this.userController= new UserController();
+    constructor(mysql: Mysql){
+        this.userController= new UserController(mysql);
     }
 
     addRoutes(app: express.Application){

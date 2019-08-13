@@ -1,11 +1,12 @@
 import * as express from 'express';
 import IngenioController from '../controller/ingenioController';
+import Mysql from '../utils/mysql';
 
 export default class OrderRoute{
     public ingenioController: IngenioController;
 
-    constructor(){
-        this.ingenioController = new IngenioController();
+    constructor(mysql: Mysql){
+        this.ingenioController = new IngenioController(mysql);
     }
     
     addRoutes(app: express.Application){

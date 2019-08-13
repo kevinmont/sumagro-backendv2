@@ -7,26 +7,37 @@ export default class Mysql{
 
     constructor(){
         this.connection = mysql.createPool({
-            host: 'sumagro-dev.csdxmz0vjytf.us-east-1.rds.amazonaws.com',
-            user: 'superUsuario',
-            password: 'Dist2019',
-            database: 'sumagro-dev'
+            host: 'localhost',
+            user: 'root',
+            password: 'Holamundo1250',
+            database: 'sumagro-dev',
+            
             });
-        this.connection.getConnection((err:any,c:any) => {
-            if(c) logger.info('Client MYSQL Conected!!');
-            if(err) logger.error('Error conection');
-        })
+        
     }
 
     async query(query:any){
+        logger.info("Calling query method");
         return new Promise((resolve:any,reject:any)=>{
-            this.connection.query(query, (err:any, result:any)=>{
+            this.connection.getConnection((err:any,c:any)=>{
+                if(err){
+                logger.error("Error al conectar",err);
+                    
+                }else{
+                c.query(query, (err:any, result:any)=>{
                 if(err) {
-                    logger.error("Error");
+                    logger.error("Error in query",err);
                     reject(err);
-                }
+                }else{
+                    logger.info(typeof c);
+                c.release();
+                logger.info("Cerrando cliente",typeof c);
                 resolve(result);
+                }
+                
             })
+                }
+        });
         })
     }
    
