@@ -24,6 +24,14 @@ export default class UserDao{
         return await this.mysql.query(sql);
     }
 
+    async UserById(id:string){
+        logger.info('DAO: Method UserById Starting');
+        let sql = `SELECT * FROM users where id = "${id}"`;
+        logger.debug('DAO: Method UserById Ending');
+        return await this.mysql.query(sql);
+    }
+    
+
     async getUser(userId:any){
         logger.info(`Dao: Method getUser startting`);
         let sql= `SELECT EXISTS(SELECT * FROM users WHERE id='${userId}')`;

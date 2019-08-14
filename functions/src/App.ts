@@ -6,6 +6,7 @@ import UserRoute from './routes/userRoute';
 import OrderRoute from './routes/orderRoute';
 import IngenioRoute from './routes/ingenioRoute';
 import DatabaseRoute from './routes/databaseRoute';
+import SackRoute from './routes/sackRote';
 //import errorMiddleware from './exceptions/error.middleware';
 const json2xls = require('json2xls');
 class App{
@@ -15,6 +16,7 @@ class App{
     public orderRoute:OrderRoute;
     public ingenioRoute:IngenioRoute;
     public databaseRoute: DatabaseRoute;
+    public sackRoute: SackRoute;
     constructor(){
         this.app = express();
         this.pinRoute = new PinRoute();
@@ -22,12 +24,14 @@ class App{
         this.orderRoute = new OrderRoute();
         this.ingenioRoute = new IngenioRoute();
         this.databaseRoute = new DatabaseRoute();
+        this.sackRoute = new SackRoute();
         this.config();
         this.pinRoute.addRoutes(this.app);
         this.userRoute.addRoutes(this.app);
         this.orderRoute.addRoutes(this.app);
         this.ingenioRoute.addRoutes(this.app);
         this.databaseRoute.addRoutes(this.app);
+        this.sackRoute.addRoutes(this.app)
     }
     config(){
         this.app.use(function(req, res, next) {
