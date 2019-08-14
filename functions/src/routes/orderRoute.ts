@@ -1,16 +1,19 @@
 import * as express from 'express';
 import OrderController from '../controller/orderController';
+import UserController from '../controller/userController';
 
 export default class OrderRoute{
     public orderController: OrderController;
+    public userController: UserController;
 
     constructor(){
         this.orderController = new OrderController();
+        this.userController = new UserController();
     }
     addRoutes(app: express.Application){
 
         app.route('/sumagro-app/order')
-        .post((req: express.Request,res:express.Response)=>{
+        .post(this.userController.firebase.authentication,(req: express.Request,res:express.Response)=>{
             this.orderController.postOrder(req,res);
         })
         .get((req: express.Request, res:express.Response)=>{
@@ -21,10 +24,10 @@ export default class OrderRoute{
         .delete((req: express.Request,res:express.Response)=>{
             this.orderController.deleteOrderByOrderId(req,res);
         })
-        .patch((req:express.Request, res: express.Response)=>{
+        .patch(this.userController.firebase.authentication,(req:express.Request, res: express.Response)=>{
             this.orderController.getOrder(req,res);
         })
-        .get((req:express.Request, res:express.Response)=>{
+        .get(this.userController.firebase.authentication,(req:express.Request, res:express.Response)=>{
             this.orderController.getOrderById(req,res);
         })
 

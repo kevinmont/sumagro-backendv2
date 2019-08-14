@@ -1,11 +1,14 @@
 import * as express from 'express';
 import IngenioController from '../controller/ingenioController';
+import UserController from '../controller/userController';
 
 export default class OrderRoute{
     public ingenioController: IngenioController;
+    public userController: UserController;
 
     constructor(){
         this.ingenioController = new IngenioController();
+        this.userController = new UserController();
     }
     
     addRoutes(app: express.Application){
@@ -21,7 +24,7 @@ export default class OrderRoute{
         })
 
         app.route('/sumagro-app/send-pdf/:orderId')
-            .post((req:express.Request, res: express.Response)=>{
+            .post(this.userController.firebase.authentication,(req:express.Request, res: express.Response)=>{
                 this.ingenioController.sendEmail(req,res);
             })
 

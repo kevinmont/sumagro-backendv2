@@ -15,7 +15,7 @@ export default class UserRoute{
         });
 
         app.route('/sumagro-app/user/:userId')
-        .delete((req: express.Request, res: express.Response)=>{
+        .delete(this.userController.firebase.authentication,(req: express.Request, res: express.Response)=>{
             this.userController.deleteUser(req, res);
         })
 
@@ -24,10 +24,10 @@ export default class UserRoute{
         });
 
         app.route('/sumagro-app/token')
-        .post((req:express.Request,res:express.Response)=>{
+        .post(this.userController.firebase.authentication,(req:express.Request,res:express.Response)=>{
             this.userController.saveToken(req,res);
         })
-        .delete((req:express.Request,res:express.Response)=>{
+        .delete(this.userController.firebase.authentication,(req:express.Request,res:express.Response)=>{
             this.userController.deleteToken(req,res);
         })
     }
