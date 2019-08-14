@@ -143,9 +143,9 @@ export default class IngenioController {
         logger.info('CONTROLLER: Method getIngenios Stratting');
         let num_page: number = req.query.numPage;
         let total_page: number = req.query.totalPage;
-        let discard: number = num_page * total_page;
         if (!num_page) throw res.status(400).send(`numPage is required`);
         if (!total_page) throw res.status(400).send(`totalPage is required`);
+        let discard: number = num_page * total_page;
 
         let ingenios: any = await this.ingenioDao.getAllIngenios(discard, total_page);
         let structureIngenios: any = [];

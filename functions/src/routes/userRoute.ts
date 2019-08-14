@@ -1,11 +1,13 @@
 import * as express from 'express';
 import UserController from '../controller/userController';
+import Firebase from '../utils/firebase';
 
 export default class UserRoute{
     public userController: UserController;
-
-    constructor(){
-        this.userController= new UserController();
+    public firebase: Firebase;
+    constructor(firebase: Firebase){
+        this.firebase = firebase;
+        this.userController= new UserController(this.firebase);
     }
 
     addRoutes(app: express.Application){
@@ -15,7 +17,7 @@ export default class UserRoute{
         });
 
         app.route('/sumagro-app/user/:userId')
-        .delete(this.userController.firebase.authentication,(req: express.Request, res: express.Response)=>{
+        .delete(this.firebase.authentication,(req: express.Request, res: express.Response)=>{
             this.userController.deleteUser(req, res);
         })
 
@@ -24,11 +26,16 @@ export default class UserRoute{
         });
 
         app.route('/sumagro-app/token')
-        .post(this.userController.firebase.authentication,(req:express.Request,res:express.Response)=>{
+        .post(this.firebase.authentication,(req:express.Request,res:express.Response)=>{
             this.userController.saveToken(req,res);
         })
-        .delete(this.userController.firebase.authentication,(req:express.Request,res:express.Response)=>{
+        .delete(this.firebase.authentication,(req:express.Request,res:express.Response)=>{
             this.userController.deleteToken(req,res);
+        })
+
+        app.route('/sumagro-app/users')
+        .get((req: express.Request, res:express.Response)=>{
+            this.userController.getUsers(req,res);
         })
     }
 }

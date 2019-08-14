@@ -7,6 +7,8 @@ import OrderRoute from './routes/orderRoute';
 import IngenioRoute from './routes/ingenioRoute';
 import DatabaseRoute from './routes/databaseRoute';
 import SackRoute from './routes/sackRote';
+import Firebase from './utils/firebase';
+import config from './models/config';
 //import errorMiddleware from './exceptions/error.middleware';
 const json2xls = require('json2xls');
 class App{
@@ -17,14 +19,16 @@ class App{
     public ingenioRoute:IngenioRoute;
     public databaseRoute: DatabaseRoute;
     public sackRoute: SackRoute;
+    public firebase: Firebase;
     constructor(){
         this.app = express();
+        this.firebase = new Firebase(config);
         this.pinRoute = new PinRoute();
-        this.userRoute = new UserRoute();
-        this.orderRoute = new OrderRoute();
-        this.ingenioRoute = new IngenioRoute();
+        this.userRoute = new UserRoute(this.firebase);
+        this.orderRoute = new OrderRoute(this.firebase);
+        this.ingenioRoute = new IngenioRoute(this.firebase);
         this.databaseRoute = new DatabaseRoute();
-        this.sackRoute = new SackRoute();
+        this.sackRoute = new SackRoute(this.firebase);
         this.config();
         this.pinRoute.addRoutes(this.app);
         this.userRoute.addRoutes(this.app);
