@@ -109,4 +109,28 @@ export default class Firebase{
       );
     }
 
+    async authentication(req: any,res: any,next:any){
+      let idToken:any = req.headers.authorization;
+      console.log("TOKEN: "+JSON.stringify(idToken));
+      try {
+          // Use firebase-admin auth to verify the token passed in from the client header.
+          // This is token is generated from the firebase client
+          // Decoding this token returns the userpayload and all the other token claims you added while creating the custom token
+          const userPayload = await admin.auth().verifyIdToken(idToken );
+          
+          req.headers.uid = userPayload.uid;
+          req.headers.email = userPayload.email;
+          req.headers.name = userPayload.name;
+          console.log("MAIL OF CURRENT USER",req.headers.email );
+          next();
+          return ;
+        } catch (error) {
+            console.log(error);
+          return res.status(500).json({
+            error
+          });
+        }
+      
+  }
+
 }
