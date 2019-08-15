@@ -56,10 +56,13 @@ export default class UserController {
 
 
         try {
-            await this.userDao.createUser(user);
-            let response = await this.firebase.createUserFirebase(user);
+            let response:any = await this.firebase.createUserFirebase(user);
+            if(user.rol == "WAREHOUSE" || user.rol == "CAPTURIST"){
+                user.ingenioId = 0;
+            }
+            await this.userDao.createUser(user,response.uid);
             await this.nodemailers.sendMailNewAccount(email, { email: user.email, password });
-            logger.info(response);
+            logger.info(response.uid);
             res.status(200).send({ msg: "Usuario registrado" });
         } catch (err) {
             res.status(200).send({ msg: "Usuarios actualizados" });

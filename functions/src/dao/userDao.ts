@@ -10,9 +10,9 @@ export default class UserDao{
         this.mysql = new Mysql();
     }
 
-    async createUser(user:any){
+    async createUser(user:any,uid:any){
         logger.info('DAO: Method createUser Starting');
-        let sql = `INSERT INTO users VALUES("${user.uid}","${user.email}","${user.ingenioId}","${user.rol}",${null})`;
+        let sql = `INSERT INTO users VALUES("${uid}","${user.email}","${user.ingenioId}","${user.rol}",${null})`;
         logger.debug('DAO: Method createUser Ending');
         return await this.mysql.query(sql);
     }
