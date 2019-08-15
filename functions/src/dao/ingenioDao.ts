@@ -47,9 +47,10 @@ export default class ingenioDao {
         return await this.mysql.query(sql);
     }
 
-    async getAllIngenios(discard:number, total_page:number){
+    async getAllIngenios(params:any=''){
         logger.info('DAO: Method getAllIngenios Stratting');
-        let sql = `SELECT * FROM ingenios LIMIT ${total_page} OFFSET ${discard}`;
+        let sql = `SELECT * FROM ingenios ${params}`;
+        console.log(`sql: ${sql}`);
         logger.debug('DAO: Method getAllIngenios Ending');
         return await this.mysql.query(sql);
     }

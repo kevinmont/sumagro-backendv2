@@ -74,7 +74,7 @@ export default class UserDao{
     async getUsers(discard:number, total_page:number, complements:any=''){
         logger.info('DAO: Method getUsers Startting');
         let sql= `SELECT * FROM users ${complements} LIMIT ${total_page} OFFSET ${discard}`;
-        logger.info(`sql: ${sql}`);
+        logger.info(`sql ${sql}`);
         logger.debug('DAO: Method getUsers Ending');
         return await this.mysql.query(sql);
     }
