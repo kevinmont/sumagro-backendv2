@@ -1,13 +1,13 @@
 import * as express from 'express';
 import UserController from '../controller/userController';
-import Firebase from '../utils/firebase';
+import Mysql from '../utils/mysql';
+
 
 export default class UserRoute{
     public userController: UserController;
-    public firebase: Firebase;
-    constructor(firebase: Firebase){
-        this.firebase = firebase;
-        this.userController= new UserController(this.firebase);
+
+    constructor(mysql: Mysql){
+        this.userController= new UserController(mysql);
     }
 
     addRoutes(app: express.Application){
@@ -17,7 +17,7 @@ export default class UserRoute{
         });
 
         app.route('/sumagro-app/user/:userId')
-        .delete(this.firebase.authentication,(req: express.Request, res: express.Response)=>{
+        .delete(this.userController.firebase.authentication,(req: express.Request, res: express.Response)=>{
             this.userController.deleteUser(req, res);
         })
 
@@ -26,10 +26,10 @@ export default class UserRoute{
         });
 
         app.route('/sumagro-app/token')
-        .post(this.firebase.authentication,(req:express.Request,res:express.Response)=>{
+        .post(this.userController.firebase.authentication,(req:express.Request,res:express.Response)=>{
             this.userController.saveToken(req,res);
         })
-        .delete(this.firebase.authentication,(req:express.Request,res:express.Response)=>{
+        .delete(this.userController.firebase.authentication,(req:express.Request,res:express.Response)=>{
             this.userController.deleteToken(req,res);
         })
 

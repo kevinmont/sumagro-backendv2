@@ -10,6 +10,7 @@ import { Nodemailers } from '../utils/Nodemailer-helper';
 import Config from '../models/config';
 import * as pdf from 'html-pdf';
 import * as log4js from 'log4js';
+import Mysql from '../utils/mysql';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -19,14 +20,14 @@ export default class IngenioController {
     public orderDao: OrderDao;
     public subOrdersDao: SubOrdersDao;
     public pdfHelper: PdfHelper;
-    public nodemailerHelper: Nodemailers;
-    public config: any;
-    constructor() {
+    public nodemailerHelper: Nodemailers; 
+    public config:any;
+    constructor(mysql: Mysql){
         this.config = Config;
-        this.ingenioDao = new IngenioDao();
-        this.addressDao = new AddressDao();
-        this.orderDao = new OrderDao();
-        this.subOrdersDao = new SubOrdersDao();
+        this.ingenioDao = new IngenioDao(mysql);
+        this.addressDao = new AddressDao(mysql);
+        this.orderDao = new OrderDao(mysql);
+        this.subOrdersDao = new SubOrdersDao(mysql);
         this.pdfHelper = new PdfHelper();
         this.nodemailerHelper = new Nodemailers(this.config);
     }

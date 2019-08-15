@@ -1,6 +1,7 @@
 import * as express from 'express';
 import PinController from '../controller/pinController';
 
+
 export default class PinRoute{
     public pinController: PinController;
 

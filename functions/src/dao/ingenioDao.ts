@@ -6,8 +6,8 @@ logger.level = 'debug';
 export default class ingenioDao {
 
     public mysql: Mysql;
-    constructor() {
-        this.mysql = new Mysql();
+    constructor(mysql: Mysql) {
+        this.mysql = mysql;
     }
 
     async getIngenio(ingenioId: any) {

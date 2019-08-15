@@ -5,6 +5,8 @@ import { Nodemailers } from '../utils/Nodemailer-helper';
 import Firebase from '../utils/firebase';
 import config from '../models/config';
 import * as log4js from 'log4js';
+import Mysql from '../utils/mysql';
+
 import {roles} from '../models/rol';
 const logger = log4js.getLogger();
 logger.level = 'debug';
@@ -15,10 +17,10 @@ export default class UserController {
     public firebase: Firebase;
     public config: any;
 
-    constructor(firebase: Firebase) {
-        this.config = config;
-        this.userDao = new UserDao();
-        this.firebase = firebase;
+    constructor(mysql: Mysql){
+        this.config= config;
+        this.userDao = new UserDao(mysql);
+        this.firebase = new Firebase(this.config);
         this.nodemailers = new Nodemailers(this.config);
     }
 
