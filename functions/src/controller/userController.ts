@@ -84,10 +84,7 @@ export default class UserController {
         if (req.headers.email == "sumagro.distribucion@gmail.com") {
             if (!req.params.userId) throw res.status(400).send(`{"msg": "userId is required"}`);
             let userid: any = req.params.userId;
-
-            let userFirebase: any = await this.firebase.getUserFirebase(userid);
-            let userRds: any = await this.userDao.getUserByEmail(userFirebase.email)
-            await this.userDao.deleteUser(userRds[0].id);
+            await this.userDao.deleteUser(userid);
             await this.firebase.deleteUserFirebase(userid)
             res.status(200).send(`{}`);
         } else {
