@@ -46,13 +46,9 @@ export default class UserController {
         }
 
 
-        try {
-            let emailUser: any = await this.userDao.getUserById(email);
-            console.log(emailUser)
-            if (emailUser.length) { throw res.status(400).send({ msg: "Email is register" }); }
-        } catch (err) {
-
-        }
+        let emailUser: any = await this.userDao.getUserById(email);
+        console.log(emailUser)
+        if (emailUser.length) throw res.status(400).send({ msg: "Email is register" }); 
 
 
         try {
@@ -62,9 +58,9 @@ export default class UserController {
             }
             await this.userDao.createUser(user,response.uid);
             await this.nodemailers.sendMailNewAccount(email, { email: user.email, password });
-            logger.info(response.uid);
             res.status(200).send({ msg: "Usuario registrado" });
         } catch (err) {
+            logger.error(err);
             res.status(200).send({ msg: "Usuarios actualizados" });
         }
         logger.debug("Controller: Method createUser Ending");
