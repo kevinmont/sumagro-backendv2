@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "sumagro-dev"
+    "default": "sumagro-dev",
+    "sumagro-backend": "sumagro-backend"
   }
 }
