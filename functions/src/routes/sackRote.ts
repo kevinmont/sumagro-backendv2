@@ -1,20 +1,20 @@
 import * as express from 'express';
 import SackController from '../controller/sackController';
-import UserController from '../controller/userController';
+import Firebase from '../utils/firebase';
 
 export default class SackRoute{
     public sackController: SackController;
-    public userController: UserController;
+    public firebase: Firebase;
 
-    constructor(){
+    constructor(firebase: Firebase){
         this.sackController= new SackController();
-        this.userController = new UserController();
+        this.firebase = firebase;
     }
 
     addRoutes(app: express.Application){
 
         app.route('/sumagro-app/capturist/sacks')
-            .post(this.userController.firebase.authentication,(req: express.Request, res: express.Response)=>{
+            .post(this.firebase.authentication,(req: express.Request, res: express.Response)=>{
                 this.sackController.registerSacks(req,res);
         })
     }
