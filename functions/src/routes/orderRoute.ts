@@ -31,6 +31,11 @@ export default class OrderRoute{
             .get((req: express.Request, res: express.Response) =>{
                 this.orderController.getStatusOrder( req, res )
         })
+
+        app.route('/sumagro-app/remission/number')
+            .get((req: express.Request,res: express.Response)=>{
+                this.orderController.getRemissionNumber(req,res);
+        })
     }
 
 }

@@ -335,4 +335,11 @@ export default class OrderController {
         res.status(200).send(orders);
     }
 
+    async getRemissionNumber(req: Request,res: Response){
+        logger.info('CONTROLLER: method getRemissionNumber Starting');
+        let response:any = await this.orderDao.getRemissionNumber();
+        logger.debug('CONTROLLER: method getRemissionNumber Ending');
+        res.status(200).send({currentRemissionNumber: response[0].count});
+    }
+
 }

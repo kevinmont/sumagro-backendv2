@@ -69,4 +69,11 @@ export default class OrderDao{
         logger.debug('DAO: Method getOrdersWareHouse Ending');
         return await this.mysql.query(sql);
     }
+
+    async getRemissionNumber(){
+        logger.info('DAO: Method getRemissionNumber Startting');
+        let sql=`SELECT * FROM remissions`;
+        logger.debug('DAO: Method getRemissionNumber Ending');
+        return await this.mysql.query(sql);
+    }
 }
