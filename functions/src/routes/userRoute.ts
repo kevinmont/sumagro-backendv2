@@ -25,7 +25,7 @@ export default class UserRoute{
         });
 
         app.route('/sumagro-app/user/:userId')
-        .delete(his.userController.firebase.authentication,(req: express.Request, res: express.Response)=>{
+        .delete(this.userController.firebase.authentication,(req: express.Request, res: express.Response)=>{
             this.userController.deleteUser(req, res);
         })
 
@@ -71,5 +71,11 @@ export default class UserRoute{
             .post(this.userController.firebase.authentication,(req:express.Request, res: express.Response)=>{
                 this.ingenioController.sendEmail(req,res);
             })
+        
+        
+        app.route('/sumagro-app/ingenio/:ingenioId')
+        .delete((req: express.Request,res:express.Response)=>{
+            this.userController.deleteIngenioById(req,res);
+        })
     }
 }
