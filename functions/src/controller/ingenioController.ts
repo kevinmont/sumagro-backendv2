@@ -11,6 +11,7 @@ import Config from '../models/config';
 import * as pdf from 'html-pdf';
 import * as log4js from 'log4js';
 import Mysql from '../utils/mysql';
+import UserDao from '../dao/userDao';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -20,7 +21,8 @@ export default class IngenioController {
     public orderDao: OrderDao;
     public subOrdersDao: SubOrdersDao;
     public pdfHelper: PdfHelper;
-    public nodemailerHelper: Nodemailers; 
+    public nodemailerHelper: Nodemailers;
+    public userDao: UserDao; 
     public config:any;
     constructor(mysql: Mysql){
         this.config = Config;
@@ -28,6 +30,7 @@ export default class IngenioController {
         this.addressDao = new AddressDao(mysql);
         this.orderDao = new OrderDao(mysql);
         this.subOrdersDao = new SubOrdersDao(mysql);
+        this.userDao = new UserDao(mysql);
         this.pdfHelper = new PdfHelper();
         this.nodemailerHelper = new Nodemailers(this.config);
     }
@@ -74,6 +77,10 @@ export default class IngenioController {
         let ingenioId: any = req.params.ingenioId;
         let ingenio:any = await this.ingenioDao.getIngenioById(ingenioId);
         if (!ingenio.length) throw res.status(404).send({ msg: 'ingenio not fund' });
+        let users: any = await this.userDao.getUserByIngenioId(ingenioId);
+        for(let i = 0; i< users.length; i++){
+            await this.userDao.deleteUser(users[i].id);
+        }
         await this.addressDao.deleteAddresById(ingenio[0].addressid);
         await this.ingenioDao.deleteIngeniosById(ingenioId);
         res.status(200).send({})

@@ -84,4 +84,11 @@ export default class UserDao{
         return await this.mysql.query(sql);
     }
 
+    async getUserByIngenioId(ingenioId:string){
+        logger.info(`Dao: Method getUserByEmail startting`);
+        let sql:string = `SELECT * FROM users where ingenioid = "${ingenioId}"`;
+        logger.debug('DAO: Method getUserByEmail Ending');
+        return await this.mysql.query(sql);
+    }
+
 }

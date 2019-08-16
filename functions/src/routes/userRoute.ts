@@ -25,7 +25,7 @@ export default class UserRoute{
         });
 
         app.route('/sumagro-app/user/:userId')
-        .delete(/*his.userController.firebase.authentication,*/(req: express.Request, res: express.Response)=>{
+        .delete(his.userController.firebase.authentication,(req: express.Request, res: express.Response)=>{
             this.userController.deleteUser(req, res);
         })
 
