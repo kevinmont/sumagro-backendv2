@@ -44,7 +44,8 @@ export default class OrderController {
         if (!ingenioid) throw res.status(400).send({ msg: 'ingenioId is required' });
 
 
-        let addressid: any = await this.addressDao.getAddress(address);
+        let addressid: any = await this.addressDao.getIdAddresByAttributes(address);
+        logger.info(`id address: ${addressid[0].id}`);
         if (!addressid) res.status(400).send('Error in parameters');
 
         let object: any = {
@@ -59,11 +60,13 @@ export default class OrderController {
         if (!object.remissionNumber) throw res.status(400).send({ msg: 'remissionNumber is required' });
         if (!object.shippingDate) throw res.status(400).send({ msg: 'shippingDate is required' });
 
-
+        logger.info(`ingenioid: ${object.ingenioId}`);
         let resquery: any = await this.ingenioDao.getIngenio(object.ingenioId);
+        logger.info(`resquery: ${resquery}`);
         if (!resquery) res.status(400).send(`Error in parameters`);
 
         let orderidquery: any = await this.orderDao.saveOrder(object);
+        logger.info(`orderidquery: ${orderidquery}`);
         if (orderidquery) {
             await this.subOrdersDao.saveSubOrders(subOrders, orderidquery);
             res.status(201).send();

@@ -15,8 +15,9 @@ export default class SubOrdersDao {
         return await Promise.all(subOrders.map((subOrder: any) => {
             let sql = `INSERT INTO suborder(orderid,description,quantity,captured,received,status)
             values(${orderid}, '${subOrder.description}', ${subOrder.quantity},
-            ${subOrder.captured},${subOrder.received},${subOrder.status})`;
+            false,false,false)`;
             logger.debug('Dao: Method saveSubOrders Ending');
+            console.log(`DAO: sql suborder ${sql}`);
             return this.mysql.query(sql);
         }));
     }

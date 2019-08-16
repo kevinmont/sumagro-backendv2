@@ -43,6 +43,7 @@ export default class AddressDao{
     async getAddresByAttributes(address:any){
         logger.info('DAO: Method CreateAddress Starting');
         let sql = `SELECT * FROM address WHERE calle = '${address.street}' AND numero = '${address.number}' AND ciudad = "${address.city}" AND localidad = "${address.location}" AND municipio = "${address.municipality}"`;
+       logger.info(`DAO: sql ${sql}`);
         logger.debug('DAO: Method CreateAddress Ending');
         return await this.mysql.query(sql);
     }
@@ -59,5 +60,13 @@ export default class AddressDao{
         logger.debug('DAO: Method deleteAddresById Ending');
         return await this.mysql.query(sql);
         
+    }
+
+    async getIdAddresByAttributes(address:any){
+        logger.info('DAO: Method CreateAddress Starting');
+        let sql = `SELECT * FROM address WHERE calle = '${address.calle}' AND numero = '${address.numero}' AND ciudad = "${address.ciudad}" AND localidad = "${address.localidad}" AND municipio = "${address.municipio}"`;
+       logger.info(`DAO: sql ${sql}`);
+        logger.debug('DAO: Method CreateAddress Ending');
+        return await this.mysql.query(sql);
     }
 }
