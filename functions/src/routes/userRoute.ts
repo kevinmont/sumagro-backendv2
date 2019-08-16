@@ -84,6 +84,14 @@ export default class UserRoute{
         app.route('/sumagro-app/warehouse/oders')
             .get((this.userController.firebase.authentication,(req: express.Request,res: express.Response)=>{
                 this.orderController.warehouseOrders(req,res);
-        })) 
+        }))
+        
+        app.route('/sumagro-app/ingenio/:ingenioId/order/:orderId')
+            .patch(this.userController.firebase.authentication,(req:express.Request, res: express.Response)=>{
+                this.userController.updateOrderStatus(req,res);
+            })
+            .delete(this.userController.firebase.authentication,(req: express.Request, res: express.Response)=>{
+                this.userController.deleteOrder(req,res);    
+            })
     }
 }

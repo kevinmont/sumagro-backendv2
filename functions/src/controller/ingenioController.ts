@@ -177,4 +177,5 @@ export default class IngenioController {
         res.status(200).send(structureIngenios);
     }
 
+
 }

@@ -155,4 +155,29 @@ export default class Firebase{
     })
 }
 
+async updateOrderStatus(){
+      await this.db.ref('/sumagro/users').orderByChild('rol').equalTo("WAREHOUSE").once("value",async(snapshot:any)=>{
+          let warehousesAdmin = snapshot.val();
+          console.log(JSON.stringify(warehousesAdmin));
+          
+          if(warehousesAdmin!=null){
+              let admins = Object.keys(warehousesAdmin);
+              console.log("ADMINS:",JSON.stringify(admins));
+              for(let i=0;i<admins.length;i++){
+                  if(warehousesAdmin[admins[i]].token){
+                  let notify = {
+                      title: "Sumagro Almacen",
+                      body: "Se capturo una orden"
+                  }
+                  
+                  console.log("TOKEN:",warehousesAdmin[admins[i]].token);
+                  await this.notification(warehousesAdmin[admins[i]].token,notify)
+              }
+              }
+          }
+      })
+  
+  
+}
+
 }

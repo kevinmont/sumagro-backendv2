@@ -54,5 +54,9 @@ export default class ingenioDao {
         logger.debug('DAO: Method getAllIngenios Ending');
         return await this.mysql.query(sql);
     }
+
+    async updateOrderStatus(){
+        
+    }
     
 }

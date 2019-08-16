@@ -76,4 +76,11 @@ export default class OrderDao{
         logger.debug('DAO: Method getRemissionNumber Ending');
         return await this.mysql.query(sql);
     }
+
+    async updateOrderByOrderIdAndIngenioId(orderId:string,ingenioId:string,objectRequest:any){
+        logger.info('DAO: Method updateOrderByOrderIdAndIngenioId Startting');
+        let sql = `update orders set status='${objectRequest.status}' WHERE id=${orderId} AND ingenioid= ${ingenioId}`;
+        logger.debug('DAO: Method updateOrderByOrderIdAndIngenioId Ending');
+        return await this.mysql.query(sql);
+    }
 }

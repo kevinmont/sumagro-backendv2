@@ -10,6 +10,7 @@ import * as log4js from 'log4js';
 import Mysql from '../utils/mysql';
 
 import {roles} from '../models/rol';
+import OrderDao from '../dao/orderDao';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -17,6 +18,7 @@ export default class UserController {
     public userDao: UserDao;
     public ingenioDao: IngenioDao;
     public addressDao: AddressDao;
+    public orderDao: OrderDao;
     public nodemailers: Nodemailers;
     public firebase: Firebase;
     public config: any;
@@ -26,6 +28,7 @@ export default class UserController {
         this.ingenioDao = new IngenioDao(mysql);
         this.addressDao = new AddressDao(mysql);
         this.userDao = new UserDao(mysql);
+        this.orderDao = new OrderDao(mysql);
         this.firebase = new Firebase(this.config);
         this.nodemailers = new Nodemailers(this.config);
     }
@@ -212,8 +215,42 @@ export default class UserController {
     }
 
     async getUserInfo(req: Request,res: Response){
+        logger.info('CONTROLLER: method getUserInfo Starting');
         let uid:any = req.headers.uid;
         let response = await this.firebase.getUser(uid);
+        logger.debug('CONTROLLER: method getUserInfo Ending');
         res.send(response);
     }
+
+
+    async updateOrderStatus(req:Request,res: Response){
+        logger.info('CONTROLLER: method updateOrderStatus Starting');
+        if (!req.params.ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
+        if (!req.params.orderId) throw res.status(400).send({ msg: 'orderId is required' });
+        let orderId = req.params.orderId;
+        let ingenioId = req.params.ingenioId;
+        let updateRequest = req.body;
+        if(updateRequest.status=="CAPTURED"){
+            let data = await this.firebase.updateOrderStatus();
+            res.status(200).send(data);
+        }
+        let ingenio:any = await this.ingenioDao.getIngenioById(ingenioId);
+        if (!ingenio.length) throw res.status(404).send({ msg: 'ingenio not fund' });
+        let order:any = await this.orderDao.orderById(orderId)
+        if (!order.length) throw res.status(404).send({ msg: 'order not fund' });
+        await this.orderDao.updateOrderByOrderIdAndIngenioId(orderId,ingenioId,updateRequest);
+        logger.debug('CONTROLLER: method updateOrderStatus Ending');
+        res.status(200).send({msg:"Updated"});
+    }
+
+    async deleteOrder(req: Request,res: Response){
+        logger.info('CONTROLLER: method deleteOrder Starting');
+        if (!req.params.orderId) throw res.status(400).send({ msg: 'orderId is required' });
+        let orderId = req.params.orderId;
+        //let ingenioId = req.params.ingenioId;
+        let response = await this.orderDao.deleteOrderById(orderId);
+        logger.debug('CONTROLLER: method deleteOrder Ending');
+        res.status(200).send({msg:response });
+    }  
+
 }

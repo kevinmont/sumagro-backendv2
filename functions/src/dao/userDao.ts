@@ -91,4 +91,11 @@ export default class UserDao{
         return await this.mysql.query(sql);
     }
 
+    async getUserByRol(){
+        logger.info(`Dao: Method getUserByEmail startting`);
+        let sql:string = `SELECT * FROM users where rol = "WAREHOUSE"`;
+        logger.debug('DAO: Method getUserByEmail Ending');
+        return await this.mysql.query(sql);
+    }
+
 }
