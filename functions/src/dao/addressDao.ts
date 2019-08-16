@@ -6,8 +6,8 @@ logger.level='debug';
 export default class AddressDao{
     public mysql: Mysql;
 
-    constructor(){
-        this.mysql= new Mysql();
+    constructor(mysql: Mysql){
+        this.mysql= mysql;
     }
 
     async getAddress(address:any){
@@ -42,7 +42,7 @@ export default class AddressDao{
 
     async getAddresByAttributes(address:any){
         logger.info('DAO: Method CreateAddress Starting');
-        let sql = `SELECT * FROM address WHERE calle = '${address.street}' AND numero = ${address.number} AND ciudad = "${address.city}" AND localidad = "${address.location}" AND municipio = "${address.municipality}"`;
+        let sql = `SELECT * FROM address WHERE calle = '${address.street}' AND numero = '${address.number}' AND ciudad = "${address.city}" AND localidad = "${address.location}" AND municipio = "${address.municipality}"`;
         logger.debug('DAO: Method CreateAddress Ending');
         return await this.mysql.query(sql);
     }
@@ -51,5 +51,13 @@ export default class AddressDao{
         let sql= `SELECT * FROM address WHERE id= ${addressId}`;
         logger.debug('DAO: Method getAddressById Ending');
     return await this.mysql.query(sql);
+    }
+
+    async deleteAddresById(addressId:string){
+        logger.info('DAO: Method deleteAddresById Starting');
+        let sql = `DELETE FROM address WHERE id = ${addressId}`;
+        logger.debug('DAO: Method deleteAddresById Ending');
+        return await this.mysql.query(sql);
+        
     }
 }

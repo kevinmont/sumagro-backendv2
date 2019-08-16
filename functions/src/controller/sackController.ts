@@ -4,6 +4,7 @@ import OrderDao from '../dao/orderDao';
 import IngenioDao from '../dao/ingenioDao';
 import UserDao from '../dao/userDao';
 import * as log4js from 'log4js';
+import Mysql from '../utils/mysql';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -13,11 +14,11 @@ export default class SackController{
     public orderDao: OrderDao;
     public userDao: UserDao;
 
-    constructor(){
-        this.sackDao = new SackDao();
-        this.orderDao = new OrderDao();
-        this.ingenioDao = new IngenioDao();
-        this.userDao = new UserDao();
+    constructor(mysql: Mysql){
+        this.sackDao = new SackDao(mysql);
+        this.orderDao = new OrderDao(mysql);
+        this.ingenioDao = new IngenioDao(mysql);
+        this.userDao = new UserDao(mysql);
     }
 
     async registerSacks(req: Request,res: Response){

@@ -1,7 +1,12 @@
 {
   "projects": {
+<<<<<<< HEAD
     "default": "sumagro-backend",
     "sumagro-backend": "sumagro-backend",
     "sumagro-dev": "sumagro-dev"
+=======
+    "default": "sumagro-dev",
+    "sumagro-backend": "sumagro-backend"
+>>>>>>> 3806b703f45d938909de2a0909eb6148d8fbe62f
   }
 }

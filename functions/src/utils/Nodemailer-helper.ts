@@ -1,4 +1,7 @@
 import * as nodemailer from 'nodemailer';
+import * as log4js from 'log4js';
+const logger = log4js.getLogger();
+logger.level = 'debug';
 export class Nodemailers {
     config: any;
     constructor(config:any){
@@ -37,9 +40,10 @@ export class Nodemailers {
             }
 
         
-        sendMailNewAccount(email: string, credentials: any ){
-            console.log("CREDENTIALS: ", JSON.stringify(credentials));
-            console.info( "start method sendMail" );
+        async sendMailNewAccount(email: string, credentials: any ){
+            logger.info('NODEMAILER: Method sendMailNewAccount Starting');
+            logger.info("CREDENTIALS: ", JSON.stringify(credentials));
+            logger.info(email);
             let transporter = nodemailer.createTransport( {
                     host: this.config.nodemailer.host,
                     port: this.config.nodemailer.port,
@@ -57,14 +61,17 @@ export class Nodemailers {
                     text: `Username: ${credentials.email} Password: ${credentials.password}`
                 };
 
-            
+                logger.info("pasas")
             transporter.sendMail( mailOptions, ( error: any, info: any ) => {
+                logger.info("pasa")
                     if ( error ) {
                             return console.error( error );
                         }
                     console.debug( 'Message sent: ', info.messageId );
                     console.debug( 'Preview URL: ', nodemailer.getTestMessageUrl( info ) );
                 });
+            
+                logger.debug('NODEMAILER: Method sendMailNewAccount Ending');
             
             }
 

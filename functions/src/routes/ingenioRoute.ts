@@ -1,14 +1,12 @@
 import * as express from 'express';
 import IngenioController from '../controller/ingenioController';
-import Firebase from '../utils/firebase';
+import Mysql from '../utils/mysql';
 
 export default class OrderRoute{
     public ingenioController: IngenioController;
-    public firebase: Firebase;
 
-    constructor(firebase: Firebase){
-        this.ingenioController = new IngenioController();
-        this.firebase = firebase; 
+    constructor(mysql: Mysql){
+        this.ingenioController = new IngenioController(mysql);
     }
     
     addRoutes(app: express.Application){
@@ -23,10 +21,7 @@ export default class OrderRoute{
             this.ingenioController.createeIngenio(req,res);
         })
 
-        app.route('/sumagro-app/send-pdf/:orderId')
-            .post(this.firebase.authentication,(req:express.Request, res: express.Response)=>{
-                this.ingenioController.sendEmail(req,res);
-            })
+        
 
         app.route('/sumagro-app/ingenios')
         .get((req:express.Request, res: express.Response)=>{

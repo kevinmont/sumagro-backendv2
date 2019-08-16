@@ -5,10 +5,10 @@ import PinRoute from './routes/pinRoute';
 import UserRoute from './routes/userRoute';
 import OrderRoute from './routes/orderRoute';
 import IngenioRoute from './routes/ingenioRoute';
+import Mysql from './utils/mysql';
+import  SumagroReportRouter  from './routes/sumagroReportRouter';
 import DatabaseRoute from './routes/databaseRoute';
-import SackRoute from './routes/sackRote';
-import Firebase from './utils/firebase';
-import config from './models/config';
+//import config from './models/config';
 //import errorMiddleware from './exceptions/error.middleware';
 const json2xls = require('json2xls');
 class App{
@@ -17,25 +17,25 @@ class App{
     public userRoute:UserRoute;
     public orderRoute:OrderRoute;
     public ingenioRoute:IngenioRoute;
+    private mysql: Mysql;
+    public sumagroReportRouter : SumagroReportRouter;
     public databaseRoute: DatabaseRoute;
-    public sackRoute: SackRoute;
-    public firebase: Firebase;
     constructor(){
+        this.mysql = new Mysql();
         this.app = express();
-        this.firebase = new Firebase(config);
         this.pinRoute = new PinRoute();
-        this.userRoute = new UserRoute(this.firebase);
-        this.orderRoute = new OrderRoute(this.firebase);
-        this.ingenioRoute = new IngenioRoute(this.firebase);
-        this.databaseRoute = new DatabaseRoute();
-        this.sackRoute = new SackRoute(this.firebase);
+        this.userRoute = new UserRoute(this.mysql);
+        this.orderRoute = new OrderRoute(this.mysql);
+        this.ingenioRoute = new IngenioRoute(this.mysql);
+        this.sumagroReportRouter = new SumagroReportRouter(this.mysql);
+        this.databaseRoute = new DatabaseRoute(this.mysql);
         this.config();
         this.pinRoute.addRoutes(this.app);
         this.userRoute.addRoutes(this.app);
         this.orderRoute.addRoutes(this.app);
         this.ingenioRoute.addRoutes(this.app);
+        this.sumagroReportRouter.addRoutes(this.app);
         this.databaseRoute.addRoutes(this.app);
-        this.sackRoute.addRoutes(this.app)
     }
     config(){
         this.app.use(function(req, res, next) {

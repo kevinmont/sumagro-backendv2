@@ -5,6 +5,8 @@ import {Nodemailers} from '../utils/Nodemailer-helper';
 import Firebase from '../utils/firebase';
 import config from '../models/config';
 import * as log4js from 'log4js';
+import Mysql from '../utils/mysql';
+
 import {roles} from '../models/rol';
 const logger = log4js.getLogger();
 logger.level = 'debug';
@@ -15,10 +17,10 @@ export default class UserController {
     public firebase : Firebase;
     public config : any;
 
-    constructor(firebase : Firebase) {
-        this.config = config;
-        this.userDao = new UserDao();
-        this.firebase = firebase;
+    constructor(mysql: Mysql){
+        this.config= config;
+        this.userDao = new UserDao(mysql);
+        this.firebase = new Firebase(this.config);
         this.nodemailers = new Nodemailers(this.config);
     }
 
@@ -46,13 +48,9 @@ export default class UserController {
         }
 
 
-        try {
-            let emailUser: any = await this.userDao.getUserById(email);
-            console.log(emailUser)
-            if (emailUser.length) {
-                throw res.status(400).send({msg: "Email is register"});
-            }
-        } catch (err) {}
+        let emailUser: any = await this.userDao.getUserById(email);
+        console.log(emailUser)
+        if (emailUser.length) throw res.status(400).send({ msg: "Email is register" }); 
 
 
         try {
@@ -60,15 +58,13 @@ export default class UserController {
             if (user.rol == "WAREHOUSE" || user.rol == "CAPTURIST") {
                 user.ingenioId = 0;
             }
-            await this.userDao.createUser(user, response.uid);
-            await this.nodemailers.sendMailNewAccount(email, {
-                email: user.email,
-                password
-            });
-            logger.info(response.uid);
-            res.status(200).send({msg: "Usuario registrado"});
+            logger.info(response);
+            await this.userDao.createUser(user,response.uid);
+            await this.nodemailers.sendMailNewAccount(email, { email: user.email, password });
+            res.status(200).send({ msg: "Usuario registrado" });
         } catch (err) {
-            res.status(200).send({msg: "Usuarios actualizados"});
+            logger.error(err);
+            res.status(200).send({ msg: "Usuarios actualizados" });
         }
         logger.debug("Controller: Method createUser Ending");
     }
@@ -91,10 +87,7 @@ export default class UserController {
                 throw res.status(400).send(`{"msg": "userId is required"}`);
             
             let userid: any = req.params.userId;
-
-            let userFirebase: any = await this.firebase.getUserFirebase(userid);
-            let userRds: any = await this.userDao.getUserByEmail(userFirebase.email)
-            await this.userDao.deleteUser(userRds[0].id);
+            await this.userDao.deleteUser(userid);
             await this.firebase.deleteUserFirebase(userid)
             res.status(200).send(`{}`);
         } else {

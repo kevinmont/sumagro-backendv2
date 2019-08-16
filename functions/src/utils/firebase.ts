@@ -66,33 +66,32 @@ export default class Firebase{
     }
 
     async createUserFirebase(user:any){
-        logger.info('DAO: Method createUserFirebase Starting')
-        return new Promise(async(resolve,reject)=>{
-            await admin.auth().createUser({email: user.email, password: user.password})
-               .then(async (userRecord:any)=> {
-                 // See the UserRecord reference doc for the contents of userRecord.
-                 logger.info('Successfully created new user:', userRecord.uid);
-                 let key = userRecord.uid;
-                 delete user.password;
-                 user.uid = key;
-                 await this.db.ref(`/sumagro/users`).child(key).set(user,(err:any)=>{
-                   if(err) {
-                       logger.info(err); reject("Usuario ya existente");
-                   }else{
-                        resolve(user);
-                   }
-                   
-               }
-               );
-   
-               })
-               .catch(function(error:any) {
-                 resolve("Error creating new user:"+error);
-               });
-               
-               logger.debug('DAO: Method createUserFirebase Ending')
-           })
-    }
+      return new Promise(async(resolve,reject)=>{
+       await admin.auth().createUser({email: user.email, password: user.password})
+          .then(async (userRecord)=> {
+            // See the UserRecord reference doc for the contents of userRecord.
+            console.log("Successfully created new user:", userRecord.uid);
+            let key = userRecord.uid;
+            delete user.password;
+            user.uid = key;
+            await this.db.ref(`/sumagro/users`).child(key).set(user,(err:any)=>{
+              if(err) {
+                  console.log(err); reject("Usuario ya existente");
+              }else{
+                   resolve(userRecord);
+              }
+              
+          }
+          );
+
+          })
+          .catch(function(error) {
+            resolve("Error creating new user:"+error);
+          });
+          
+          
+      })
+  }
 
     async saveToken(uid:string,token: string){
 

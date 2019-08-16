@@ -10,6 +10,8 @@ import { Nodemailers } from '../utils/Nodemailer-helper';
 import Config from '../models/config';
 import * as pdf from 'html-pdf';
 import * as log4js from 'log4js';
+import Mysql from '../utils/mysql';
+import UserDao from '../dao/userDao';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -20,13 +22,15 @@ export default class IngenioController {
     public subOrdersDao: SubOrdersDao;
     public pdfHelper: PdfHelper;
     public nodemailerHelper: Nodemailers;
-    public config: any;
-    constructor() {
+    public userDao: UserDao; 
+    public config:any;
+    constructor(mysql: Mysql){
         this.config = Config;
-        this.ingenioDao = new IngenioDao();
-        this.addressDao = new AddressDao();
-        this.orderDao = new OrderDao();
-        this.subOrdersDao = new SubOrdersDao();
+        this.ingenioDao = new IngenioDao(mysql);
+        this.addressDao = new AddressDao(mysql);
+        this.orderDao = new OrderDao(mysql);
+        this.subOrdersDao = new SubOrdersDao(mysql);
+        this.userDao = new UserDao(mysql);
         this.pdfHelper = new PdfHelper();
         this.nodemailerHelper = new Nodemailers(this.config);
     }
@@ -71,6 +75,13 @@ export default class IngenioController {
         logger.info('CONTROLLER: method createeIngenio Starting');
         if (!req.params.ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
         let ingenioId: any = req.params.ingenioId;
+        let ingenio:any = await this.ingenioDao.getIngenioById(ingenioId);
+        if (!ingenio.length) throw res.status(404).send({ msg: 'ingenio not fund' });
+        let users: any = await this.userDao.getUserByIngenioId(ingenioId);
+        for(let i = 0; i< users.length; i++){
+            await this.userDao.deleteUser(users[i].id);
+        }
+        await this.addressDao.deleteAddresById(ingenio[0].addressid);
         await this.ingenioDao.deleteIngeniosById(ingenioId);
         res.status(200).send({})
         logger.debug('CONTROLLER: method createeIngenio Ending');
