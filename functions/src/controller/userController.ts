@@ -210,4 +210,10 @@ export default class UserController {
         res.status(200).send({})
         logger.debug('CONTROLLER: method createeIngenio Ending');
     }
+
+    async getUserInfo(req: Request,res: Response){
+        let uid:any = req.headers.uid;
+        let response = await this.firebase.getUser(uid);
+        res.send(response);
+    }
 }

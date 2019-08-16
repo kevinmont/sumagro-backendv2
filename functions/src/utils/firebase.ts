@@ -142,4 +142,17 @@ export default class Firebase{
       
   }
 
+  async getUser(userId:string){
+    return new Promise(async(resolve,reject)=>{
+        await this.db.ref(`/sumagro/users/${userId}`).once('value',(snapshot:any)=>{
+            let objectUser = snapshot.val();
+            if(objectUser){
+                resolve(objectUser);
+            }else{
+                resolve({});
+            }
+        });
+    })
+}
+
 }

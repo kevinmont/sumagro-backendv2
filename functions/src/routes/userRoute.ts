@@ -28,6 +28,9 @@ export default class UserRoute{
         .delete(this.userController.firebase.authentication,(req: express.Request, res: express.Response)=>{
             this.userController.deleteUser(req, res);
         })
+        .get(this.userController.firebase.authentication,(req: express.Request,res: express.Response)=>{
+            this.userController.getUserInfo(req,res);
+        })
 
         app.post('/sumagro-app/notification',(req: express.Request ,res: express.Response)=>{
             this.userController.notificationPush(req,res);
