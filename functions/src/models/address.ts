@@ -1,7 +1,7 @@
 export interface Address{
-    street:number,
-    number:number,
-    city:number,
+    street:string,
+    number:string,
+    city:string,
     location:string,
     municipality: string
 }

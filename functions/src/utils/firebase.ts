@@ -79,7 +79,7 @@ export default class Firebase{
                    if(err) {
                        logger.info(err); reject("Usuario ya existente");
                    }else{
-                        resolve("Usuario registrado");
+                        resolve(user);
                    }
                    
                }

@@ -141,13 +141,25 @@ export default class IngenioController {
 
     async getIngenios(req: Request, res: Response) {
         logger.info('CONTROLLER: Method getIngenios Stratting');
-        let num_page: number = req.query.peer_page;
-        let total_page: number = req.query.page;
-        if (!num_page) throw res.status(400).send(`numPage is required`);
-        if (!total_page) throw res.status(400).send(`totalPage is required`);
-        let discard: number = num_page * total_page;
+        let peer_page: number = req.query.peer_page;
+        let page: number = req.query.page;
+        let discard:number;
+        let ingenios:any;
+        if(peer_page!= undefined && page != undefined){
 
-        let ingenios: any = await this.ingenioDao.getAllIngenios(discard, total_page);
+            if (!peer_page) throw res.status(400).send(`peer_page is required`);
+            if (!page) throw res.status(400).send(`page is required`);
+            if(page == 0 || page <0 ){
+                page=1;
+            }
+            logger.info(`discard: ${(page-1) * peer_page}`);
+            discard = (page-1) * peer_page;
+    
+            ingenios = await this.ingenioDao.getAllIngenios(`LIMIT ${peer_page} OFFSET ${discard}`);
+        }else{
+            ingenios = await this.ingenioDao.getAllIngenios();
+
+        }
         let structureIngenios: any = [];
 
         for (let ingenio of ingenios) {
@@ -156,8 +168,8 @@ export default class IngenioController {
             let dataAddress: any = await this.addressDao.getAddressById(addressid);
             let structureaddress: any = {};
             structureaddress = {
-                calle: JSON.parse(dataAddress[0].calle),
-                numero: JSON.parse(dataAddress[0].numero),
+                calle: `${dataAddress[0].calle}`,
+                numero: `${dataAddress[0].numero}`,
                 ciudad: `${dataAddress[0].ciudad}`,
                 localidad: `${dataAddress[0].localidad}`,
                 municipio: `${dataAddress[0].municipio}`

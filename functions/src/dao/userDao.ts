@@ -10,9 +10,9 @@ export default class UserDao{
         this.mysql = new Mysql();
     }
 
-    async createUser(user:any){
+    async createUser(user:any,uid:any){
         logger.info('DAO: Method createUser Starting');
-        let sql = `INSERT INTO users VALUES("${user.uid}","${user.email}","${user.ingenioId}","${user.rol}",${null})`;
+        let sql = `INSERT INTO users VALUES("${uid}","${user.email}","${user.ingenioId}","${user.rol}",${null})`;
         logger.debug('DAO: Method createUser Ending');
         return await this.mysql.query(sql);
     }
@@ -68,6 +68,14 @@ export default class UserDao{
         logger.info(`Dao: Method saveToken Startting`);
         let sql= `UPDATE users SET token = "${null}" where id = "${userId}"`;
         logger.debug(`Dao: Method saveToken Ending`);
+        return await this.mysql.query(sql);
+    }
+
+    async getUsers(discard:number, total_page:number, complements:any=''){
+        logger.info('DAO: Method getUsers Startting');
+        let sql= `SELECT * FROM users ${complements} LIMIT ${total_page} OFFSET ${discard}`;
+        logger.info(`sql: ${sql}`);
+        logger.debug('DAO: Method getUsers Ending');
         return await this.mysql.query(sql);
     }
 
