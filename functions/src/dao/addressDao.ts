@@ -52,4 +52,12 @@ export default class AddressDao{
         logger.debug('DAO: Method getAddressById Ending');
     return await this.mysql.query(sql);
     }
+
+    async deleteAddresById(addressId:string){
+        logger.info('DAO: Method deleteAddresById Starting');
+        let sql = `DELETE FROM address WHERE id = ${addressId}`;
+        logger.debug('DAO: Method deleteAddresById Ending');
+        return await this.mysql.query(sql);
+        
+    }
 }

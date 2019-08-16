@@ -72,6 +72,9 @@ export default class IngenioController {
         logger.info('CONTROLLER: method createeIngenio Starting');
         if (!req.params.ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
         let ingenioId: any = req.params.ingenioId;
+        let ingenio:any = await this.ingenioDao.getIngenioById(ingenioId);
+        if (!ingenio.length) throw res.status(404).send({ msg: 'ingenio not fund' });
+        await this.addressDao.deleteAddresById(ingenio[0].addressid);
         await this.ingenioDao.deleteIngeniosById(ingenioId);
         res.status(200).send({})
         logger.debug('CONTROLLER: method createeIngenio Ending');
