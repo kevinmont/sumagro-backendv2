@@ -289,4 +289,50 @@ export default class OrderController {
         logger.debug('CONTROLLER: method getStatusOrder Ending');
     }
 
+    async warehouseOrders(req:Request,res:Response){
+        logger.info('CONTROLLER: method warehouseOrders Starting');
+        let resquery:any = await this.orderDao.getOrdersWareHouse();
+        let orders: any = [];
+
+        for (let order of resquery) {
+            let address: any = await this.addressDao.getAddressById(order.addressid);
+            let subOrder: any = await this.subOrdersDao.getsubOrdersById(order.id);
+            let sub: any = [];
+
+            subOrder.forEach((i: any) => {
+                sub.push({
+                    id: `${i.id}`,
+                    captured: `${i.captured}`,
+                    description: `${i.description}`,
+                    quantity: `${i.quantity}`,
+                    received: `${i.received}`,
+                    status: `${i.status}`
+                });
+            });
+
+            orders.push({
+                client: `${order.client}`,
+                clientAddress: `${address[0].localidad}`,
+                dateEntrance: `${order.dateentrance}`,
+                dateOutput: `${order.dateoutput}`,
+                shippingdate: `${order.shippingdate}`,
+                flet: `${order.flet}`,
+                id: `${order.id}`,
+                ingenioId: `${order.ingenioid}`,
+                isShowed: `${order.isshowed}`,
+                mark: `${order.mark}`,
+                modelUnit: `${order.modelunit}`,
+                operationUnit: `${order.operationunit}`,
+                operator: `${order.operator}`,
+                plates: `${order.plates}`,
+                remissionNumber: `${order.remissionnumber}`,
+                shippingDate: `${order.shippingdate}`,
+                status: `${order.status}`,
+                subOrders: sub
+            })
+        }
+        logger.debug('CONTROLLER: method warehouseOrders Ending');
+        res.status(200).send(orders);
+    }
+
 }

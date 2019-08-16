@@ -80,5 +80,10 @@ export default class UserRoute{
         .delete((req: express.Request,res:express.Response)=>{
             this.userController.deleteIngenioById(req,res);
         })
+
+        app.route('/sumagro-app/warehouse/oders')
+            .get((this.userController.firebase.authentication,(req: express.Request,res: express.Response)=>{
+                this.orderController.warehouseOrders(req,res);
+        })) 
     }
 }
