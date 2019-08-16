@@ -73,7 +73,7 @@ export default class Firebase{
                  // See the UserRecord reference doc for the contents of userRecord.
                  logger.info('Successfully created new user:', userRecord.uid);
                  
-                 resolve(userRecord.uid);
+                 resolve(userRecord);
    
                })
                .catch(function(error:any) {

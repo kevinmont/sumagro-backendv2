@@ -58,6 +58,7 @@ export default class UserController {
             if(user.rol == "WAREHOUSE" || user.rol == "CAPTURIST"){
                 user.ingenioId = 0;
             }
+            logger.info(response);
             await this.userDao.createUser(user,response.uid);
             await this.nodemailers.sendMailNewAccount(email, { email: user.email, password });
             res.status(200).send({ msg: "Usuario registrado" });
