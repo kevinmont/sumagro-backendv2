@@ -79,12 +79,12 @@ export class ReportTemplate{
                 Producto: ${typeSack}
                 </td>
                 <td colspan="2">
-                    Descripcion: ${typeSack}
+                    Descripción: ${typeSack}
                 </td>
             </tr>
             <tr>
                 <td>
-                Almacen: 1
+                Almacén: 1
                 </td>
             </tr>
             <tr>
@@ -109,8 +109,17 @@ export class ReportTemplate{
                     </div>
                     </body>
                     </html> `;
-                    logger.info("BODY PDF",body);
         return body;
 
     }
+
+
+    getByClient(from:string,to:string,type:string,data:any){
+        
+    }
+
+    getHeadByClient(){
+        
+    }
+
 }

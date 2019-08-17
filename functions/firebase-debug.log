@@ -1,0 +1,158 @@
+[debug] [2019-08-17T19:04:45.607Z] ----------------------------------------------------------------------
+[debug] [2019-08-17T19:04:45.610Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Usuario\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --only functions
+[debug] [2019-08-17T19:04:45.610Z] CLI Version:   7.0.0
+[debug] [2019-08-17T19:04:45.610Z] Platform:      win32
+[debug] [2019-08-17T19:04:45.610Z] Node Version:  v10.16.0
+[debug] [2019-08-17T19:04:45.612Z] Time:          Sat Aug 17 2019 14:04:45 GMT-0500 (GMT-05:00)
+[debug] [2019-08-17T19:04:45.612Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-08-17T19:04:45.631Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-08-17T19:04:45.632Z] > authorizing via signed-in user
+[debug] [2019-08-17T19:04:45.635Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/sumagro-backend  
+ 
+[debug] [2019-08-17T19:04:46.155Z] <<< HTTP RESPONSE 200
+[info] i  Starting emulators: ["functions"]
+[warn] !  Your requested "node" version "8" doesn't match your global version "10"
+[debug] [2019-08-17T19:04:46.185Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/1016153454511:getServerAppConfig  
+ 
+[debug] [2019-08-17T19:04:46.680Z] <<< HTTP RESPONSE 200
+[info] +  functions: Emulator started at http://localhost:5001
+[info] i  functions: Watching "C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions" for Cloud Functions...
+[debug] [2019-08-17T19:04:47.654Z] Functions runtime initialized.
+[debug] [2019-08-17T19:04:47.657Z] Disabled runtime features: undefined
+[debug] [2019-08-17T19:04:48.295Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-17T19:04:48.295Z] Outgoing network have been stubbed.
+[debug] [2019-08-17T19:04:48.380Z] Checked functions.config()
+[debug] [2019-08-17T19:04:48.386Z] firebase-admin has been stubbed.
+[info] i  functions: HTTP trigger initialized at http://localhost:5001/sumagro-backend/us-central1/app
+[debug] [2019-08-17T19:04:50.002Z] Accepted request GET /sumagro-backend/us-central1/app/sumagro-app/getpin --> app
+[debug] [2019-08-17T19:04:50.815Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "app"
+[debug] [2019-08-17T19:04:50.817Z] Disabled runtime features: undefined
+[debug] [2019-08-17T19:04:51.369Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-17T19:04:51.369Z] Outgoing network have been stubbed.
+[debug] [2019-08-17T19:04:51.462Z] Checked functions.config()
+[debug] [2019-08-17T19:04:51.470Z] firebase-admin has been stubbed.
+[debug] [2019-08-17T19:04:52.735Z] Trigger "app" has been found, beginning invocation!
+[debug] [2019-08-17T19:04:52.735Z] 
+[debug] [2019-08-17T19:04:52.735Z] Running app in mode HTTPS
+[debug] [2019-08-17T19:04:52.742Z] {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\14572"}
+[debug] [2019-08-17T19:04:52.743Z] [functions] Runtime ready! Sending request! {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\14572"}
+[debug] [2019-08-17T19:04:52.816Z] Ephemeral server used!
+[debug] [2019-08-17T19:04:52.817Z] Bodyundefined
+[info] >  [2019-08-17T14:04:52.820] [INFO] default - CONTROLLER: method getPint Starting
+[info] >  [2019-08-17T14:04:52.824] [INFO] default - DAO: Method getpin Startting
+[info] >  [2019-08-17T14:04:52.824] [DEBUG] default - DAO: Method getPin Ending
+[info] >  [2019-08-17T14:04:52.825] [INFO] default - Calling query method
+[debug] [2019-08-17T19:04:52.830Z] Ephemeral server survived.
+[info] >  [2019-08-17T14:04:53.833] [ERROR] default - Error al conectar { Error: connect ECONNREFUSED 127.0.0.1:3306
+[info] >      at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1106:14)
+[info] >      --------------------
+[info] >      at Protocol._enqueue (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:144:48)
+[info] >      at Protocol.handshake (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:51:23)
+[info] >      at PoolConnection.connect (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:119:18)
+[info] >      at Pool.getConnection (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Pool.js:48:16)
+[info] >      at Promise (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\utils\mysql.js:18:29)
+[info] >      at new Promise (<anonymous>)
+[info] >      at Mysql.query (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\utils\mysql.js:17:16)
+[info] >      at PinDao.getPin (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\dao\pinDao.js:15:33)
+[info] >      at PinController.getPin (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\controller\pinController.js:13:42)
+[info] >      at app.route.get (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\routes\pinRoute.js:11:32)
+[info] >    errno: 'ECONNREFUSED',
+[info] >    code: 'ECONNREFUSED',
+[info] >    syscall: 'connect',
+[info] >    address: '127.0.0.1',
+[info] >    port: 3306,
+[info] >    fatal: true }
+[warn] !  Your function timed out after ~60s. To configure this timeout, see
+      https://firebase.google.com/docs/functions/manage-functions#set_timeout_and_memory_allocation.
+[debug] [2019-08-17T19:13:09.888Z] Accepted request GET /sumagro-backend/us-central1/app/sumagro-app/getpin --> app
+[debug] [2019-08-17T19:13:10.697Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "app"
+[debug] [2019-08-17T19:13:10.699Z] Disabled runtime features: undefined
+[debug] [2019-08-17T19:13:11.226Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-17T19:13:11.227Z] Outgoing network have been stubbed.
+[debug] [2019-08-17T19:13:11.308Z] Checked functions.config()
+[debug] [2019-08-17T19:13:11.316Z] firebase-admin has been stubbed.
+[debug] [2019-08-17T19:13:12.378Z] Trigger "app" has been found, beginning invocation!
+[debug] [2019-08-17T19:13:12.378Z] 
+[debug] [2019-08-17T19:13:12.379Z] Running app in mode HTTPS
+[debug] [2019-08-17T19:13:12.385Z] {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\14056"}
+[debug] [2019-08-17T19:13:12.386Z] [functions] Runtime ready! Sending request! {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\14056"}
+[debug] [2019-08-17T19:13:12.486Z] Ephemeral server used!
+[debug] [2019-08-17T19:13:12.487Z] Body
+{
+	"from":"2019/08/10",
+	"to":"2019/09/20",
+	"type": "inventory",
+	"user":"José Ignacio Colohua Reyes",
+	"dateRequested":"2019/10/09"
+}
+
+[info] >  [2019-08-17T14:13:12.491] [INFO] default - CONTROLLER: method getPint Starting
+[info] >  [2019-08-17T14:13:12.495] [INFO] default - DAO: Method getpin Startting
+[info] >  [2019-08-17T14:13:12.496] [DEBUG] default - DAO: Method getPin Ending
+[info] >  [2019-08-17T14:13:12.497] [INFO] default - Calling query method
+[debug] [2019-08-17T19:13:12.502Z] Ephemeral server survived.
+[info] >  [2019-08-17T14:13:13.505] [ERROR] default - Error al conectar { Error: connect ECONNREFUSED 127.0.0.1:3306
+[info] >      at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1106:14)
+[info] >      --------------------
+[info] >      at Protocol._enqueue (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:144:48)
+[info] >      at Protocol.handshake (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:51:23)
+[info] >      at PoolConnection.connect (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:119:18)
+[info] >      at Pool.getConnection (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Pool.js:48:16)
+[info] >      at Promise (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\utils\mysql.js:18:29)
+[info] >      at new Promise (<anonymous>)
+[info] >      at Mysql.query (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\utils\mysql.js:17:16)
+[info] >      at PinDao.getPin (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\dao\pinDao.js:15:33)
+[info] >      at PinController.getPin (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\controller\pinController.js:13:42)
+[info] >      at app.route.get (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\routes\pinRoute.js:11:32)
+[info] >    errno: 'ECONNREFUSED',
+[info] >    code: 'ECONNREFUSED',
+[info] >    syscall: 'connect',
+[info] >    address: '127.0.0.1',
+[info] >    port: 3306,
+[info] >    fatal: true }
+[warn] !  Your function timed out after ~60s. To configure this timeout, see
+      https://firebase.google.com/docs/functions/manage-functions#set_timeout_and_memory_allocation.
+[debug] [2019-08-17T20:23:58.073Z] Accepted request GET /sumagro-backend/us-central1/app/sumagro-app/getpin --> app
+[debug] [2019-08-17T20:23:58.799Z] Functions runtime initialized.
+[info] i  functions: Beginning execution of "app"
+[debug] [2019-08-17T20:23:58.801Z] Disabled runtime features: undefined
+[debug] [2019-08-17T20:23:59.326Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-17T20:23:59.326Z] Outgoing network have been stubbed.
+[debug] [2019-08-17T20:23:59.409Z] Checked functions.config()
+[debug] [2019-08-17T20:23:59.417Z] firebase-admin has been stubbed.
+[debug] [2019-08-17T20:24:00.474Z] Trigger "app" has been found, beginning invocation!
+[debug] [2019-08-17T20:24:00.475Z] 
+[debug] [2019-08-17T20:24:00.475Z] Running app in mode HTTPS
+[debug] [2019-08-17T20:24:00.483Z] {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\20536"}
+[debug] [2019-08-17T20:24:00.484Z] [functions] Runtime ready! Sending request! {"socketPath":"\\\\?\\pipe\\C:\\Users\\Usuario\\Desktop\\SHS\\sumagrov2\\sumagro-backendv2\\functions\\20536"}
+[debug] [2019-08-17T20:24:00.553Z] Ephemeral server used!
+[debug] [2019-08-17T20:24:00.554Z] Bodyundefined
+[info] >  [2019-08-17T15:24:00.558] [INFO] default - CONTROLLER: method getPint Starting
+[info] >  [2019-08-17T15:24:00.562] [INFO] default - DAO: Method getpin Startting
+[info] >  [2019-08-17T15:24:00.562] [DEBUG] default - DAO: Method getPin Ending
+[info] >  [2019-08-17T15:24:00.562] [INFO] default - Calling query method
+[debug] [2019-08-17T20:24:00.568Z] Ephemeral server survived.
+[info] >  [2019-08-17T15:24:01.572] [ERROR] default - Error al conectar { Error: connect ECONNREFUSED 127.0.0.1:3306
+[info] >      at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1106:14)
+[info] >      --------------------
+[info] >      at Protocol._enqueue (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:144:48)
+[info] >      at Protocol.handshake (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\protocol\Protocol.js:51:23)
+[info] >      at PoolConnection.connect (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Connection.js:119:18)
+[info] >      at Pool.getConnection (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\mysql\lib\Pool.js:48:16)
+[info] >      at Promise (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\utils\mysql.js:18:29)
+[info] >      at new Promise (<anonymous>)
+[info] >      at Mysql.query (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\utils\mysql.js:17:16)
+[info] >      at PinDao.getPin (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\dao\pinDao.js:15:33)
+[info] >      at PinController.getPin (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\controller\pinController.js:13:42)
+[info] >      at app.route.get (C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\lib\routes\pinRoute.js:11:32)
+[info] >    errno: 'ECONNREFUSED',
+[info] >    code: 'ECONNREFUSED',
+[info] >    syscall: 'connect',
+[info] >    address: '127.0.0.1',
+[info] >    port: 3306,
+[info] >    fatal: true }
+[warn] !  Your function timed out after ~60s. To configure this timeout, see
+      https://firebase.google.com/docs/functions/manage-functions#set_timeout_and_memory_allocation.

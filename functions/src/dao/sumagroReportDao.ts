@@ -18,12 +18,11 @@ export default class SumagroReportDao{
                     let query = 'SELECT * FROM `sumagro-dev`.'+`${type} where date>='${from}' and date<='${to}'`;
                     logger.debug("QUERY TO EXECUTE",query);
                     let data = await this.mysqlClient.query(query);
-                    logger.info("DATA OBTAINED",data);
                     let pdfBody = this.reportTemplate.getReport(from,to,type,data);
                     return pdfBody;
                 }catch(err){
                     logger.error('[ERROR] -> '+err);
-                    return [];
+                    return "";
                 }
                
         
