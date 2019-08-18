@@ -23,13 +23,13 @@ export default class UserController {
     public firebase: Firebase;
     public config: any;
 
-    constructor(mysql: Mysql){
+    constructor(mysql: Mysql,firebase: Firebase){
         this.config= config;
         this.ingenioDao = new IngenioDao(mysql);
         this.addressDao = new AddressDao(mysql);
         this.userDao = new UserDao(mysql);
         this.orderDao = new OrderDao(mysql);
-        this.firebase = new Firebase(this.config);
+        this.firebase = firebase;
         this.nodemailers = new Nodemailers(this.config);
     }
 

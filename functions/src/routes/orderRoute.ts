@@ -2,18 +2,36 @@ import * as express from 'express';
 import OrderController from '../controller/orderController';
 import Mysql from '../utils/mysql';
 
+import Firebase from '../utils/firebase';
+
 
 export default class OrderRoute{
     public orderController: OrderController;
+    public firebase: Firebase
 
-    constructor(mysql: Mysql){
+    constructor(mysql: Mysql,firebase: Firebase){
         this.orderController = new OrderController(mysql);
+        this.firebase = firebase;
     }
     addRoutes(app: express.Application){
 
         app.route('/sumagro-app/order')
+        .post(this.firebase.authentication,(req: express.Request,res:express.Response)=>{
+            this.orderController.postOrder(req,res);
+        })
         .get((req: express.Request, res:express.Response)=>{
             this.orderController.getOrders(req,res);
+        })
+
+        app.route('/sumagro-app/order/:orderId')
+        .delete((req: express.Request,res:express.Response)=>{
+            this.orderController.deleteOrderByOrderId(req,res);
+        })
+        .patch(this.firebase.authentication,(req:express.Request, res: express.Response)=>{
+            this.orderController.getOrder(req,res);
+        })
+        .get(this.firebase.authentication,(req:express.Request, res:express.Response)=>{
+            this.orderController.getOrderById(req,res);
         })
 
         app.route('/sumagro-app/generate-pdf/:orderId')

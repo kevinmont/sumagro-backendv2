@@ -8,7 +8,9 @@ import IngenioRoute from './routes/ingenioRoute';
 import Mysql from './utils/mysql';
 import  SumagroReportRouter  from './routes/sumagroReportRouter';
 import DatabaseRoute from './routes/databaseRoute';
-//import config from './models/config';
+import SackRoute from './routes/sackRote';
+import Firebase from './utils/firebase';
+import config from './models/config';
 //import errorMiddleware from './exceptions/error.middleware';
 const json2xls = require('json2xls');
 class App{
@@ -20,15 +22,19 @@ class App{
     private mysql: Mysql;
     public sumagroReportRouter : SumagroReportRouter;
     public databaseRoute: DatabaseRoute;
+    public sackRoute: SackRoute;
+    public firebase: Firebase;
     constructor(){
         this.mysql = new Mysql();
+        this.firebase = new Firebase(config);
         this.app = express();
         this.pinRoute = new PinRoute();
-        this.userRoute = new UserRoute(this.mysql);
-        this.orderRoute = new OrderRoute(this.mysql);
-        this.ingenioRoute = new IngenioRoute(this.mysql);
+        this.userRoute = new UserRoute(this.mysql,this.firebase);
+        this.orderRoute = new OrderRoute(this.mysql,this.firebase);
+        this.ingenioRoute = new IngenioRoute(this.mysql,this.firebase);
         this.sumagroReportRouter = new SumagroReportRouter(this.mysql);
         this.databaseRoute = new DatabaseRoute(this.mysql);
+        this.sackRoute = new SackRoute(this.mysql,this.firebase);
         this.config();
         this.pinRoute.addRoutes(this.app);
         this.userRoute.addRoutes(this.app);
