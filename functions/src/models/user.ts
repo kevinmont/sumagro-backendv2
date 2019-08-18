@@ -4,6 +4,6 @@ export interface User{
     phoneNumber?:string,
     uid?:string,
     rol: string,
-    ingenioId?: string,
+    ingenioId?: number,
     password: string
 }
