@@ -1,21 +1,21 @@
 import * as express from 'express';
 import SackController from '../controller/sackController';
 import Mysql from '../utils/mysql';
-import UserController from '../controller/userController';
+import Firebase from '../utils/firebase';
 
 export default class SackRoute{
     public sackController: SackController;
-    public userController: UserController;
+    public firebase: Firebase;
 
-    constructor(mysql:Mysql){
-        this.userController = new UserController(mysql);
+    constructor(mysql:Mysql,firebase: Firebase){
+        this.firebase = firebase;
         this.sackController= new SackController(mysql);
     }
 
     addRoutes(app: express.Application){
 
         app.route('/sumagro-app/capturist/sacks')
-            .post(this.userController.firebase.authentication,(req: express.Request, res: express.Response)=>{
+            .post(this.firebase.authentication,(req: express.Request, res: express.Response)=>{
                 this.sackController.registerSacks(req,res);
         })
     }

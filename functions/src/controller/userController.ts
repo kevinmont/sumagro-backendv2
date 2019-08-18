@@ -17,10 +17,10 @@ export default class UserController {
     public firebase: Firebase;
     public config: any;
 
-    constructor(mysql: Mysql){
+    constructor(mysql: Mysql,firebase: Firebase){
         this.config= config;
         this.userDao = new UserDao(mysql);
-        this.firebase = new Firebase(this.config);
+        this.firebase = firebase;
         this.nodemailers = new Nodemailers(this.config);
     }
 

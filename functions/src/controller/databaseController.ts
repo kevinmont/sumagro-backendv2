@@ -4,6 +4,7 @@ import CoordenatesDao from '../dao/coordenatesDao';
 import * as log4js from 'log4js';
 
 import DatabaseDao from '../dao/databaseDao';
+import Mysql from '../utils/mysql';
 
 const logger= log4js.getLogger();
 logger.level ='debug';
@@ -11,9 +12,9 @@ export default class DatabaseController{
     public databaseDao: DatabaseDao;
     public addressDao: AddressDao; 
     public coordenatesDao:CoordenatesDao;
-    constructor (){
+    constructor (mysql: Mysql){
         this.coordenatesDao= new CoordenatesDao();
-        this.addressDao= new AddressDao();
+        this.addressDao= new AddressDao(mysql);
         this.databaseDao = new DatabaseDao();
     }
 
