@@ -72,7 +72,6 @@ export default class IngenioController {
         logger.info('CONTROLLER: method sendEmail Starting');
         if (!req.params.orderId) throw res.status(400).send("orderId is required");
         let orderId = req.params.orderId;
-        let ingenioId = req.body.ingenioId;
         let dataOrder: any = await this.orderDao.orderById(orderId);
         if (!dataOrder.length) throw res.status(404).send('{ "msg":"order not found"}');
         let response = parseInt(dataOrder[0].addressid)
@@ -100,6 +99,7 @@ export default class IngenioController {
             dateentrance: `${dataOrder[0].dateentrance}`,
             clientAddress: `${address[0].localidad}`,
             operationUnit: `${dataOrder[0].operationunit}`,
+            modelUnit: `${dataOrder[0].modelunit}`,
             operator: `${dataOrder[0].operator}`,
             plates: `${dataOrder[0].plates}`,
             remissionNumber: `${dataOrder[0].remissionnumber}`,
@@ -108,7 +108,11 @@ export default class IngenioController {
             subOrders: sub
         }
         if (order.status != "PENDING") {
-            let ingenio: any = await this.ingenioDao.getIngenioById(ingenioId);
+            let ingenioid:number= parseInt(dataOrder[0].ingenioid);
+            console.log("ingenioId: "+ingenioid);
+            let ingenio:any = await this.ingenioDao.getIngenioById(ingenioid)
+            console.log(`datos ingenio: ${ingenio}`);
+            console.log(`email: ${ingenio[0].email}`);
             let email = ingenio[0].email;
             logger.info(order)
             logger.info(email)
