@@ -25,8 +25,9 @@ export default class SackController{
         logger.info('CONTROLLER: Method registerSacks Starting');
         let  { id,ingenioId,description,orderId,operationUnit,plates,operator } = req.body;
         let operatorName:any = req.headers.email;
+        let parseid = parseInt(id);
         let record = { SackId:id,ingenioId,description,orderId, operationUnit,plates,operator };
-        let sack:any = await this.sackDao.getSackById(id);
+        let sack:any = await this.sackDao.getSackById(parseid);
         if(!sack.length) throw res.status(404).send({msg:"sack not found"});
         let ingenio:any = await this.ingenioDao.getIngenioById(ingenioId);
         if(!ingenio.length) throw res.status(404).send({msg:"ingenio not found"});
@@ -34,8 +35,8 @@ export default class SackController{
         if(!order.length) throw res.status(404).send({msg:"order not found"});
         let user:any = await this.userDao.UserById(operator)
         if(!user.length) throw res.status(404).send({msg:"user not found"});
-        await this.sackDao.saveSackIntrasit(record);
-        await this.sackDao.saveSackOutputs(record,operatorName)
+        await this.sackDao.saveSackIntrasit(record,parseid);
+        await this.sackDao.saveSackOutputs(record,operatorName,parseid)
         res.send({msg:"Costal registrado"});
         logger.info('CONTROLLER: Method registerSacks Ending');
     }
