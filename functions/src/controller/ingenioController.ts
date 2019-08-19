@@ -108,8 +108,7 @@ export default class IngenioController {
             subOrders: sub
         }
         if (order.status != "PENDING") {
-            let ingenio: any = await this.ingenioDao.getIngenioById(ingenioId);
-            let email = ingenio[0].email;
+            let email = dataOrder[0].email;
             logger.info(order)
             logger.info(email)
             let report = await this.pdfHelper.getRemissionDocument(order);

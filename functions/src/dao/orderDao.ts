@@ -83,4 +83,18 @@ export default class OrderDao{
         logger.debug('DAO: Method updateOrderByOrderIdAndIngenioId Ending');
         return await this.mysql.query(sql);
     }
+
+    async updateOrder(orderId:string,updateRequest:any){
+        logger.info('DAO: Method updateOrder Startting');
+        let sql = `update orders set operationunit='${updateRequest.operationUnit}',
+        plates='${updateRequest.plates}',
+        operator='${updateRequest.operator}',
+        plates='${updateRequest.flet}',
+        modelunit='${updateRequest.modelUnit}',
+        mark='${updateRequest.mark}',
+        dateoutput='${updateRequest.dateOutput}',
+        dateentrance='${updateRequest.dateEntrance}' WHERE id=${orderId}`;
+        logger.debug('DAO: Method updateOrder Ending');
+        return await this.mysql.query(sql);
+    }
 }
