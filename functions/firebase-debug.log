@@ -1,0 +1,12 @@
+[debug] [2019-08-19T03:17:53.404Z] ----------------------------------------------------------------------
+[debug] [2019-08-19T03:17:53.407Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Usuario\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start --only functions
+[debug] [2019-08-19T03:17:53.408Z] CLI Version:   7.0.0
+[debug] [2019-08-19T03:17:53.408Z] Platform:      win32
+[debug] [2019-08-19T03:17:53.408Z] Node Version:  v10.16.0
+[debug] [2019-08-19T03:17:53.409Z] Time:          Sun Aug 18 2019 22:17:53 GMT-0500 (GMT-05:00)
+[debug] [2019-08-19T03:17:53.409Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-08-19T03:17:53.426Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-08-19T03:17:53.428Z] > authorizing via signed-in user
+[debug] [2019-08-19T03:17:53.431Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/sumagro-backend  
+ 

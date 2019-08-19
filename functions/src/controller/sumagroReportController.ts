@@ -17,8 +17,8 @@ export default class SumagroReportController{
         if(!req.body.to) throw res.status(400).send('to parameter is missing');
         if(!req.body.type) throw res.status(400).send('type parameter is missing');
         if((typeof req.body.type!="string") || !ingenioSection.includes(req.body.type.toLowerCase()) ) throw res.status(400).send("type parameter invalid")
-        let { from, to,type,user,dateRequested} = req.body;
-        let dataToReport:any = await this.sumagroReportDao.getReportInfo(from,to,type.toLowerCase());
+        let { from, to,type,user,dateRequested, typeFormat} = req.body;
+        let dataToReport:any = await this.sumagroReportDao.getReportInfo(from,to,type.toLowerCase(),typeFormat);
         pdfH.create(dataToReport,{
             footer:{
                 contents:`
