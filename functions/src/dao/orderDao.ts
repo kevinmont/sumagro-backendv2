@@ -13,9 +13,9 @@ export default class OrderDao{
 
     async saveOrder(object: any) {
         logger.info('Dao: Method saveOrder Startting');
-        let sql = `INSERT INTO orders(ingenioid,shippingdate,client,addressid,remissionnumber) 
+        let sql = `INSERT INTO orders(ingenioid,shippingdate,client,addressid,remissionnumber,status) 
         VALUES(${object.ingenioId}, '${object.shippingDate}', '${object.client}', 
-        ${object.addressid}, ${object.remissionNumber})`;
+        ${object.addressid}, ${object.remissionNumber},'PENDING')`;
         let t:any= await this.mysql.query(sql);
         logger.info('Dao: Method saveOrder Ending');
         return t.insertId;
@@ -83,4 +83,12 @@ export default class OrderDao{
         logger.debug('DAO: Method updateOrderByOrderIdAndIngenioId Ending');
         return await this.mysql.query(sql);
     }
+
+    async updateRemission(remissionNumber:number){
+        logger.info(`DAO: updateRemission Startting`);
+        let sql=`update remissions set count=${remissionNumber +1} where count=${remissionNumber}`;
+        logger.debug(`DAO: updateRemission ending`);
+        return await this.mysql.query(sql);
+    }
+
 }

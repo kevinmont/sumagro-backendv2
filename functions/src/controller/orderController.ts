@@ -69,6 +69,7 @@ export default class OrderController {
         logger.info(`orderidquery: ${orderidquery}`);
         if (orderidquery) {
             await this.subOrdersDao.saveSubOrders(subOrders, orderidquery);
+            await this.orderDao.updateRemission(object.remissionNumber); 
             res.status(201).send();
         } else {
             res.status(404).send(`Order not found`);
@@ -79,6 +80,7 @@ export default class OrderController {
     async getOrder(req: Request, res: Response) {
         logger.info('CONTROLLER: Method getOrder Startting');
         if (!req.params.orderId) throw res.status(400).send('{"msg":"orderId is required"}');
+
         if (!req.query.status) throw res.status(400).send('{"msg":"status is required"}');
         let status = req.query.status;
         let orderId = req.params.orderId;
