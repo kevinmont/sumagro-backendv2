@@ -84,7 +84,6 @@ export default class OrderDao{
         return await this.mysql.query(sql);
     }
 
-<<<<<<< HEAD
     async updateOrder(orderId:string,updateRequest:any){
         logger.info('DAO: Method updateOrder Startting');
         let sql = `update orders set operationunit='${updateRequest.operationUnit}',
@@ -98,13 +97,4 @@ export default class OrderDao{
         logger.debug('DAO: Method updateOrder Ending');
         return await this.mysql.query(sql);
     }
-=======
-    async updateRemission(remissionNumber:number){
-        logger.info(`DAO: updateRemission Startting`);
-        let sql=`update remissions set count=${remissionNumber +1} where count=${remissionNumber}`;
-        logger.debug(`DAO: updateRemission ending`);
-        return await this.mysql.query(sql);
-    }
-
->>>>>>> 38ebfd8016c29b5821b1a97ec69b353c7ac50171
 }
