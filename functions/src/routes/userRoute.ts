@@ -73,12 +73,6 @@ export default class UserRoute{
             this.orderController.getOrderById(req,res);
         })
 
-        app.route('/sumagro-app/send-pdf/:orderId')
-            .post(this.firebase.authentication,(req:express.Request, res: express.Response)=>{
-                this.ingenioController.sendEmail(req,res);
-            })
-        
-        
         app.route('/sumagro-app/ingenio/:ingenioId')
         .delete((req: express.Request,res:express.Response)=>{
             this.userController.deleteIngenioById(req,res);
@@ -96,5 +90,6 @@ export default class UserRoute{
             .delete(this.firebase.authentication,(req: express.Request, res: express.Response)=>{
                 this.userController.deleteOrder(req,res);    
             })
+
     }
 }

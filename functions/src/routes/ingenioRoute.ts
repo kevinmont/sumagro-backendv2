@@ -23,7 +23,7 @@ export default class OrderRoute{
             .post(this.firebase.authentication,(req:express.Request, res: express.Response)=>{
                 this.ingenioController.sendEmail(req,res);
             })
-
+        
         app.route('/sumagro-app/ingenios')
         .get((req:express.Request, res: express.Response)=>{
             this.ingenioController.getIngenios(req,res);

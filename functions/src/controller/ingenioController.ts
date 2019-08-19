@@ -20,7 +20,7 @@ export default class IngenioController {
     public orderDao: OrderDao;
     public subOrdersDao: SubOrdersDao;
     public pdfHelper: PdfHelper;
-    public nodemailerHelper: Nodemailers;
+    public nodemailers: Nodemailers;
     public config:any;
     constructor(mysql: Mysql){
         this.config = Config;
@@ -29,7 +29,7 @@ export default class IngenioController {
         this.orderDao = new OrderDao(mysql);
         this.subOrdersDao = new SubOrdersDao(mysql);
         this.pdfHelper = new PdfHelper();
-        this.nodemailerHelper = new Nodemailers(this.config);
+        this.nodemailers = new Nodemailers(this.config);
     }
 
     async createeIngenio(req: Request, res: Response) {
@@ -71,11 +71,10 @@ export default class IngenioController {
     async sendEmail(req: any, res: Response) {
         logger.info('CONTROLLER: method sendEmail Starting');
         if (!req.params.orderId) throw res.status(400).send("orderId is required");
-        if (!req.body.ingenioId) throw res.status(400).send("ingenioId is required");
         let orderId = req.params.orderId;
         let ingenioId = req.body.ingenioId;
         let dataOrder: any = await this.orderDao.orderById(orderId);
-        if (!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
+        if (!dataOrder.length) throw res.status(404).send('{ "msg":"order not found"}');
         let response = parseInt(dataOrder[0].addressid)
         logger.info(response)
         let address: any = await this.addressDao.getAddressById(response);
@@ -112,7 +111,9 @@ export default class IngenioController {
             let ingenio: any = await this.ingenioDao.getIngenioById(ingenioId);
             let email = ingenio[0].email;
             logger.info(order)
+            logger.info(email)
             let report = await this.pdfHelper.getRemissionDocument(order);
+            logger.info(report);
             pdf.create(report, {
                 format: 'Letter', border: {
                     top: "1in",            // default is 0, units: mm, cm, in, px
@@ -122,7 +123,7 @@ export default class IngenioController {
                 }
             }).toStream(async (err, stream) => {
                 logger.info("Email:", email);
-                await this.nodemailerHelper.sendMail({ content: stream, filename: `${orderId}.pdf` }, email);
+                await this.nodemailers.sendMail({ content: stream, filename: `${orderId}.pdf` }, email);
                 res.send({ msg: 'OK' });
             })
         } else {
