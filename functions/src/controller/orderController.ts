@@ -80,13 +80,7 @@ export default class OrderController {
     async getOrder(req: Request, res: Response) {
         logger.info('CONTROLLER: Method getOrder Startting');
         if (!req.params.orderId) throw res.status(400).send('{"msg":"orderId is required"}');
-<<<<<<< HEAD
         let updateRequest = req.body;
-=======
-
-        if (!req.query.status) throw res.status(400).send('{"msg":"status is required"}');
-        let status = req.query.status;
->>>>>>> 38ebfd8016c29b5821b1a97ec69b353c7ac50171
         let orderId = req.params.orderId;
         let exists = await this.orderDao.getOrderById(orderId);
         if (!exists) throw res.status(404).send('{"msg":"order not found"}');

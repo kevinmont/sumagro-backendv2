@@ -97,4 +97,11 @@ export default class OrderDao{
         logger.debug('DAO: Method updateOrder Ending');
         return await this.mysql.query(sql);
     }
+    async updateRemission(remissionNumber:number){
+        logger.info(`DAO: updateRemission Startting`);
+        let sql=`update remissions set count=${remissionNumber +1} where count=${remissionNumber}`;
+        logger.debug(`DAO: updateRemission ending`);
+        return await this.mysql.query(sql);
+    }
+
 }
