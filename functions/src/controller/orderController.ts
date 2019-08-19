@@ -69,6 +69,7 @@ export default class OrderController {
         logger.info(`orderidquery: ${orderidquery}`);
         if (orderidquery) {
             await this.subOrdersDao.saveSubOrders(subOrders, orderidquery);
+            await this.orderDao.updateRemission(object.remissionNumber); 
             res.status(201).send();
         } else {
             res.status(404).send(`Order not found`);
@@ -79,7 +80,13 @@ export default class OrderController {
     async getOrder(req: Request, res: Response) {
         logger.info('CONTROLLER: Method getOrder Startting');
         if (!req.params.orderId) throw res.status(400).send('{"msg":"orderId is required"}');
+<<<<<<< HEAD
         let updateRequest = req.body;
+=======
+
+        if (!req.query.status) throw res.status(400).send('{"msg":"status is required"}');
+        let status = req.query.status;
+>>>>>>> 38ebfd8016c29b5821b1a97ec69b353c7ac50171
         let orderId = req.params.orderId;
         let exists = await this.orderDao.getOrderById(orderId);
         if (!exists) throw res.status(404).send('{"msg":"order not found"}');
@@ -91,8 +98,13 @@ export default class OrderController {
     async getOrders(req: Request, res: Response) {
         logger.info('CONTROLLER: Method getOrders Startting');
         let status = req.query.status;
-        if (!status) throw res.status(400).send('status is required');
-        let resquery: any = await this.orderDao.getOrdersByStatus(status);
+        let resquery:any;
+        if(!status)
+        resquery = await this.orderDao.getOrdersByStatus();
+        else
+        resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}'`);
+         
+
         let orders: any = [];
 
         for (let order of resquery) {

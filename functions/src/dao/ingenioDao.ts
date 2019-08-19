@@ -42,7 +42,7 @@ export default class ingenioDao {
 
     async getIngenioById(ingenioId:any){
         logger.info('DAO: Method getIngenioById Starting');
-        let sql = `SELECT * FROM ingenios WHERE id = "${ingenioId}"`;
+        let sql = `SELECT * FROM ingenios WHERE id = ${ingenioId}`;
         logger.debug('DAO: Method getIngenioById Ending');
         return await this.mysql.query(sql);
     }

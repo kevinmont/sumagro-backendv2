@@ -13,9 +13,9 @@ export default class OrderDao{
 
     async saveOrder(object: any) {
         logger.info('Dao: Method saveOrder Startting');
-        let sql = `INSERT INTO orders(ingenioid,shippingdate,client,addressid,remissionnumber) 
+        let sql = `INSERT INTO orders(ingenioid,shippingdate,client,addressid,remissionnumber,status) 
         VALUES(${object.ingenioId}, '${object.shippingDate}', '${object.client}', 
-        ${object.addressid}, ${object.remissionNumber})`;
+        ${object.addressid}, ${object.remissionNumber},'PENDING')`;
         let t:any= await this.mysql.query(sql);
         logger.info('Dao: Method saveOrder Ending');
         return t.insertId;
@@ -49,9 +49,9 @@ export default class OrderDao{
         logger.debug('DAO: Method updateStatus Ending');
         return await this.mysql.query(sql);
     }
-    async getOrdersByStatus(status:string){
+    async getOrdersByStatus(params:string=''){
         logger.info('DAO: Method getOrders Startting');
-        let sql=`SELECT * FROM orders WHERE status='${status}'`;
+        let sql=`SELECT * FROM orders ${params}`;
         logger.debug('DAO: Method getOrders Ending');
         return await this.mysql.query(sql);
     }
@@ -84,6 +84,7 @@ export default class OrderDao{
         return await this.mysql.query(sql);
     }
 
+<<<<<<< HEAD
     async updateOrder(orderId:string,updateRequest:any){
         logger.info('DAO: Method updateOrder Startting');
         let sql = `update orders set operationunit='${updateRequest.operationUnit}',
@@ -97,4 +98,13 @@ export default class OrderDao{
         logger.debug('DAO: Method updateOrder Ending');
         return await this.mysql.query(sql);
     }
+=======
+    async updateRemission(remissionNumber:number){
+        logger.info(`DAO: updateRemission Startting`);
+        let sql=`update remissions set count=${remissionNumber +1} where count=${remissionNumber}`;
+        logger.debug(`DAO: updateRemission ending`);
+        return await this.mysql.query(sql);
+    }
+
+>>>>>>> 38ebfd8016c29b5821b1a97ec69b353c7ac50171
 }

@@ -7,7 +7,7 @@ export default class PdfHelper{
         let content = "";
         subOrders.forEach((element:any)=>{
             content=content+`<tr><td style="text-align: center; border: 1px solid black;"><span>${element.quantity}</span></td>`+
-            `<td style="text-align: center; border: 1px solid black;"><span>${element.unit}</span></td>`+
+            `<td style="text-align: center; border: 1px solid black;"><span>${element.received}</span></td>`+
             `<td style="text-align: center; border: 1px solid black;"><span>${element.description}</span></td>`+
             `<td style="text-align: left; border: 1px solid black;">$</td>`+
             `<td style="text-align: left; border: 1px solid black;">$</td></tr>\n`;
