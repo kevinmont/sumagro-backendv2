@@ -8,8 +8,9 @@ export class Nodemailers {
         this.config=config;
     }
          async sendMail(documents: DocSend,email: string) {
-           
-            console.info( "start method sendMail" );
+            logger.info('NODEMAILER: Method sendMail Starting');
+            logger.info(email);
+            logger.info(documents)
             let transporter = nodemailer.createTransport( {
                     host: this.config.nodemailer.host,
                     port: this.config.nodemailer.port,
@@ -24,11 +25,10 @@ export class Nodemailers {
                     from: this.config.nodemailer.mailOptions.from, // sender address
                     to: email, // list of receivers
                     subject: this.config.nodemailer.mailOptions.subject, // Subject line // plain text body
-                    attachments: 
-                        documents
+                    attachments: documents
                 };
 
-            
+                logger.info("pasas")
             transporter.sendMail( mailOptions, ( error: any, info: any ) => {
                     if ( error ) {
                             return console.error( error );
@@ -36,6 +36,8 @@ export class Nodemailers {
                     console.debug( 'Message sent: ', info.messageId );
                     console.debug( 'Preview URL: ', nodemailer.getTestMessageUrl( info ) );
                 });
+            
+                logger.debug('NODEMAILER: Method sendMail Ending');
             
             }
 
