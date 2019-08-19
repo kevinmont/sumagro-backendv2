@@ -49,9 +49,9 @@ export default class OrderDao{
         logger.debug('DAO: Method updateStatus Ending');
         return await this.mysql.query(sql);
     }
-    async getOrdersByStatus(status:string){
+    async getOrdersByStatus(params:string=''){
         logger.info('DAO: Method getOrders Startting');
-        let sql=`SELECT * FROM orders WHERE status='${status}'`;
+        let sql=`SELECT * FROM orders ${params}`;
         logger.debug('DAO: Method getOrders Ending');
         return await this.mysql.query(sql);
     }

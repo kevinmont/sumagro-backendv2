@@ -92,8 +92,13 @@ export default class OrderController {
     async getOrders(req: Request, res: Response) {
         logger.info('CONTROLLER: Method getOrders Startting');
         let status = req.query.status;
-        if (!status) throw res.status(400).send('status is required');
-        let resquery: any = await this.orderDao.getOrdersByStatus(status);
+        let resquery:any;
+        if(!status)
+        resquery = await this.orderDao.getOrdersByStatus();
+        else
+        resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}'`);
+         
+
         let orders: any = [];
 
         for (let order of resquery) {
