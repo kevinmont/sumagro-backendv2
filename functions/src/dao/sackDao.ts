@@ -37,8 +37,8 @@ export default class SackDao{
 
     async saveSack(record:any){
         logger.info('DAO: Method saveSack Starting');
-        let sql = `INSERT INTO sacks(id,description,ingenioid) 
-        VALUES(${record.SackId}, "${record.description}", ${record.ingenioId})`;
+        let sql = `INSERT INTO sacks(id,description,userid,coordenatesid,clave) 
+        VALUES(${record.SackId}, "${record.description}", null, 0, null)`;
         logger.debug('DAO: Method saveSack Ending');
         return await this.mysql.query(sql);
     }
