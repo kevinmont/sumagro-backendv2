@@ -54,6 +54,11 @@ export default class OrderRoute{
             .get((req: express.Request,res: express.Response)=>{
                 this.orderController.getRemissionNumber(req,res);
         })
+
+        app.route('/sumagro-app/ordersByIngenio/:ingenioId/status/:status')
+        .get(this.firebase.authentication,(req: express.Request, res: express.Response) =>{
+            this.orderController.getOrdersByIngenio(req,res);
+        })
     }
 
 }

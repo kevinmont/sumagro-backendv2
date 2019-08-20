@@ -350,4 +350,12 @@ export default class OrderController {
         res.status(200).send({currentRemissionNumber: response[0].count});
     }
 
+    async getOrdersByIngenio(req:Request,res:Response){
+        let ingenioId = req.params.ingenioId;
+        let status = req.params.status;
+        let data = await this.orderDao.getOrdersByIngenio(ingenioId,status);
+
+        res.status(200).send(data);
+    }
+
 }

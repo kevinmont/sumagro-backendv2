@@ -104,4 +104,11 @@ export default class OrderDao{
         return await this.mysql.query(sql);
     }
 
+    async getOrdersByIngenio(ingenioId:any,status:any){
+        logger.info(`DAO: getOrdersByIngenio Startting`);
+        let sql=`SELECT * FROM orders WHERE ingenioid = ${ingenioId} AND status = ${status};`;
+        logger.debug(`DAO: getOrdersByIngenio ending`);
+        return await this.mysql.query(sql);
+    }
+
 }
