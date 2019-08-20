@@ -43,4 +43,20 @@ export default class SackDao{
         return await this.mysql.query(sql);
     }
 
+    async saveSackEntrance(entrance:any){
+        logger.info('DAO: Method saveSackEntrance Starting');
+        let sql = `INSERT INTO entrance(id,date,description,ingenioid,operatorid,orderid) 
+        VALUES(${entrance.id}, "${new Date()}", "${entrance.description}", ${entrance.ingenioId}, "${entrance.operatorid}", ${entrance.orderId})`;
+        logger.debug('DAO: Method saveSackEntrance Ending');
+        return await this.mysql.query(sql);
+    }
+
+    async saveSackInventory(inventory:any){
+        logger.info('DAO: Method saveSackEntrance Starting');
+        let sql = `INSERT INTO intansit(id,ingenioid,description,operator,date) 
+        VALUES(${inventory.id}, ${inventory.ingenioId}, "${inventory.description}", "${inventory.operator}", "${new Date()}")`;
+        logger.debug('DAO: Method saveSackEntrance Ending');
+        return await this.mysql.query(sql);
+    }
+
 }

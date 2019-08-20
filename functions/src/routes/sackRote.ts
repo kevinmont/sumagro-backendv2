@@ -18,5 +18,11 @@ export default class SackRoute{
             .post(this.firebase.authentication,(req: express.Request, res: express.Response)=>{
                 this.sackController.registerSacks(req,res);
         })
+
+        app.route('/sumagro-app/recept/sacks')
+        .patch(this.firebase.authentication,(req: express.Request, res: express.Response)=>{
+                this.sackController.receptSacks(req,res)
+            }
+        )
     }
 }

@@ -45,4 +45,38 @@ export default class SackController{
         res.send({msg:"Costal registrado"});
         logger.info('CONTROLLER: Method registerSacks Ending');
     }
+
+    async receptSacks(req: Request, res:Response){
+        logger.info('CONTROLLER: Method receptSacks Starting');
+        if(!req.body.orderId) throw res.status(400).send('orderId is required');
+        if(!req.body.description) throw res.status(400).send('description is required');
+        if(!req.body.operator) throw res.status(400).send('operator is required');
+        if(!req.body.sack) throw res.status(400).send('sack is required');
+        let operatorName:any = req.headers.email;
+        let subOrderId = parseInt(req.body.index)
+        let orderId = parseInt(req.body.orderId);
+        let alldata:any = await this.orderDao.orderById(orderId);
+        let ingenio= alldata[0].ingenioid;
+        logger.info(`ingenioid: ${ingenio}`);
+        let ingenioId = parseInt(ingenio);
+        let entrance = {
+            id: parseInt(req.body.sack),
+            description: req.body.description,
+            ingenioId: ingenioId,
+            operatorid: operatorName,
+            orderId: orderId
+
+        };
+        let inventory = {
+            id: parseInt(req.body.sack),
+            ingenioId: ingenioId,
+            description: req.body.description,
+            operador: req.body.operator,
+        }
+        await this.sackDao.saveSackEntrance(entrance);
+        await this.sackDao.saveSackInventory(inventory);
+        await this.subOrderDao.updateRecived(subOrderId);
+        logger.info('CONTROLLER: Method receptSacks Ending');
+        res.status(200).send({msg:"Costal recibido"});
+    }
 }
