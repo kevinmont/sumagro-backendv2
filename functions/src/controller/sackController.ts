@@ -27,7 +27,8 @@ export default class SackController{
         let operatorName:any = req.headers.email;
         let parseid = parseInt(id);
         let record = { SackId:id,ingenioId,description,orderId, operationUnit,plates,operator };
-        let sack:any = await this.sackDao.getSackById(parseid);
+        await this.sackDao.saveSack(record);
+        let sack:any = await this.sackDao.getSackById(id);
         if(!sack.length) throw res.status(404).send({msg:"sack not found"});
         let ingenio:any = await this.ingenioDao.getIngenioById(ingenioId);
         if(!ingenio.length) throw res.status(404).send({msg:"ingenio not found"});
