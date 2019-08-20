@@ -43,4 +43,11 @@ export default class SubOrdersDao {
         return await this.mysql.query(sql);
     }
 
+    async updateCaptured(subOrderId:any){
+        logger.info(`DAO: Method updatestatus Startting`);
+        let sql=`update suborder set captured=1 where id=${subOrderId}`;
+        logger.debug(`DAO: Method updatestatus Ending`);
+        return await this.mysql.query(sql);
+    }
+
 }
