@@ -4,9 +4,13 @@ import OrderDao from '../dao/orderDao';
 import SubOrdersDao from '../dao/subOrdersDao';
 import * as log4js from 'log4js';
 import IngenioDao from '../dao/ingenioDao';
+import SumagroIntransit from '../dao/intransitDao';
+import SumagroOutput from '../dao/outputDao';
 import PdfHelper from '../utils/Pdf-Helper';
 import * as pdf from 'html-pdf';
 import Mysql from '../utils/mysql';
+import {TYPEINGENIO} from '../models/Order';
+
 
 const logger = log4js.getLogger();
 logger.level = 'debug';
@@ -17,7 +21,11 @@ export default class OrderController {
     public pdfHelper: PdfHelper;
     public addressDao: AddressDao;
     public subOrdersDao: SubOrdersDao;
+    public sumagroIntransit: SumagroIntransit;
+    public sumagroOutput: SumagroOutput;
     constructor(mysql: Mysql) {
+        this.sumagroOutput=new SumagroOutput(mysql);
+        this.sumagroIntransit= new SumagroIntransit(mysql);
         this.orderDao = new OrderDao(mysql);
         this.ingenioDao = new IngenioDao(mysql);
         this.addressDao = new AddressDao(mysql);
@@ -367,6 +375,75 @@ export default class OrderController {
         let data = await this.orderDao.getOrdersByIngenio(ingenioId,status);
 
         res.status(200).send(data);
+    }
+
+    async outputs(req:Request, res:Response){
+        logger.info('CONTROLLER: Method outputs Startting');
+        let data:any=await this.sumagroOutput.getAllDataOutputs();
+        let response:any=[];
+        for(let element of data){
+            let ingenio:any = await this.ingenioDao.getIngenioById(element.ingenioid)
+            response.push({
+                id:`${element.id}`,
+                date: `${element.date}`,
+                ingenioName:`${ingenio[0].name}`,
+                description:`${element.description}`,
+                operator:`${element.operator}`,
+                orderId:`${element.orderid}`,
+            });
+        }
+        logger.debug('CONTROLLER: Method outputs Ending');
+        res.status(200).send(response);
+    }
+
+    async intransit(req:Request,res:Response){
+        logger.info('CONTROLLER: Method intransit Startting');
+        let data:any = await this.sumagroIntransit.getalldataIntransit();
+        let response:any=[];
+        for(let element of data){
+            let ingenio:any = await this.ingenioDao.getIngenioById(element.ingenioid)
+            response.push({
+                id:`${element.id}`,
+                description: `${element.description}`,
+                ingenioName:`${ingenio[0].name}`,
+                operationUnit:`${element.operationunit}`,
+                plates:`${element.plates}`,
+                orderId:`${element.orderid}`,
+                operator:`${element.operator}`
+            });
+        }
+        logger.debug('CONTROLLER: Method intransit Ending');
+        res.status(200).send(response);
+    }
+
+    async countFormule(req:Request,res:Response){
+        logger.info('CONTROLLER: Method countFormule Startting');
+        let type:any =req.params.type;
+        if(!type) res.status(200).send(`Type is requiered`);
+        let objectdata:any=[];
+        if(TYPEINGENIO.intransit == type){
+            let data:any = await this.sumagroIntransit.getcountFormuleIntransit('sumagrointransit ');
+            if(!data.length) throw res.status(200).send({});
+            for(let element of data){
+                objectdata.push({
+                    name:`${element.description}`,
+                    quantity:`${element.count}`,
+                });
+            }
+            res.status(200).send(objectdata);
+        }else if(TYPEINGENIO.outputs == type){
+            let data:any = await this.sumagroIntransit.getcountFormuleIntransit('sumagrooutputs ');
+            if(!data.length) throw res.status(200).send({});
+            for(let element of data){
+                objectdata.push({
+                    name:`${element.description}`,
+                    quantity:`${element.count}`,
+                });
+            }
+            res.status(200).send(objectdata);
+        }
+
+        logger.debug('CONTROLLER: Method countFormule Ending');
     }
 
 }
