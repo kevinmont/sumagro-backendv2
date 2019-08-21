@@ -53,7 +53,6 @@ export default class IngenioController {
         }
         let response: any = await this.ingenioDao.getIngenioByEmail(email);
         if (response.length) { throw res.status(400).send({ msg: "Email is register" }); }
-
         await this.addressDao.CreateAddress(address);
         let response1: any = await this.addressDao.getAddresByAttributes(address)
         let addressid: number = parseInt(response1[0].id);

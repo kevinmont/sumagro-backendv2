@@ -92,6 +92,7 @@ export default class OrderController {
     async getOrders(req: Request, res: Response) {
         logger.info('CONTROLLER: Method getOrders Startting');
         let status = req.query.status;
+        let ingenioId = req.query.ingenioId;
         let resquery:any;
         if(!status)
         resquery = await this.orderDao.getOrdersByStatus();
