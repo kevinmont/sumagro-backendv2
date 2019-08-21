@@ -18,3 +18,11 @@ export const STATUS ={
     TRANSIT: "TRANSIT",
     DELIVERED: "DELIBERED"
 }
+
+export enum TYPEINGENIO {
+    outputs= "outputs",
+    entrance= "entrance",
+    aplicated= "aplicated",
+    inventory= "inventory",
+    intransit="intransit"
+}

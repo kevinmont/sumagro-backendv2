@@ -59,6 +59,21 @@ export default class OrderRoute{
         .get(this.firebase.authentication,(req: express.Request, res: express.Response) =>{
             this.orderController.getOrdersByIngenio(req,res);
         })
+
+        app.route('/sumagro-app/sumagro-almacen/intransit')
+        .get((req:express.Request, res:express.Response)=>{
+            this.orderController.intransit(req,res);
+        })
+
+        app.route('/sumagro-app/sumagro-almacen/outputs')
+        .get((req:express.Request, res:express.Response)=>{
+            this.orderController.outputs(req,res);
+        })
+
+        app.route('/sumagro-app/almacen/formula/:type')
+        .get((req:express.Request, res:express.Response)=>{
+            this.orderController.countFormule(req,res);
+        })
     }
 
 }
