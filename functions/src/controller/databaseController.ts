@@ -26,6 +26,9 @@ export default class DatabaseController{
         if(!ingenioId) throw res.status(400).send('{"msg":"ingenioId is required"}');
         if(!records) throw res.status(400).send('{"msg":"records is required"}');
         let error:any=[];
+        records = records.reverse();
+        records.pop();
+        records = records.reverse();
         for(let record of records){
             let address= record[5];
             let addressId:any= await this.addressDao.createAddressByLocalidad(address);
@@ -40,6 +43,14 @@ export default class DatabaseController{
 
         logger.debug('CONTROLLER: Method uploadDatabaseIngenio Ending');
         (!error.length)? res.status(200).send(`{}`):res.status(409).send(error);   
+    }
+
+    async getExcel(req:Request,res: any){
+        let ingenioId = req.params.ingenioId;
+        let response = await this.databaseDao.getRecordsByIngenioId(ingenioId);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader("Content-Disposition", "attachment; filename=" + "Report.xlsx");
+        res.xls('database.xlsx',response);
     }
 
 }

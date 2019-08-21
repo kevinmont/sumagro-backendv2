@@ -92,12 +92,20 @@ export default class OrderController {
     async getOrders(req: Request, res: Response) {
         logger.info('CONTROLLER: Method getOrders Startting');
         let status = req.query.status;
-        let ingenioId = req.query.ingenioId;
+        let ingenioId:any = req.query.ingenioId;
         let resquery:any;
-        if(!status)
-        resquery = await this.orderDao.getOrdersByStatus();
-        else
-        resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}'`);
+
+        if(!ingenioId){
+            if(!status)
+            resquery = await this.orderDao.getOrdersByStatus();
+            else
+            resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}'`);
+        }else{
+            if(!status)
+            resquery = await this.orderDao.getOrdersByStatus(`where ingenioid=${ingenioId}`);
+            else
+            resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}' AND ingenioid=${ingenioId}`);
+        }
          
 
         let orders: any = [];
@@ -121,6 +129,7 @@ export default class OrderController {
             orders.push({
                 id: `${order.id}`,
                 client: `${order.client}`,
+                ingenioId:`${order.ingenioid}`,
                 shippingdate: `${order.shippingdate}`,
                 dateentrance: `${order.dateentrance}`,
                 clientAddress: `${address[0].localidad}`,
@@ -162,6 +171,7 @@ export default class OrderController {
         order = {
             id: `${dataOrder[0].id}`,
             client: `${dataOrder[0].client}`,
+            ingenioId: `${dataOrder[0].ingenioid}`,
             shippingdate: `${dataOrder[0].shippingdate}`,
             dateentrance: `${dataOrder[0].dateentrance}`,
             clientAddress: `${address[0].localidad}`,

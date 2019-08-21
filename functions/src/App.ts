@@ -42,6 +42,7 @@ class App{
         this.ingenioRoute.addRoutes(this.app);
         this.sumagroReportRouter.addRoutes(this.app);
         this.databaseRoute.addRoutes(this.app);
+        this.sackRoute.addRoutes(this.app);
     }
     config(){
         this.app.use(function(req, res, next) {
@@ -61,6 +62,7 @@ class App{
         res.send();
     });
         this.app.use(bodyparser.json({ limit: '5mb' }));
+        this.app.use(json2xls.middleware);
         this.app.use(bodyparser.urlencoded({ extended: false}));
     }
 }
