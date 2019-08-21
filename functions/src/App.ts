@@ -42,6 +42,7 @@ class App{
         this.ingenioRoute.addRoutes(this.app);
         this.sumagroReportRouter.addRoutes(this.app);
         this.databaseRoute.addRoutes(this.app);
+        this.sackRoute.addRoutes(this.app);
     }
     config(){
         this.app.use(function(req, res, next) {
