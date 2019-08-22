@@ -40,42 +40,58 @@ export default class IngenioController {
         if (!req.body.email) 
             throw res.status(400).send("email is required")
 
+
         
+
 
         if (!req.body.address) 
             throw res.status(400).send("address is required")
 
+
         
+
 
         if (!req.body.name) 
             throw res.status(400).send("name is required")
 
+
         
+
 
         if (!req.body.address.street) 
             throw res.status(400).send("Street is required")
 
+
         
+
 
         if (!req.body.address.number) 
             throw res.status(400).send("number is required")
 
+
         
+
 
         if (!req.body.address.city) 
             throw res.status(400).send("city is required")
 
+
         
+
 
         if (!req.body.address.location) 
             throw res.status(400).send("location is required")
 
+
         
+
 
         if (!req.body.address.municipality) 
             throw res.status(400).send("municipality is required")
 
+
         
+
 
         let {email, name} = req.body
         let {street, number, city, location, municipality} = req.body.address
@@ -87,7 +103,9 @@ export default class IngenioController {
             municipality
         }
         let response: any = await this.ingenioDao.getIngenioByEmail(email);
-        if (response.length) { throw res.status(400).send({ msg: "Email is register" }); }
+        if (response.length) {
+            throw res.status(400).send({msg: "Email is register"});
+        }
         await this.addressDao.CreateAddress(address);
         let response1: any = await this.addressDao.getAddresByAttributes(address)
         let addressid: number = parseInt(response1[0].id);
@@ -108,11 +126,13 @@ export default class IngenioController {
             throw res.status(400).send("orderId is required");
         
 
+
         let orderId = req.params.orderId;
         let dataOrder: any = await this.orderDao.orderById(orderId);
         if (! dataOrder.length) 
             throw res.status(404).send('{ "msg":"order not found"}');
         
+
 
         let response = parseInt(dataOrder[0].addressid)
         logger.info(response)
@@ -225,9 +245,11 @@ export default class IngenioController {
                 throw res.status(400).send(`peer_page is required`);
             
 
+
             if (! page) 
                 throw res.status(400).send(`page is required`);
             
+
 
             if (page == 0 || page < 0) {
                 page = 1;
@@ -280,8 +302,8 @@ export default class IngenioController {
         res.status(200).send(structureIngenios);
     }
 
-    async getIngenioDetails(req: Request,res: Response){
-        return ;
+    async getIngenioDetails(req : Request, res : Response) {
+        return;
     }
 
     async getFormulaByingenio(req : Request, res : Response) {
@@ -289,19 +311,32 @@ export default class IngenioController {
         if (!req.params.type) 
             throw res.status(400).send('Type is required');
         
+        if (!arrtypes.includes(req.params.type)) 
+            throw res.status(400).send('Type not exists');
+        
         if (!req.params.ingenioId) 
             throw res.status(400).send('ingenioId is required');
         
         let type: any = req.params.type;
-        logger.info(`tabla: ${type}`);
         let ingenioId: any = req.params.ingenioId
+        logger.info(`tabla: ${type}`);
         logger.info(`ingenio: ${ingenioId}`);
-        let page: any = req.query.page;
-        let peer_page: any = req.query.peer_page;
         let data: any;
         let discard: any;
         let response: any = [];
-        if (peer_page && page) {
+        logger.info(`datps 2: ${typeof req.query.peer_page}`);
+        logger.info(`datps: ${!(Number.isInteger(+req.query.peer_page))}`);
+        logger.info(`datos: ${req.query.peer_page}`);
+        if (!(Number.isInteger(+req.query.peer_page)))
+            throw res.status(400).send('peer_page not is number');
+        
+        if (!(Number.isInteger(+req.query.page))) 
+            throw res.status(400).send('page not is number');
+        
+
+        if (req.query.peer_page && req.query.page) {
+            let peer_page: any = req.query.peer_page;
+            let page: any = req.query.page;
 
             if (page == 0 || page < 0) {
                 page = 1;
@@ -328,9 +363,11 @@ export default class IngenioController {
         if (!req.params.type) 
             throw res.status(400).send('Type is required');
         
+
         if (!req.params.ingenioId) 
             throw res.status(400).send('ingenioId is required');
         
+
         let type: any = req.params.type;
         logger.info(`tabla: ${type}`);
         let ingenioId: any = req.params.ingenioId;
@@ -339,7 +376,9 @@ export default class IngenioController {
         let discard: any;
         let response: any = [];
         let coordenate: any = {};
-        if(!(arrtypes.includes(type))) throw res.status(400).send('Type not exists');
+        if (!(arrtypes.includes(type))) 
+            throw res.status(400).send('Type not exists');
+        
         if (req.query.peer_page && req.query.page) {
             let page: any = req.query.page;
             let peer_page: any = req.query.peer_page;
