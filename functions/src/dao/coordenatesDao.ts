@@ -7,8 +7,8 @@ logger.level= 'debug';
 export default class CoordenatesDao{
     public mysql: Mysql;
 
-    constructor(){
-        this.mysql= new Mysql();
+    constructor(mysql:Mysql){
+        this.mysql= mysql;
     }
 
     async registeringCoordenates(latitud:any, longitud:any){
@@ -17,5 +17,12 @@ export default class CoordenatesDao{
         let res:any= await this.mysql.query(sql);
         logger.debug('DAO: Method registeringCoordenates Ending');
         return res.insertId;
+    }
+
+    async getCoordenatesById(coordenatesId: any){
+        logger.info('DAO: Method getCoordenatesById Startting');
+        let sql= `SELECT * FROM coordenates WHERE id=${coordenatesId}`;
+        logger.info('DAO: Method getCoordenatesById Ending');
+        return await this.mysql.query(sql);
     }
 }

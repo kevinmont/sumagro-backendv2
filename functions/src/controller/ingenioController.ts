@@ -3,8 +3,9 @@ import IngenioDao from '../dao/ingenioDao';
 import AddressDao from '../dao/addressDao';
 import OrderDao from '../dao/orderDao';
 import SubOrdersDao from '../dao/subOrdersDao';
-import {Ingenio} from '../models/ingenio';
+import {Ingenio, types, arrtypes} from '../models/ingenio';
 import {Address} from '../models/address';
+import CoordenatesDao from '../dao/coordenatesDao';
 import PdfHelper from '../utils/Pdf-Helper';
 import {Nodemailers} from '../utils/Nodemailer-helper';
 import Config from '../models/config';
@@ -15,6 +16,7 @@ const logger = log4js.getLogger();
 logger.level = 'debug';
 
 export default class IngenioController {
+    public coordenatesDao : CoordenatesDao;
     public ingenioDao : IngenioDao;
     public addressDao : AddressDao;
     public orderDao : OrderDao;
@@ -26,6 +28,7 @@ export default class IngenioController {
         this.config = Config;
         this.ingenioDao = new IngenioDao(mysql);
         this.addressDao = new AddressDao(mysql);
+        this.coordenatesDao = new CoordenatesDao(mysql);
         this.orderDao = new OrderDao(mysql);
         this.subOrdersDao = new SubOrdersDao(mysql);
         this.pdfHelper = new PdfHelper();
@@ -36,28 +39,44 @@ export default class IngenioController {
         logger.info('CONTROLLER: method createeIngenio Starting');
         if (!req.body.email) 
             throw res.status(400).send("email is required")
+
         
+
         if (!req.body.address) 
             throw res.status(400).send("address is required")
+
         
+
         if (!req.body.name) 
             throw res.status(400).send("name is required")
+
         
+
         if (!req.body.address.street) 
             throw res.status(400).send("Street is required")
+
         
+
         if (!req.body.address.number) 
             throw res.status(400).send("number is required")
+
         
+
         if (!req.body.address.city) 
             throw res.status(400).send("city is required")
+
         
+
         if (!req.body.address.location) 
             throw res.status(400).send("location is required")
+
         
+
         if (!req.body.address.municipality) 
             throw res.status(400).send("municipality is required")
+
         
+
         let {email, name} = req.body
         let {street, number, city, location, municipality} = req.body.address
         let address: Address = {
@@ -88,11 +107,13 @@ export default class IngenioController {
         if (!req.params.orderId) 
             throw res.status(400).send("orderId is required");
         
+
         let orderId = req.params.orderId;
         let dataOrder: any = await this.orderDao.orderById(orderId);
         if (! dataOrder.length) 
             throw res.status(404).send('{ "msg":"order not found"}');
         
+
         let response = parseInt(dataOrder[0].addressid)
         logger.info(response)
         let address: any = await this.addressDao.getAddressById(response);
@@ -203,9 +224,11 @@ export default class IngenioController {
             if (! peer_page) 
                 throw res.status(400).send(`peer_page is required`);
             
+
             if (! page) 
                 throw res.status(400).send(`page is required`);
             
+
             if (page == 0 || page < 0) {
                 page = 1;
             }
@@ -259,41 +282,193 @@ export default class IngenioController {
 
     async getFormulaByingenio(req : Request, res : Response) {
         logger.info('CONTROLLER: Method getFormulaByingenio Startting');
-        if(!req.params.type) throw res.status(400).send('Type is required');
-        if(!req.params.ingenioId) throw res.status(400).send('ingenioId is required');
-        let type:any = req.params.type;
+        if (!req.params.type) 
+            throw res.status(400).send('Type is required');
+        
+        if (!req.params.ingenioId) 
+            throw res.status(400).send('ingenioId is required');
+        
+        let type: any = req.params.type;
         logger.info(`tabla: ${type}`);
-        let ingenioId:any= req.params.ingenioId
+        let ingenioId: any = req.params.ingenioId
         logger.info(`ingenio: ${ingenioId}`);
-        let page:any=req.query.page;
-        let peer_page:any=req.query.peer_page;
-        let data:any;
-        let discard:any;
-        let response:any=[];
-        if (peer_page != undefined && page != undefined) {
+        let page: any = req.query.page;
+        let peer_page: any = req.query.peer_page;
+        let data: any;
+        let discard: any;
+        let response: any = [];
+        if (peer_page && page) {
 
-            if (! peer_page) 
-                throw res.status(400).send(`peer_page is required`);
-            
-            if (! page) 
-                throw res.status(400).send(`page is required`);
-            
             if (page == 0 || page < 0) {
                 page = 1;
             }
             discard = (page - 1) * peer_page;
             data = await this.ingenioDao.getCountFormule(type, ingenioId, `LIMIT ${peer_page} OFFSET ${discard}`);
-        }else{
-            data = await this.ingenioDao.getCountFormule( type, ingenioId);
+        } else {
+            data = await this.ingenioDao.getCountFormule(type, ingenioId);
         }
 
-        for(let element of data){
-            response.push({
-                name:`${element.description}`,
-                cuantity:`${element.count}`
-            })
+        for (let element of data) {
+            response.push({name: `${
+                    element.description
+                }`, cuantity: `${
+                    element.count
+                }`})
         }
         logger.debug('CONTROLLER: Method getFormulaByingenio Ending');
+        res.status(200).send(response);
+    }
+
+    async getDataentranceByIngenio(req : Request, res : Response) {
+        logger.info('CONTROLLER: Method getDataentranceByIngenio Stratting');
+        if (!req.params.type) 
+            throw res.status(400).send('Type is required');
+        
+        if (!req.params.ingenioId) 
+            throw res.status(400).send('ingenioId is required');
+        
+        let type: any = req.params.type;
+        logger.info(`tabla: ${type}`);
+        let ingenioId: any = req.params.ingenioId;
+        logger.info(`ingenio: ${ingenioId}`);
+        let data: any;
+        let discard: any;
+        let response: any = [];
+        let coordenate: any = {};
+        if(!(arrtypes.includes(type))) throw res.status(400).send('Type not exists');
+        if (req.query.peer_page && req.query.page) {
+            let page: any = req.query.page;
+            let peer_page: any = req.query.peer_page;
+
+            if (page == 0 || page < 0) {
+                page = 1;
+            }
+            discard = (page - 1) * peer_page;
+            data = await this.ingenioDao.getDatatable(type, ingenioId, `LIMIT ${peer_page} OFFSET ${discard}`);
+        } else {
+            data = await this.ingenioDao.getDatatable(type, ingenioId);
+        }
+
+        if (type == types.aplicated) {
+            for (let element of data) {
+                let coordenates: any = await this.coordenatesDao.getCoordenatesById(element.coordenatesid);
+                Object.assign(coordenate, {
+                    latitud: coordenates[0].latitud,
+                    longitud: coordenates[0].longitud
+                })
+                response.push({
+                    id: `${
+                        element.id
+                    }`,
+                    description: `${
+                        element.description
+                    }`,
+                    inplot: `${
+                        element.inplot
+                    }`,
+                    used: `${
+                        element.used
+                    }`,
+                    dateaplicated: `${
+                        element.dateaplicated
+                    }`,
+                    ingenioid: `${
+                        element.ingenioid
+                    }`,
+                    operator: `${
+                        element.operator
+                    }`,
+                    coordenates: coordenate
+                })
+            }
+        } else if (type == types.entrance) {
+            for (let element of data) {
+                response.push({
+                    id: `${
+                        element.id
+                    }`,
+                    date: `${
+                        element.date
+                    }`,
+                    description: `${
+                        element.description
+                    }`,
+                    ingenioId: `${
+                        element.ingenioid
+                    }`,
+                    operatorId: `${
+                        element.operatorid
+                    }`,
+                    orderId: `${
+                        element.orderid
+                    }`
+                })
+            }
+        } else if (type == types.intransit) {
+            for (let element of data) {
+                response.push({
+                    id: `${
+                        element.id
+                    }`,
+                    description: `${
+                        element.description
+                    }`,
+                    ingenioId: `${
+                        element.ingenioid
+                    }`,
+                    operator: `${
+                        element.operator
+                    }`,
+                    operationunit: `${
+                        element.operationunit
+                    }`,
+                    plates: `${
+                        element.plates
+                    }`,
+                    orderId: `${
+                        element.orderid
+                    }`
+                })
+            }
+        } else if (type == types.inventory) {
+            for (let element of data) {
+                response.push({id: `${
+                        element.id
+                    }`, ingenioId: `${
+                        element.ingenioid
+                    }`, description: `${
+                        element.description
+                    }`, operator: `${
+                        element.operator
+                    }`, date: `${
+                        element.date
+                    }`})
+            }
+        } else if (type == types.outputs) {
+            for (let element of data) {
+                response.push({
+                    id: `${
+                        element.id
+                    }`,
+                    description: `${
+                        element.description
+                    }`,
+                    operator: `${
+                        element.operator
+                    }`,
+                    userId: `${
+                        element.userid
+                    }`,
+                    ingenioId: `${
+                        element.ingenioid
+                    }`,
+                    qrdataid: `${
+                        element.qrdataid
+                    }`
+                })
+            }
+        }
+        logger.debug('CONTROLLER: Method getDataentranceByIngenio Ending');
         res.status(200).send(response);
     }
 }

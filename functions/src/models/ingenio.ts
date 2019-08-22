@@ -17,3 +17,19 @@ export const ingeniosTypes = {
  entrance:"entradas",
  aplicated:"aplicados"
 }
+
+export const arrtypes=[
+    "outputs",
+    "entrance",
+    "aplicated",
+    "inventory",
+    "intransit"
+]
+
+export enum types{
+    outputs= "outputs",
+    entrance= "entrance",
+    aplicated= "aplicated",
+    inventory= "inventory",
+    intransit="intransit"
+}
