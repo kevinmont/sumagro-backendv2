@@ -280,6 +280,10 @@ export default class IngenioController {
         res.status(200).send(structureIngenios);
     }
 
+    async getIngenioDetails(req: Request,res: Response){
+        return ;
+    }
+
     async getFormulaByingenio(req : Request, res : Response) {
         logger.info('CONTROLLER: Method getFormulaByingenio Startting');
         if (!req.params.type) 
@@ -311,7 +315,7 @@ export default class IngenioController {
         for (let element of data) {
             response.push({name: `${
                     element.description
-                }`, cuantity: `${
+                }`, quantity: `${
                     element.count
                 }`})
         }
