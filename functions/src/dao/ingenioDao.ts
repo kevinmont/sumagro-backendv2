@@ -63,5 +63,13 @@ export default class ingenioDao {
         logger.debug('DAO: Method getCountFormule Ending');
         return await this.mysql.query(sql);
     }
+
+    async getDatatable(type:any,ingenioId:number,params:any=''){
+        logger.info('DAO: Method getDatatables Startting');
+        let sql=`SELECT * FROM ${type} WHERE ingenioid=${ingenioId} ${params}`;
+        logger.info(`sql getDataTable: ${sql}`);
+        logger.debug('DAO: Method getDatatables Ending');
+        return await this.mysql.query(sql);
+    }
     
 }

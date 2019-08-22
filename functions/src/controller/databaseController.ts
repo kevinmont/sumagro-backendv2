@@ -13,7 +13,7 @@ export default class DatabaseController{
     public addressDao: AddressDao; 
     public coordenatesDao:CoordenatesDao;
     constructor (mysql: Mysql){
-        this.coordenatesDao= new CoordenatesDao();
+        this.coordenatesDao= new CoordenatesDao(mysql);
         this.addressDao= new AddressDao(mysql);
         this.databaseDao = new DatabaseDao();
     }
