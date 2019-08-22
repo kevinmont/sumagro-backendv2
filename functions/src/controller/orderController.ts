@@ -418,12 +418,12 @@ export default class OrderController {
 
     async countFormule(req:Request,res:Response){
         logger.info('CONTROLLER: Method countFormule Startting');
+        if(!req.params.type) res.status(400).send(`Type is requiered`);
         let type:any =req.params.type;
-        if(!type) res.status(200).send(`Type is requiered`);
         let objectdata:any=[];
         if(TYPEINGENIO.intransit == type){
             let data:any = await this.sumagroIntransit.getcountFormuleIntransit('sumagrointransit ');
-            if(!data.length) throw res.status(200).send({});
+            if(!data.length) throw res.status(404).send({});
             for(let element of data){
                 objectdata.push({
                     name:`${element.description}`,
@@ -433,7 +433,7 @@ export default class OrderController {
             res.status(200).send(objectdata);
         }else if(TYPEINGENIO.outputs == type){
             let data:any = await this.sumagroIntransit.getcountFormuleIntransit('sumagrooutputs ');
-            if(!data.length) throw res.status(200).send({});
+            if(!data.length) throw res.status(404).send({});
             for(let element of data){
                 objectdata.push({
                     name:`${element.description}`,
