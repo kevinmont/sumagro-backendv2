@@ -45,6 +45,12 @@ export default class DatabaseController{
         (!error.length)? res.status(200).send(`{}`):res.status(409).send(error);   
     }
 
+    async getDatabase(req: Request,res: Response){
+        let ingenioId = req.params.ingenioId;
+        let response = await this.databaseDao.getRecordsByIngenioId(ingenioId);
+        return response;
+    }
+
     async getExcel(req:Request,res: any){
         let ingenioId = req.params.ingenioId;
         let response = await this.databaseDao.getRecordsByIngenioId(ingenioId);

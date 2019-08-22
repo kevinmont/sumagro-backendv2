@@ -15,6 +15,9 @@ export default class DatabaseRoute{
         .post((req:express.Request, res:express.Response)=>{
             this.databaseController.uploadDatabaseIngenio(req,res);
         })
+        .get((req: express.Request, res: express.Response)=>{
+            this.databaseController.getDatabase(req,res);
+        })
 
         app.route('/sumagro-app/generateExcel/:ingenioId')
             .get((req: express.Request, res: express.Response)=>{

@@ -34,7 +34,7 @@ export default class DatabaseDao {
 
     async getRecordsByIngenioId(ingenioId: number){
         logger.info("DAO: Method getRecordsByIngenioId Startting");
-        let response = await this.mysql.query('SELECT * from `database`.database'+` where ingenioid=${ingenioId}`);
+        let response = await this.mysql.query('SELECT * from `sumagro-dev`.database'+` where ingenioid=${ingenioId}`);
         logger.info("DAO: Method getRecordsByIngenioId Ended");
         return response;
     }

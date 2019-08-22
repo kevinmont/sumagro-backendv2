@@ -39,12 +39,9 @@ export default class UserDao{
 
     async getUser(userId:any){
         logger.info(`Dao: Method getUser startting`);
-        let sql= `SELECT EXISTS(SELECT * FROM users WHERE id='${userId}')`;
-        let execution: any= await this.mysql.query(sql);
-
-         let count= execution[0][`EXISTS(SELECT id FROM ingenios WHERE id=${userId})`];
-         logger.debug(`Dao: Method getUser Ending`);
-        (count < 1)?  false : true; 
+        let sql= `SELECT * FROM users WHERE id='${userId}'`;
+        return await this.mysql.query(sql);
+ 
     }
 
     async getUserByEmail(email:string){

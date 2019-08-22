@@ -29,5 +29,10 @@ export default class OrderRoute{
             this.ingenioController.getIngenios(req,res);
         })
 
+        app.route('/sumagro-app/ingenio/formula/:type/:ingenioId')
+        .get((req:express.Request, res:express.Response)=>{
+            this.ingenioController.getFormulaByingenio(req,res);
+        })
+
     }
 }

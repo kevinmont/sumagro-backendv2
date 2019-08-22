@@ -55,8 +55,13 @@ export default class ingenioDao {
         return await this.mysql.query(sql);
     }
 
-    async updateOrderStatus(){
-        
+    async getCountFormule(type:any,ingenioId:number,params:any=''){
+        logger.info('DAO: Method getCountFormule Startting');
+        let sql=`select description, count(description) AS count
+        from ${type} where ingenioid=${ingenioId} group by description ${params}`;
+        logger.info(`sql get: ${sql}`);
+        logger.debug('DAO: Method getCountFormule Ending');
+        return await this.mysql.query(sql);
     }
     
 }

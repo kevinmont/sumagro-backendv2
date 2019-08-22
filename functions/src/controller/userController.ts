@@ -217,9 +217,14 @@ export default class UserController {
     async getUserInfo(req: Request,res: Response){
         logger.info('CONTROLLER: method getUserInfo Starting');
         let uid:any = req.headers.uid;
-        let response = await this.firebase.getUser(uid);
+        let response:any = await this.userDao.getUser(uid);
+        logger.info("response user Obtained",response);
         logger.debug('CONTROLLER: method getUserInfo Ending');
-        res.send(response);
+        if(response.length){
+        res.send(response[0]);
+        }else{
+            res.send([]);
+        }
     }
 
 
