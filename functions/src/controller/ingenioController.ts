@@ -293,7 +293,7 @@ export default class IngenioController {
         for(let element of data){
             response.push({
                 name:`${element.description}`,
-                count:`${element.count}`
+                cuantity:`${element.count}`
             })
         }
         logger.debug('CONTROLLER: Method getFormulaByingenio Ending');
