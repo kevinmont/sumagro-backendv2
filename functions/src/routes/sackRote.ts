@@ -24,5 +24,10 @@ export default class SackRoute{
                 this.sackController.receptSacks(req,res)
             }
         )
+
+        app.route('/sumagro-backend/output-ingenio/sacks')
+        .post((req: express.Request, res: express.Response, next: express.NextFunction) => {
+            this.sackController.updateInventory(req, res)
+        })
     }
 }

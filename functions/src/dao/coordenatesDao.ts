@@ -25,4 +25,19 @@ export default class CoordenatesDao{
         logger.info('DAO: Method getCoordenatesById Ending');
         return await this.mysql.query(sql);
     }
+
+    async saveCordenate(record:any){
+        logger.info('DAO: Method saveCordenate Starting');
+        let sql = `INSERT INTO coordenates(latitud,longitud) 
+        VALUES("${record.qrData.latitud}","${record.qrData.longitud}")`;
+        logger.debug('DAO: Method saveCordenate Ending');
+        return await this.mysql.query(sql);
+    }
+
+    async getCordenate(record:any){
+        logger.info('DAO: Method getCordenate Starting');
+        let sql = `SELECT * coordenates FROM WHERE latitud = "${record.qrData.latitud}" AND longitud = "${record.qrData.longitud}"`;
+        logger.debug('DAO: Method getCordenate Ending');
+        return await this.mysql.query(sql);
+    }
 }
