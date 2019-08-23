@@ -45,4 +45,11 @@ export default class DatabaseDao {
         logger.debug(`DAO: getOrdersByIngenio ending`);
         return await this.mysql.query(sql);
     }
+
+    async getRecordsByEjido(ejido: string){
+        logger.info("DAO: Method getRecordsByIngenioId Startting");
+        let sql ='SELECT * from `sumagro-dev`.database'+` where ejidolocalidad='${ejido}'`;
+        logger.info("DAO: Method getRecordsByIngenioId Ended");
+        return await this.mysql.query(sql);
+    }
 }
