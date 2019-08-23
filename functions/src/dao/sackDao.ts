@@ -59,4 +59,11 @@ export default class SackDao{
         return await this.mysql.query(sql);
     }
 
+    async deleteInventory(inventoryId: any){
+        logger.info(`Dao: Method deleteInventory Startting`);
+        let sql= `DELETE FROM inventory WHERE id=${inventoryId}`;
+        logger.debug(`Dao: Method deleteInventory Ending`);
+        return await this.mysql.query(sql);
+    }
+
 }

@@ -4,8 +4,12 @@ import OrderDao from '../dao/orderDao';
 import IngenioDao from '../dao/ingenioDao';
 import UserDao from '../dao/userDao';
 import SubOrderDao from '../dao/subOrdersDao';
+import CoordenatesDao from '../dao/coordenatesDao';
+
 import * as log4js from 'log4js';
 import Mysql from '../utils/mysql';
+import QrdataDao from '../dao/qrdataDao';
+import Output from '../dao/outputDao';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -15,6 +19,9 @@ export default class SackController{
     public orderDao: OrderDao;
     public userDao: UserDao;
     public subOrderDao: SubOrderDao;
+    public coordenateDao : CoordenatesDao;
+    public qrdataDao: QrdataDao
+    public outputDao: Output
 
     constructor(mysql: Mysql){
         this.sackDao = new SackDao(mysql);
@@ -22,6 +29,9 @@ export default class SackController{
         this.ingenioDao = new IngenioDao(mysql);
         this.userDao = new UserDao(mysql);
         this.subOrderDao= new SubOrderDao(mysql);
+        this.coordenateDao = new CoordenatesDao(mysql);
+        this.qrdataDao = new QrdataDao(mysql);
+        this.outputDao = new Output(mysql);
     }
 
     async registerSacks(req: Request,res: Response){
@@ -80,4 +90,29 @@ export default class SackController{
         logger.info('CONTROLLER: Method receptSacks Ending');
         res.status(200).send({msg:"Costal recibido"});
     }
+
+    async updateInventory(req: any, res: Response){
+        logger.info('CONTROLLER: Method updateInventory Starting');
+        let {id, ingenioId, description, userId, qrData,ingenioName} = req.body;
+        let record = {id, ingenioId, description, userId, qrData,ingenioName};
+        let operatorName:any = req.headers.email;
+        if(!record.id) res.status(400).send('id is missing');
+        if(!record.ingenioId) res.status(400).send('ingenioId is missing');
+        if(!record.ingenioName) res.status(400).send('ingenioName is missing');
+        if(!record.description) res.status(400).send('description is missing');
+        if(!record.userId) res.status(400).send('userId is missing');
+        if(!record.qrData) res.status(400).send('qrData is missing');
+        await this.coordenateDao.saveCordenate(record);
+        let coordenate:any = await this.coordenateDao.getCordenate(record)
+        let coordenateId:number = parseInt(coordenate[0].id);
+        await this.qrdataDao.registeringQrData(record, coordenateId);
+        let qrDatas:any = await this.qrdataDao.getQrDataCoordenateId(coordenateId);
+        let qrDataId = parseInt(qrDatas[0].id);
+        let response = await this.outputDao.saveOutputs(record,operatorName,qrDataId);
+        let inventoryId = parseInt(record.id);
+        await this.sackDao.deleteInventory(inventoryId);
+        logger.info('CONTROLLER: Method updateInventory Ending');
+        res.send({msg:response});
+    }
+
 }
