@@ -338,14 +338,13 @@ export default class IngenioController {
         logger.info(`datps 2: ${typeof req.query.peer_page}`);
         logger.info(`datps: ${!(Number.isInteger(+req.query.peer_page))}`);
         logger.info(`datos: ${req.query.peer_page}`);
-        if (!(Number.isInteger(+req.query.peer_page)))
-            throw res.status(400).send('peer_page not is number');
         
-        if (!(Number.isInteger(+req.query.page))) 
-            throw res.status(400).send('page not is number');
-        
-
         if (req.query.peer_page && req.query.page) {
+            if (!(Number.isInteger(+req.query.peer_page)))
+                throw res.status(400).send('peer_page not is number');
+            
+            if (!(Number.isInteger(+req.query.page))) 
+                throw res.status(400).send('page not is number');
             let peer_page: any = req.query.peer_page;
             let page: any = req.query.page;
 
