@@ -5,6 +5,7 @@ import * as log4js from 'log4js';
 
 import DatabaseDao from '../dao/databaseDao';
 import Mysql from '../utils/mysql';
+import AplicatedDao from '../dao/aplicatedDao';
 
 const logger= log4js.getLogger();
 logger.level ='debug';
@@ -12,10 +13,12 @@ export default class DatabaseController{
     public databaseDao: DatabaseDao;
     public addressDao: AddressDao; 
     public coordenatesDao:CoordenatesDao;
+    public aplicatedDao:AplicatedDao;
     constructor (mysql: Mysql){
         this.coordenatesDao= new CoordenatesDao(mysql);
         this.addressDao= new AddressDao(mysql);
         this.databaseDao = new DatabaseDao();
+        this.aplicatedDao = new AplicatedDao(mysql);
     }
 
     async uploadDatabaseIngenio (req:Request, res:Response){
@@ -59,6 +62,65 @@ export default class DatabaseController{
         res.xls('database.xlsx',response);
     }
 
+    async getEjidoByIngenioId(req: Request, res: Response) {
+        logger.info('CONTROLLER: Method getEjidoByIngenioId Starting');
 
-    
+        if (!req.params.ingenioId) throw res.status(400).send('{ "msg":"ingenioId is required"}');
+        let ingenioId = req.params.ingenioId;
+        let parseId:number = parseInt(ingenioId)
+        let ejido:any = await this.databaseDao.getEjidoByIngenio(parseId);
+        if(!ejido.length) res.status(200).send({})
+        logger.info(ejido);
+        let objectdata:any=[];
+        for(let element of ejido){
+            objectdata.push(element.ejidolocalidad);
+        }
+        res.status(200).send(objectdata);
+        logger.debug('CONTROLLER: Method getEjidoByIngenioId Ending');
+    }
+
+    async getParcelaByEjido(req: Request, res: Response) {
+        logger.info('CONTROLLER: Method getParcelaByEjido Starting');
+
+        if (!req.params.ejido) throw res.status(400).send('{ "msg":"ejido is required"}');
+        let ejido:string = req.params.ejido;
+        let database:any = await this.databaseDao.getRecordsByEjido(ejido);
+        let parcelas: any = [];
+        for (let parcela of database) {
+            let coordenate:any = await this.coordenatesDao.getCoordenatesById(parcela.coordenatesid)
+            let sacks:any = await this.aplicatedDao.getAplicatedByOperator(parcela.productor);
+            let sack: any = [];
+
+            sacks.forEach(async(i: any) => {
+                let coordenateAplicated:any = await this.coordenatesDao.getCoordenatesById(i.coordenatesid);
+
+                let coordenatesApli = {
+                    latitud: `${coordenateAplicated[0].latitud}`,
+                    longitud: `${coordenateAplicated[0].longitud}`
+                }
+
+                sack.push({
+                    id: `${i.id}`,
+                    coordenates: coordenatesApli,
+                    date: `${i.dateaplicated}`,
+                    inPlot: `${i.inplot}`,
+                    operator: `${i.operator}`,
+                    used: `${i.used}`
+                });
+
+            });
+
+            parcelas.push({
+                clave: `${parcela.codigo}`,
+                ingenioId: `${parcela.ingenioid}`,
+                latitud:`${coordenate[0].latitud}`,
+                longitud: `${coordenate[0].longitud}`,
+                sacks: sack
+            })
+        }
+
+        res.status(200).send(parcelas);
+        logger.debug('CONTROLLER: Method getParcelaByEjido Ending');
+    }
+
 }

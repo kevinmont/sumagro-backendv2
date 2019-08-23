@@ -24,6 +24,15 @@ export default class DatabaseRoute{
                 this.databaseController.getExcel(req,res);
             });
 
-        
+        app.route('/sumagro-app/ejidolist/:ingenioId')
+        .get((req:express.Request,res:express.Response)=>{
+            this.databaseController.getEjidoByIngenioId(req,res);
+        })
+
+        app.route('/sumagro-app/parcela/ejido/:ejido')
+        .get((req:express.Request,res:express.Response)=>{
+            this.databaseController.getParcelaByEjido(req,res);
+        })
+
     }
 }
