@@ -11,7 +11,8 @@ export default class Mysql{
             user: 'root',
             password: 'Holamundo1250',
             database: 'sumagro-dev',
-            
+            connectionLimit: 200,
+            queueLimit: 150
             });
         
     }

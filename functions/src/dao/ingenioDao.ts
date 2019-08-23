@@ -18,6 +18,14 @@ export default class ingenioDao {
         return execution[0][`EXISTS(SELECT id FROM ingenios WHERE id=${ingenioId})`];
     }
 
+    async getIngenioDetails(ingenioId:number){
+        logger.info("Dao: Method getIngenioDetails Startting");
+        let query = `SELECT * from ingenios where id=${ingenioId}`;
+        let response = await this.mysql.query(query);
+        logger.info("Dao: Method getIngenioDetails Ended");
+        return response;
+    }
+
     async deleteIngeniosById(ingenioId:string){
         logger.info('DAO: Method deleteIngeniosById Starting');
         let sql = `DELETE FROM ingenios WHERE id = ${ingenioId}`;
@@ -70,6 +78,13 @@ export default class ingenioDao {
         logger.info(`sql getDataTable: ${sql}`);
         logger.debug('DAO: Method getDatatables Ending');
         return await this.mysql.query(sql);
+    }
+
+    async getListOfIngenios(){
+        logger.info("'DAO: Method getListOfIngenios Startting'");
+        let query = "SELECT id,name FROM `sumagro-dev`.ingenios";
+        logger.info("'DAO: Method getListOfIngenios Ending'");
+        return await this.mysql.query(query);           
     }
     
 }

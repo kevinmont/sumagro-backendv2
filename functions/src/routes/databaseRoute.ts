@@ -23,5 +23,7 @@ export default class DatabaseRoute{
             .get((req: express.Request, res: express.Response)=>{
                 this.databaseController.getExcel(req,res);
             });
+
+        
     }
 }
