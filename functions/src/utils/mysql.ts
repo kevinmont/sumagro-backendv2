@@ -7,10 +7,10 @@ export default class Mysql{
 
     constructor(){
         this.connection = mysql.createPool({
-            host: 'sumagro-dev.csdxmz0vjytf.us-east-1.rds.amazonaws.com',
-            user: 'superUsuario',
+            host: 'localhost:3306',
+            user: 'root',
             port: 3306,
-            password: 'Dist2019',
+            password: '',
             database: 'sumagro-dev',
             connectionLimit: 200,
             queueLimit: 150
