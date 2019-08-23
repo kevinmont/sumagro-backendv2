@@ -44,5 +44,10 @@ export default class OrderRoute{
             this.ingenioController.getDataentranceByIngenio(req,res);
         })
 
+
+        app.route('/sumagro-app/getlist/ingenios')
+            .get((req: express.Request,res:express.Response)=>{
+                this.ingenioController.getIngeniosList(req,res);
+            })
     }
 }

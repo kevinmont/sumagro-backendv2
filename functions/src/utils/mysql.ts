@@ -12,7 +12,8 @@ export default class Mysql{
             port: 3306,
             password: 'Dist2019',
             database: 'sumagro-dev',
-            
+            connectionLimit: 200,
+            queueLimit: 150
             });
         
     }

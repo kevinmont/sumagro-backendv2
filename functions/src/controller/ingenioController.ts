@@ -302,8 +302,19 @@ export default class IngenioController {
         res.status(200).send(structureIngenios);
     }
 
-    async getIngenioDetails(req : Request, res : Response) {
-        return;
+    async getIngenioDetails(req: Request,res: Response){
+        let ingenioId = req.params.ingenioId;
+        let response:any = await this.ingenioDao.getIngenioDetails(ingenioId);
+        if(response.length){
+            logger.info("INGENIO DETAILS",response[0]);
+            let addressObject:any = await this.addressDao.getAddressById(response[0].addressid);
+            delete response[0].addressid;
+            response[0].address = addressObject[0];
+            res.status(200).send(response[0]);
+        }else{
+            res.status(200).send({});
+        }
+        
     }
 
     async getFormulaByingenio(req : Request, res : Response) {
@@ -346,7 +357,7 @@ export default class IngenioController {
         } else {
             data = await this.ingenioDao.getCountFormule(type, ingenioId);
         }
-
+        logger.info("REPONSE OF SEARCH",data);
         for (let element of data) {
             response.push({name: `${
                     element.description
@@ -514,5 +525,9 @@ export default class IngenioController {
         logger.debug('CONTROLLER: Method getDataentranceByIngenio Ending');
         res.status(200).send(response);
     }
-    
+
+    async getIngeniosList(req:Request,res:Response){
+        let response =await this.ingenioDao.getListOfIngenios(); 
+        res.status(200).send(response);
+    }
 }

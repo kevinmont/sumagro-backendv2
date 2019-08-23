@@ -73,40 +73,6 @@ export default class DatabaseController{
             objectdata.push(element.ejidolocalidad);
         }
         res.status(200).send(objectdata);
-        
-        // let dataOrder:any = await this.orderDao.orderById(orderId);
-        // if(!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
-        // let address: any = await this.addressDao.getAddressById(orderId);
-        // let subOrder: any = await this.subOrdersDao.getsubOrdersById(orderId);
-        // let order: any = {};
-        // let sub: any = [];
-
-        // subOrder.forEach((i: any) => {
-        //     sub.push({
-        //         id: `${i.id}`,
-        //         captured: `${i.captured}`,
-        //         description: `${i.description}`,
-        //         quantity: `${i.quantity}`,
-        //         received: `${i.received}`,
-        //         status: `${i.status}`
-        //     })
-        // });
-
-        // order = {
-        //     id: `${dataOrder[0].id}`,
-        //     client: `${dataOrder[0].client}`,
-        //     ingenioId: `${dataOrder[0].ingenioid}`,
-        //     shippingdate: `${dataOrder[0].shippingdate}`,
-        //     dateentrance: `${dataOrder[0].dateentrance}`,
-        //     clientAddress: `${address[0].localidad}`,
-        //     operationUnit: `${dataOrder[0].operationunit}`,
-        //     operator: `${dataOrder[0].operator}`,
-        //     plates: `${dataOrder[0].plates}`,
-        //     remissionNumber: `${dataOrder[0].remissionnumber}`,
-        //     shippingDate: `${dataOrder[0].shippingdate}`,
-        //     status: `${dataOrder[0].status}`,
-        //     subOrders: sub
-        // }
         logger.debug('CONTROLLER: Method getEjidoByIngenioId Ending');
     }
 
