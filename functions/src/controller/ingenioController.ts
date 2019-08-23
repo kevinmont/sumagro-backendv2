@@ -514,4 +514,5 @@ export default class IngenioController {
         logger.debug('CONTROLLER: Method getDataentranceByIngenio Ending');
         res.status(200).send(response);
     }
+    
 }

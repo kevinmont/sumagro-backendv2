@@ -43,5 +43,6 @@ export default class OrderRoute{
         .get((req:express.Request,res:express.Response)=>{
             this.ingenioController.getDataentranceByIngenio(req,res);
         })
+
     }
 }

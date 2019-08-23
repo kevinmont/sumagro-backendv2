@@ -38,4 +38,11 @@ export default class DatabaseDao {
         logger.info("DAO: Method getRecordsByIngenioId Ended");
         return response;
     }
+
+    async getEjidoByIngenio(ingenioId:any){
+        logger.info(`DAO: getOrdersByIngenio Startting`);
+        let sql='SELECT DISTINCT ejidolocalidad from `sumagro-dev`.database'+` where ingenioid=${ingenioId}`;
+        logger.debug(`DAO: getOrdersByIngenio ending`);
+        return await this.mysql.query(sql);
+    }
 }
