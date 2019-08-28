@@ -34,5 +34,14 @@ export default class DatabaseRoute{
             this.databaseController.getParcelaByEjido(req,res);
         })
 
+        app.route('/sumagro-app/databases/valeGenerators')
+            .post((req:express.Request,res:express.Response)=>{
+                this.databaseController.generateVale(req,res);
+            })
+
+        app.route('/sumagro-app/database/updaterecord/:type/parcela/:parcela')
+            .put((req:express.Request,res:express.Response)=>{
+                this.databaseController.updateProperty(req,res);
+            })
     }
 }

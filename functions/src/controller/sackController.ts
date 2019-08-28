@@ -10,6 +10,9 @@ import * as log4js from 'log4js';
 import Mysql from '../utils/mysql';
 import QrdataDao from '../dao/qrdataDao';
 import Output from '../dao/outputDao';
+import AplicatedDao from '../dao/aplicatedDao';
+import DatabaseDao from '../dao/databaseDao';
+import GeolocationDistance from '../utils/GeolocationDistance';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -22,7 +25,9 @@ export default class SackController{
     public coordenateDao : CoordenatesDao;
     public qrdataDao: QrdataDao
     public outputDao: Output
-
+    public aplicatedDao: AplicatedDao;
+    public databaseDao: DatabaseDao;
+    public geolocationDistance: GeolocationDistance;
     constructor(mysql: Mysql){
         this.sackDao = new SackDao(mysql);
         this.orderDao = new OrderDao(mysql);
@@ -32,6 +37,9 @@ export default class SackController{
         this.coordenateDao = new CoordenatesDao(mysql);
         this.qrdataDao = new QrdataDao(mysql);
         this.outputDao = new Output(mysql);
+        this.aplicatedDao = new AplicatedDao(mysql);
+        this.databaseDao = new DatabaseDao();
+        this.geolocationDistance = new GeolocationDistance();
     }
 
     async registerSacks(req: Request,res: Response){
@@ -93,26 +101,56 @@ export default class SackController{
 
     async updateInventory(req: any, res: Response){
         logger.info('CONTROLLER: Method updateInventory Starting');
-        let {id, ingenioId, description, userId, qrData,ingenioName} = req.body;
-        let record = {id, ingenioId, description, userId, qrData,ingenioName};
+        let {id, ingenioId, description, userId,ingenioName,productor} = req.body;
+        let record = {id, ingenioId, description, userId,ingenioName};
         let operatorName:any = req.headers.email;
         if(!record.id) res.status(400).send('id is missing');
         if(!record.ingenioId) res.status(400).send('ingenioId is missing');
         if(!record.ingenioName) res.status(400).send('ingenioName is missing');
         if(!record.description) res.status(400).send('description is missing');
         if(!record.userId) res.status(400).send('userId is missing');
-        if(!record.qrData) res.status(400).send('qrData is missing');
-        await this.coordenateDao.saveCordenate(record);
-        let coordenate:any = await this.coordenateDao.getCordenate(record)
-        let coordenateId:number = parseInt(coordenate[0].id);
-        await this.qrdataDao.registeringQrData(record, coordenateId);
-        let qrDatas:any = await this.qrdataDao.getQrDataCoordenateId(coordenateId);
-        let qrDataId = parseInt(qrDatas[0].id);
-        let response = await this.outputDao.saveOutputs(record,operatorName,qrDataId);
+        let response = await this.outputDao.saveOutputs(record,operatorName);
+        let response2 = await this.aplicatedDao.saveAplicated(record,productor);
+        logger.info("RESPONSE UPDATE INVENTORY",response2);
         let inventoryId = parseInt(record.id);
         await this.sackDao.deleteInventory(inventoryId);
+
         logger.info('CONTROLLER: Method updateInventory Ending');
         res.send({msg:response});
+    }
+
+    async registerSackUsed(req: Request,res: Response){
+        logger.info("RegisterSackUsed is starting...");
+        let {id,longitud,latitud,dateAplicated} = req.body;
+        let metadata:any = await this.aplicatedDao.getAplicatedById(id);
+        logger.info("METADATA",metadata);
+        let coordenatesIds:any = await this.databaseDao.getCoordenatesIdsByProductor(metadata[0].operator);
+        logger.info("COORDENATESIDS",coordenatesIds);
+        let coordenates = [];
+        for(let id of coordenatesIds){
+            let coord:any = await this.coordenateDao.getCoordenatesById(id.coordenatesid);
+            logger.info("COORD",coord);
+            coordenates.push({
+                codigo: id.codigo,
+                latitud: coord[0].latitud,
+                longitud: coord[0].longitud
+            });
+        }
+        let parcelaMatch = "unknow";
+        let bool = false;
+        for(let coord of coordenates){
+            let response = await this.geolocationDistance.getDistanceFromLatLonInKm(coord.latitud,coord.longitud,latitud,longitud);
+            if(response){
+                bool = true;
+                logger.info("MATCH COORDENATES",bool,coord.codigo);
+                parcelaMatch = coord.codigo;
+            }
+        }
+        
+        await this.aplicatedDao.updatedAplicated(id,longitud,latitud,dateAplicated,bool);
+        await this.aplicatedDao.saveParcelaSack(id,parcelaMatch);
+        logger.info("RegisterSackUsed is ended");
+        res.status(200).send({msg: "Updated" });
     }
 
 }

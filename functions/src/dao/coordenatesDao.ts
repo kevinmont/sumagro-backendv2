@@ -25,7 +25,7 @@ export default class CoordenatesDao{
         logger.info('DAO: Method getCoordenatesById Ending');
         return await this.mysql.query(sql);
     }
-
+   
     async saveCordenate(record:any){
         logger.info('DAO: Method saveCordenate Starting');
         let sql = `INSERT INTO coordenates(latitud,longitud) 

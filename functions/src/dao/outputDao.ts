@@ -17,11 +17,11 @@ export default class Output{
         return await this.mysql.query(sql);
     }
 
-    async saveOutputs(record:any,operatorName:any,qrdataId:any){
+    async saveOutputs(record:any,operatorName:any){
         logger.info('DAO: Method saveOutputs Starting');
-        let sql = `INSERT INTO outputs(id,description,operator,userid,ingenioid,qrdataid) 
+        let sql = `INSERT INTO outputs(id,description,operator,userid,ingenioid) 
         VALUES(${record.id}, "${record.description}", "${operatorName}", 
-        "${record.userId}", ${record.ingenioId}, ${qrdataId})`;
+        "${record.userId}", ${record.ingenioId})`;
         logger.debug('DAO: Method saveOutputs Ending');
         return await this.mysql.query(sql);
     }

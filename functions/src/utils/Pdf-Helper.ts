@@ -279,28 +279,28 @@ export default class PdfHelper{
         <body>`;
     }
 
-    bodyVale(vale:any,qr:any){
+    bodyVale(vale:any,qr:any,totalBultos:number){
         return `
             <table width="100%" border="0" style="border:1px solid #000000; margin-bottom: 48px;">
                 <tr style="height: 40px;">
                     <td>Valido por:</td>
-                    <td colspan="2"><span style="text-decoration: underline; text-aling: center;">${vale[14]}/${vale[15]}</span></td>
+                    <td colspan="2"><span style="text-decoration: underline; text-aling: center;">${totalBultos} bultos </span></td>
                     <td> Fecha de emision:</td>
-                    <td><span style="text-decoration: underline">${vale[16]}</span></td>
+                    <td><span style="text-decoration: underline">${vale.fechaemision}</span></td>
                 </tr>
                 <tr style="height: 40px;">
                     <td>A favor de:</td>
-                    <td colspan="2"><span style="text-decoration: underline">${vale[2]}</span></td>
+                    <td colspan="2"><span style="text-decoration: underline">${vale.productor.split("-").join(" ")}</span></td>
                     <td> CURP:</td>
-                    <td><span style="text-decoration: underline">${vale[3]}</span></td>
+                    <td><span style="text-decoration: underline">${vale.curp}</span></td>
                 </tr>
                 <tr style="height: 40px;">
                     <td colspan="2">Concepto de apoyo autorizado:</td>
-                    <td colspan="3">${vale[12]}</td>
+                    <td colspan="3">${vale.conceptoapoyo}</td>
                 </tr>
                 <tr style="height: 40px;">
                     <td colspan="2"> Superficie autorizada en hectáreas:</td>
-                    <td colspan="3">${vale[6]}</td>
+                    <td colspan="3">${vale.superficieautorizada}</td>
                     
                 </tr>
                 <tr style="height: 40px;"> 
@@ -321,33 +321,25 @@ export default class PdfHelper{
         let content = this.headVale();
         let properties:any = {};
         
-        for(let i=0;i<records.length-1;i++){
-           
-            for(let h=0;h<records[records.length-1].length;h++){
-                switch(h){
-                    case 1:
-                    case 2:
-                    case 3:
-                    case 13:
-                    case 23:
-                    case 24:
-                    case 26:
-                    
-                    case 28:
-                    case 29:
-                            properties[records[records.length-1][h]] = records[i][h];
-                        break;
-                    default:
-                        break;
-                    
+        for(let i=0;i<records.length;i++){
+           properties['productor'] = records[i].productor;
+           properties['productos']=[];
+            let keys= Object.keys(records[i]);
+            let totalBultos = 0;
+            for(let key of keys){
+                if(key!='productor' && key!="fechaemision" && key!='curp' && key!='conceptoapoyo' && key!='superficieautorizada'){
+                properties['productos'].push({formula: key,quantity: records[i][key]});
+                totalBultos += records[i][key]
                 }
+            }
+            let qr = await QRCode.toDataURL(JSON.stringify(properties));
+            console.log("qr:",qr);
+            content= content + this.bodyVale(records[i],qr,totalBultos);
                 
             }
            
-        let qr = await QRCode.toDataURL(JSON.stringify(properties));
-            console.log("qr:",qr);
-        content= content + this.bodyVale(records[i],qr);
-        }
+        
+        
         content = content + this.footvale();
     
         return content;
