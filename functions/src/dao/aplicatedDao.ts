@@ -17,4 +17,13 @@ export default class AplicatedDao{
         logger.info('DAO: Method getAplicatedByOperator Ending');
         return await this.mysql.query(sql);
     }
+
+    async saveAplicated(record:any,coordenateId:any){
+        logger.info('DAO: Method saveAplicated Starting');
+        let sql = `INSERT INTO aplicated(id,coordenatesid,description,inplot,used,dateaplicated,ingenioid,operator) 
+        VALUES(${record.id}, ${coordenateId}, "${record.description}", 0, 0, 
+        "${new Date()}", ${record.ingenioId}, ${record.operator})`;
+        logger.debug('DAO: Method saveAplicated Ending');
+        return await this.mysql.query(sql);
+    }
 }

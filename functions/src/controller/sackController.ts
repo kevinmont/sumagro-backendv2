@@ -10,6 +10,7 @@ import * as log4js from 'log4js';
 import Mysql from '../utils/mysql';
 import QrdataDao from '../dao/qrdataDao';
 import Output from '../dao/outputDao';
+import AplicatedDao from '../dao/aplicatedDao';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -22,6 +23,7 @@ export default class SackController{
     public coordenateDao : CoordenatesDao;
     public qrdataDao: QrdataDao
     public outputDao: Output
+    public aplicatedDao: AplicatedDao;
 
     constructor(mysql: Mysql){
         this.sackDao = new SackDao(mysql);
@@ -32,6 +34,7 @@ export default class SackController{
         this.coordenateDao = new CoordenatesDao(mysql);
         this.qrdataDao = new QrdataDao(mysql);
         this.outputDao = new Output(mysql);
+        this.aplicatedDao = new AplicatedDao(mysql);
     }
 
     async registerSacks(req: Request,res: Response){
@@ -93,9 +96,8 @@ export default class SackController{
 
     async updateInventory(req: any, res: Response){
         logger.info('CONTROLLER: Method updateInventory Starting');
-        let {id, ingenioId, description, userId, qrData,ingenioName} = req.body;
-        let record = {id, ingenioId, description, userId, qrData,ingenioName};
-        let operatorName:any = req.headers.email;
+        let {id, ingenioId, description, userId, qrData,ingenioName, operador} = req.body;
+        let record = {id, ingenioId, description, userId, qrData,ingenioName, operador};
         if(!record.id) res.status(400).send('id is missing');
         if(!record.ingenioId) res.status(400).send('ingenioId is missing');
         if(!record.ingenioName) res.status(400).send('ingenioName is missing');
@@ -108,11 +110,12 @@ export default class SackController{
         await this.qrdataDao.registeringQrData(record, coordenateId);
         let qrDatas:any = await this.qrdataDao.getQrDataCoordenateId(coordenateId);
         let qrDataId = parseInt(qrDatas[0].id);
-        let response = await this.outputDao.saveOutputs(record,operatorName,qrDataId);
+        await this.outputDao.saveOutputs(record,qrDataId);
+        await this.aplicatedDao.saveAplicated(record, coordenateId);
         let inventoryId = parseInt(record.id);
         await this.sackDao.deleteInventory(inventoryId);
         logger.info('CONTROLLER: Method updateInventory Ending');
-        res.send({msg:response});
+        res.send({msg:'salida registrada'});
     }
 
 }
