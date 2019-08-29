@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import AddressDao from '../dao/addressDao';
 import OrderDao from '../dao/orderDao';
+import InventoryDao from '../dao/inventoryDao';
+import AplicatedDao from '../dao/aplicatedDao';
 import SubOrdersDao from '../dao/subOrdersDao';
 import * as log4js from 'log4js';
 import IngenioDao from '../dao/ingenioDao';
@@ -10,26 +12,32 @@ import PdfHelper from '../utils/Pdf-Helper';
 import * as pdf from 'html-pdf';
 import Mysql from '../utils/mysql';
 import {TYPEINGENIO} from '../models/Order';
+import {arrtypes, types} from '../models/ingenio';
+
 
 
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
 export default class OrderController {
+    public aplicatedDao: AplicatedDao;
     public orderDao: OrderDao;
     public ingenioDao: IngenioDao;
     public pdfHelper: PdfHelper;
     public addressDao: AddressDao;
+    public inventoryDao: InventoryDao;
     public subOrdersDao: SubOrdersDao;
     public sumagroIntransit: SumagroIntransit;
     public sumagroOutput: SumagroOutput;
     constructor(mysql: Mysql) {
+        this.aplicatedDao= new AplicatedDao(mysql);
         this.sumagroOutput=new SumagroOutput(mysql);
         this.sumagroIntransit= new SumagroIntransit(mysql);
         this.orderDao = new OrderDao(mysql);
         this.ingenioDao = new IngenioDao(mysql);
         this.addressDao = new AddressDao(mysql);
         this.subOrdersDao = new SubOrdersDao(mysql);
+        this.inventoryDao= new InventoryDao(mysql);
         this.pdfHelper = new PdfHelper();
     }
 
@@ -100,8 +108,41 @@ export default class OrderController {
     async getOrders(req: Request, res: Response) {
         logger.info('CONTROLLER: Method getOrders Startting');
         let status = req.query.status;
+        let type:any;
+        let dateStart:any;
+        let dateEnd:any;
         let ingenioId:any = req.query.ingenioId;
         let resquery:any;
+        logger.info(`datos: ${req.query.type}`);
+        logger.info(`fechaInicio: ${req.query.dateStart}`);
+        logger.info(`fechaFin: ${req.query.dateEnd}`);
+        logger.info(`validacion1: ${req.query.type }`);
+        logger.info(`validacion2: ${arrtypes.includes(req.query.type)}`);
+
+        if(arrtypes.includes(req.query.type)){
+            if(!req.query.dateStart) throw res.status(400).send(`DateStart is required`);
+            if(!req.query.dateEnd) throw res.status(400).send(`DateEnd is required`);
+            dateStart = req.query.dateStart;
+            dateEnd = req.query.dateEnd;
+            type = req.query.type;
+            ingenioId=req.query.ingenioId;
+
+            if(type == types.inventory){
+                logger.info(`entro al inventario`);
+                let dataInventory = await this.inventoryDao.getdatainventoryByDate(dateStart, dateEnd, ingenioId);
+                logger.info(`datos: ${dataInventory}`);
+                return res.status(200).send(dataInventory);
+            }else if(type == types.aplicated){
+                logger.info(`entro a aplicados`);
+                let dataAplicates = await this.aplicatedDao.getdataaplicatedByDate(dateStart, dateEnd, ingenioId);
+                logger.info(`datos: ${dataAplicates}`);
+                return res.status(200).send(dataAplicates);
+            }
+            // else if(){
+                
+            // }  
+
+        }
 
         if(!ingenioId){
             if(!status)
@@ -151,7 +192,7 @@ export default class OrderController {
             })
         }
         logger.debug('CONTROLLER: Method getOrders Ending');
-        res.status(200).send(orders);
+        return res.status(200).send(orders);
     }
 
     async getOrderById(req: Request, res: Response) {

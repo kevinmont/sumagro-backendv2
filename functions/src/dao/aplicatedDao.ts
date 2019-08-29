@@ -64,4 +64,12 @@ export default class AplicatedDao{
         logger.info('DAO: Method saveParcelaSack Ending');
         return await this.mysql.query(query);
     }
+
+    async getdataaplicatedByDate(dateStart:string, dateEnding: string, ingenioId:any){
+        logger.info('DAO: Method getdatainventory Startting');
+        let sql=`SELECT * FROM aplicated where ingenioId=${ingenioId} and date >= '${dateStart} 00:00:00.000' 
+        and date <= '${dateEnding} 23:59:59.000'`;
+        logger.debug('Dao: Method getdatainventory Ending');
+        return await this.mysql.query(sql);
+    }
 }
