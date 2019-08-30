@@ -34,5 +34,7 @@ export default class SackRoute{
             .post((req:express.Request,res: express.Response)=>{
                 this.sackController.registerSackUsed(req,res);
             });
+
+        
     }
 }

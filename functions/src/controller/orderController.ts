@@ -7,7 +7,7 @@ import SubOrdersDao from '../dao/subOrdersDao';
 import IngenioDao from '../dao/ingenioDao';
 import SumagroIntransit from '../dao/intransitDao';
 import sumagroOutputDao from '../dao/sumagroOutputDao';
-import OutputDao from '../dao/OutputDao';
+import OutputDao from '../dao/outputDao';
 import EntranceDao from '../dao/entranceDao';
 
 //import models
