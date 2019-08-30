@@ -163,8 +163,9 @@ export default class OrderController {
                 logger.info(`entro a salidas`);
                 let outputs:any= await this.outputDao.getAllDataByDate(dateStart, dateEnd, ingenioId);
                 return res.status(200).send(outputs);
-            } 
-            return res.status(200).send([]);
+            } else{
+                return res.status(200).send([]);
+            }
         }else{
             if(!ingenioId){
                 if(!status)
