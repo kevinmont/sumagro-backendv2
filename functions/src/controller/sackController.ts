@@ -9,7 +9,7 @@ import CoordenatesDao from '../dao/coordenatesDao';
 import * as log4js from 'log4js';
 import Mysql from '../utils/mysql';
 import QrdataDao from '../dao/qrdataDao';
-import Output from '../dao/outputDao';
+import Output from '../dao/sumagroOutputDao';
 import AplicatedDao from '../dao/aplicatedDao';
 import DatabaseDao from '../dao/databaseDao';
 import GeolocationDistance from '../utils/GeolocationDistance';

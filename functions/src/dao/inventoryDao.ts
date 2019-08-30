@@ -10,10 +10,10 @@ export default class InventoryDao {
         this.mysql = mysql;
     }
 
-    async getdatainventoryByDate(dateStart:string, dateEnding: string, ingenioId:any){
+    async getdatainventoryByDate(dateStart:string, dateEnd: string, ingenioId:any){
         logger.info('DAO: Method getdatainventory Startting');
         let sql=`SELECT * FROM inventory where ingenioid=${ingenioId} and date >= '${dateStart} 00:00:00.000' 
-        and date <= '${dateEnding} 23:59:59.000'`;
+        and date <= '${dateEnd} 23:59:59.000'`;
         logger.debug('Dao: Method getdatainventory Ending');
         return await this.mysql.query(sql);
     }

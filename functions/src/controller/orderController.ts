@@ -1,18 +1,27 @@
-import { Request, Response } from 'express';
+//import Dao's
 import AddressDao from '../dao/addressDao';
 import OrderDao from '../dao/orderDao';
 import InventoryDao from '../dao/inventoryDao';
 import AplicatedDao from '../dao/aplicatedDao';
 import SubOrdersDao from '../dao/subOrdersDao';
-import * as log4js from 'log4js';
 import IngenioDao from '../dao/ingenioDao';
 import SumagroIntransit from '../dao/intransitDao';
-import SumagroOutput from '../dao/outputDao';
+import sumagroOutputDao from '../dao/sumagroOutputDao';
+import OutputDao from '../dao/OutputDao';
+import EntranceDao from '../dao/entranceDao';
+
+//import models
+import {arrtypes, types} from '../models/ingenio';
+import {TYPEINGENIO} from '../models/Order';
+
+//import helpers
 import PdfHelper from '../utils/Pdf-Helper';
 import * as pdf from 'html-pdf';
+
+// import dependencies
+import { Request, Response } from 'express';
 import Mysql from '../utils/mysql';
-import {TYPEINGENIO} from '../models/Order';
-import {arrtypes, types} from '../models/ingenio';
+import * as log4js from 'log4js';
 
 
 
@@ -20,6 +29,7 @@ const logger = log4js.getLogger();
 logger.level = 'debug';
 
 export default class OrderController {
+    public outputDao: OutputDao; 
     public aplicatedDao: AplicatedDao;
     public orderDao: OrderDao;
     public ingenioDao: IngenioDao;
@@ -28,10 +38,13 @@ export default class OrderController {
     public inventoryDao: InventoryDao;
     public subOrdersDao: SubOrdersDao;
     public sumagroIntransit: SumagroIntransit;
-    public sumagroOutput: SumagroOutput;
+    public sumagroOutputDao: sumagroOutputDao;
+    public entranceDao:EntranceDao;
     constructor(mysql: Mysql) {
+        this.outputDao= new OutputDao(mysql);
+        this.entranceDao= new EntranceDao(mysql);
         this.aplicatedDao= new AplicatedDao(mysql);
-        this.sumagroOutput=new SumagroOutput(mysql);
+        this.sumagroOutputDao=new sumagroOutputDao(mysql);
         this.sumagroIntransit= new SumagroIntransit(mysql);
         this.orderDao = new OrderDao(mysql);
         this.ingenioDao = new IngenioDao(mysql);
@@ -113,20 +126,19 @@ export default class OrderController {
         let dateEnd:any;
         let ingenioId:any = req.query.ingenioId;
         let resquery:any;
-        logger.info(`datos: ${req.query.type}`);
+        logger.info(`typo: ${req.query.type}`);
         logger.info(`fechaInicio: ${req.query.dateStart}`);
         logger.info(`fechaFin: ${req.query.dateEnd}`);
-        logger.info(`validacion1: ${req.query.type }`);
-        logger.info(`validacion2: ${arrtypes.includes(req.query.type)}`);
 
         if(arrtypes.includes(req.query.type)){
-            if(!req.query.dateStart) throw res.status(400).send(`DateStart is required`);
-            if(!req.query.dateEnd) throw res.status(400).send(`DateEnd is required`);
+            if(!req.query.dateStart) return res.status(400).send(`DateStart is required`);
+            if(!req.query.dateEnd) return res.status(400).send(`DateEnd is required`);
+            if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
+            if(!(req.query.dateStart <= req.query.dateEnd)) return res.status(400).send(`dateStart is greater than dateEnd`); 
             dateStart = req.query.dateStart;
             dateEnd = req.query.dateEnd;
             type = req.query.type;
-            ingenioId=req.query.ingenioId;
-
+            
             if(type == types.inventory){
                 logger.info(`entro al inventario`);
                 let dataInventory = await this.inventoryDao.getdatainventoryByDate(dateStart, dateEnd, ingenioId);
@@ -137,24 +149,36 @@ export default class OrderController {
                 let dataAplicates = await this.aplicatedDao.getdataaplicatedByDate(dateStart, dateEnd, ingenioId);
                 logger.info(`datos: ${dataAplicates}`);
                 return res.status(200).send(dataAplicates);
-            }
-            // else if(){
-                
-            // }  
-
-        }
-
-        if(!ingenioId){
-            if(!status)
-            resquery = await this.orderDao.getOrdersByStatus();
-            else
-            resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}'`);
+            }else if(type == types.entrance){
+                logger.info(`entro a entrance`);
+                let orders:any= await this.entranceDao.getAllDataByDate(ingenioId, dateStart, dateEnd);
+                let incrementable:any=[];
+                for(let element of orders){
+                    let im:any = await this.orderDao.orderById(+ element.orderid)
+                    logger.info(im[0]);
+                    incrementable.push(im[0]);
+                }
+                resquery=incrementable;
+            }else if(type == types.outputs){
+                logger.info(`entro a salidas`);
+                let outputs:any= await this.outputDao.getAllDataByDate(dateStart, dateEnd, ingenioId);
+                return res.status(200).send(outputs);
+            } 
+            return res.status(200).send([]);
         }else{
-            if(!status)
-            resquery = await this.orderDao.getOrdersByStatus(`where ingenioid=${ingenioId}`);
-            else
-            resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}' AND ingenioid=${ingenioId}`);
+            if(!ingenioId){
+                if(!status)
+                resquery = await this.orderDao.getOrdersByStatus();
+                else
+                resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}'`);
+            }else{
+                if(!status)
+                resquery = await this.orderDao.getOrdersByStatus(`where ingenioid=${ingenioId}`);
+                else
+                resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}' AND ingenioid=${ingenioId}`);
+            }
         }
+
          
 
         let orders: any = [];
@@ -420,7 +444,7 @@ export default class OrderController {
 
     async outputs(req:Request, res:Response){
         logger.info('CONTROLLER: Method outputs Startting');
-        let data:any=await this.sumagroOutput.getAllDataOutputs();
+        let data:any=await this.sumagroOutputDao.getAllDataOutputs();
         let response:any=[];
         for(let element of data){
             let ingenio:any = await this.ingenioDao.getIngenioById(element.ingenioid)
