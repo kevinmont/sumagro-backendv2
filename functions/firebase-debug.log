@@ -203,3 +203,10 @@
 [info] >  [2019-08-31T00:53:48.837Z]  @firebase/database: FIREBASE WARNING: {"code":"app/invalid-credential","message":"Credential implementation provided to initializeApp() via the \"credential\" property failed to fetch a valid Google OAuth2 access token with the following error: \"Error fetching access token: Error while making request: getaddrinfo ENOTFOUND accounts.google.com accounts.google.com:443. Error code: ENOTFOUND\"."} 
 [info] >  [2019-08-31T00:53:48.839Z]  @firebase/database: FIREBASE WARNING: {"code":"app/invalid-credential","message":"Credential implementation provided to initializeApp() via the \"credential\" property failed to fetch a valid Google OAuth2 access token with the following error: \"Error fetching access token: Error while making request: getaddrinfo ENOTFOUND accounts.google.com accounts.google.com:443. Error code: ENOTFOUND\"."} 
 [info] >  [2019-08-31T00:53:48.840Z]  @firebase/database: FIREBASE WARNING: {"code":"app/invalid-credential","message":"Credential implementation provided to initializeApp() via the \"credential\" property failed to fetch a valid Google OAuth2 access token with the following error: \"Error fetching access token: Error while making request: getaddrinfo ENOTFOUND accounts.google.com accounts.google.com:443. Error code: ENOTFOUND\"."} 
+[debug] [2019-08-31T01:35:45.951Z] File C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\src\utils\mysql.ts changed, reloading triggers
+[debug] [2019-08-31T01:35:48.282Z] Functions runtime initialized.
+[debug] [2019-08-31T01:35:48.284Z] Disabled runtime features: undefined
+[debug] [2019-08-31T01:35:49.224Z] Found google-gax at C:\Users\Usuario\Desktop\SHS\sumagrov2\sumagro-backendv2\functions\node_modules\google-gax\build\src\index.js
+[debug] [2019-08-31T01:35:49.224Z] Outgoing network have been stubbed.
+[debug] [2019-08-31T01:35:49.310Z] Checked functions.config()
+[debug] [2019-08-31T01:35:49.316Z] firebase-admin has been stubbed.
