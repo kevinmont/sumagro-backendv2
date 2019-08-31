@@ -6,9 +6,12 @@ import AplicatedDao from '../dao/aplicatedDao';
 import SubOrdersDao from '../dao/subOrdersDao';
 import IngenioDao from '../dao/ingenioDao';
 import SumagroIntransit from '../dao/intransitDao';
+
 import sumagroOutputDao from '../dao/sumagroOutputDao';
 import OutputDao from '../dao/outputDao';
 import EntranceDao from '../dao/entranceDao';
+import IntransitDao from '../dao/intransitDao';
+
 
 //import models
 import {arrtypes, types} from '../models/ingenio';
@@ -29,6 +32,7 @@ const logger = log4js.getLogger();
 logger.level = 'debug';
 
 export default class OrderController {
+    public intransitDao: IntransitDao;
     public outputDao: OutputDao; 
     public aplicatedDao: AplicatedDao;
     public orderDao: OrderDao;
@@ -41,6 +45,7 @@ export default class OrderController {
     public sumagroOutputDao: sumagroOutputDao;
     public entranceDao:EntranceDao;
     constructor(mysql: Mysql) {
+        this.intransitDao= new IntransitDao(mysql);
         this.outputDao= new OutputDao(mysql);
         this.entranceDao= new EntranceDao(mysql);
         this.aplicatedDao= new AplicatedDao(mysql);
@@ -133,23 +138,26 @@ export default class OrderController {
         if(arrtypes.includes(req.query.type)){
             if(!req.query.dateStart) return res.status(400).send(`DateStart is required`);
             if(!req.query.dateEnd) return res.status(400).send(`DateEnd is required`);
-            if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
+           
             if(!(req.query.dateStart <= req.query.dateEnd)) return res.status(400).send(`dateStart is greater than dateEnd`); 
             dateStart = req.query.dateStart;
             dateEnd = req.query.dateEnd;
             type = req.query.type;
             
             if(type == types.inventory){
+                if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
                 logger.info(`entro al inventario`);
                 let dataInventory = await this.inventoryDao.getdatainventoryByDate(dateStart, dateEnd, ingenioId);
                 logger.info(`datos: ${dataInventory}`);
                 return res.status(200).send(dataInventory);
             }else if(type == types.aplicated){
+                if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
                 logger.info(`entro a aplicados`);
                 let dataAplicates = await this.aplicatedDao.getdataaplicatedByDate(dateStart, dateEnd, ingenioId);
                 logger.info(`datos: ${dataAplicates}`);
                 return res.status(200).send(dataAplicates);
             }else if(type == types.entrance){
+                if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
                 logger.info(`entro a entrance`);
                 let orders:any= await this.entranceDao.getAllDataByDate(ingenioId, dateStart, dateEnd);
                 let incrementable:any=[];
@@ -160,10 +168,26 @@ export default class OrderController {
                 }
                 resquery=incrementable;
             }else if(type == types.outputs){
-                logger.info(`entro a salidas`);
-                let outputs:any= await this.outputDao.getAllDataByDate(dateStart, dateEnd, ingenioId);
-                return res.status(200).send(outputs);
-            } else{
+                if(!ingenioId){
+                    logger.info(`entro a salidas sin ingenio`);
+                    let outputs:any= await this.sumagroOutputDao.getAllDataByDate(dateStart, dateEnd);
+                    return res.status(200).send(outputs);
+                }else{
+                    logger.info(`entro a salidas con ingenio`);
+                    let outputs:any= await this.outputDao.getAllDataByDateByIngenio(dateStart, dateEnd, ingenioId);
+                    return res.status(200).send(outputs);
+                }
+            } else if(type == types.intransit){
+                if(!ingenioId){
+                    logger.info(`entro a en transito sin ingenioId`);
+                    let intransit= await this.intransitDao.getAllDataByDateSumagro(dateStart, dateEnd);
+                    return res.status(200).send(intransit);
+                }else {
+                    logger.info(`entro a en transito`);
+                    let intransit= await this.intransitDao.getAllDataByDate(dateStart, dateEnd, ingenioId);
+                    return res.status(200).send(intransit);
+                }
+            }else{  
                 return res.status(200).send([]);
             }
         }else{
@@ -204,7 +228,6 @@ export default class OrderController {
                 id: `${order.id}`,
                 client: `${order.client}`,
                 ingenioId:`${order.ingenioid}`,
-                shippingdate: `${order.shippingdate}`,
                 dateentrance: `${order.dateentrance}`,
                 clientAddress: `${address[0].localidad}`,
                 operationUnit: `${order.operationunit}`,

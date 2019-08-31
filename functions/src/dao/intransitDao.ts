@@ -24,4 +24,22 @@ export default class IntransitDao {
         logger.debug('DAO Method getalldataIntransit Ending');
         return await this.mysql.query(sql);
     }
+
+    async getAllDataByDate(dateStart:any, dateEnd:any, ingenioId:any){
+        logger.info('DAO: Method getAllDataByDate Startting');
+        let sql=`SELECT * FROM intransit where ingenioId=${ingenioId} and date >= '${dateStart}T00:00:00.000Z' 
+        and date <= '${dateEnd}T23:59:59.000Z'`;
+        logger.info(`sql getAllDataByDate: ${sql}`);
+        logger.debug('Dao: Method getAllDataByDate Ending');
+        return await this.mysql.query(sql);
+    }
+
+    async getAllDataByDateSumagro(dateStart:any, dateEnd:any){
+        logger.info('DAO: Method getAllDataByDate Startting');
+        let sql=`SELECT * FROM sumagrointransit where date >= '${dateStart}T00:00:00.000Z' 
+        and date <= '${dateEnd}T23:59:59.000Z'`;
+        logger.info(`sql getAllDataByDate: ${sql}`);
+        logger.debug('Dao: Method getAllDataByDate Ending');
+        return await this.mysql.query(sql);
+    }
 }
