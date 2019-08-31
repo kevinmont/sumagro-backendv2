@@ -67,8 +67,8 @@ export default class AplicatedDao{
 
     async getdataaplicatedByDate(dateStart:string, dateEnd: string, ingenioId:any){
         logger.info('DAO: Method getdataaplicatedByDate Startting');
-        let sql=`SELECT * FROM aplicated where ingenioId=${ingenioId} and date >= '${dateStart} 00:00:00.000' 
-        and date <= '${dateEnd} 23:59:59.000'`;
+        let sql=`SELECT * FROM aplicated where ingenioId=${ingenioId} and date >= '${dateStart}T00:00:00.000Z' 
+        and date <= '${dateEnd}T23:59:59.000Z'`;
         logger.debug('Dao: Method getdataaplicatedByDate Ending');
         return await this.mysql.query(sql);
     }

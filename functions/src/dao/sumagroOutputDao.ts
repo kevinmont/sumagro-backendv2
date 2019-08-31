@@ -25,4 +25,13 @@ export default class SumagroOutputDao{
         logger.debug('DAO: Method saveOutputs Ending');
         return await this.mysql.query(sql);
     }
+
+    async getAllDataByDate(dateStart:any, dateEnd:any){
+        logger.info('DAO: Method getAllDataByDate Startting');
+        let sql=`SELECT * FROM outputs where date >= '${dateStart}T00:00:00.000Z' 
+        and date <= '${dateEnd}T23:59:59.000Z'`;
+        logger.info(`sql getAllDataByDate: ${sql}`);
+        logger.debug('Dao: Method getAllDataByDate Ending');
+        return await this.mysql.query(sql);
+    }
 }

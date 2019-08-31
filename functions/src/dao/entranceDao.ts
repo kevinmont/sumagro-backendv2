@@ -13,8 +13,8 @@ export default class EntranceDao{
 
     async getAllDataByDate(ingenioId:any,dateStart:any,dateEnd:any){
         logger.info('DAO: Method getAllDataByDate Startting');
-        let sql=`SELECT distinct(orderid) FROM entrance where ingenioid=${ingenioId} and date >= '${dateStart} 00:00:00.000' 
-        and date <= '${dateEnd} 23:59:59.000'`;
+        let sql=`SELECT distinct(orderid) FROM entrance where ingenioid=${ingenioId} and date >= '${dateStart}T00:00:00.000Z' 
+        and date <= '${dateEnd}T23:59:59.000Z'`;
         logger.info(`sql getAllDataByDate: ${sql}`);
         logger.debug('Dao: Method getAllDataByDate Ending');
         return await this.mysql.query(sql);
