@@ -7,11 +7,10 @@ export default class Mysql{
 
     constructor(){
         this.connection = mysql.createPool({
-            host: 'sumagro-dev.csdxmz0vjytf.us-east-1.rds.amazonaws.com',
-            user: 'superUsuario',
+            host: 'sumagro-dev.c3xbluk1m0qi.us-east-1.rds.amazonaws.com',
+            user: 'sumagroMaster',
             password: 'Dist2019',
             database: 'sumagro-dev',
-            
             });
         
     }

@@ -324,7 +324,6 @@ export default class OrderController {
         let subOrder: any = await this.subOrdersDao.getsubOrdersById(orderId);
         let order: any = {};
         let sub: any = [];
-
         subOrder.forEach((i: any) => {
             sub.push({
                 id: `${i.id}`,
@@ -341,7 +340,9 @@ export default class OrderController {
             client: `${dataOrder[0].client}`,
             shippingdate: `${dataOrder[0].shippingdate}`,
             dateentrance: `${dataOrder[0].dateentrance}`,
+            dateoutput: dataOrder[0].dateoutput,
             clientAddress: `${address[0].localidad}`,
+            flet: dataOrder[0].flet,
             operationUnit: `${dataOrder[0].operationunit}`,
             operator: `${dataOrder[0].operator}`,
             plates: `${dataOrder[0].plates}`,

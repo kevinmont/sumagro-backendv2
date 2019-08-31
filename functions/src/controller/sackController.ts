@@ -13,6 +13,7 @@ import Output from '../dao/sumagroOutputDao';
 import AplicatedDao from '../dao/aplicatedDao';
 import DatabaseDao from '../dao/databaseDao';
 import GeolocationDistance from '../utils/GeolocationDistance';
+import { SackType } from '../models/sackType';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -151,6 +152,11 @@ export default class SackController{
         await this.aplicatedDao.saveParcelaSack(id,parcelaMatch);
         logger.info("RegisterSackUsed is ended");
         res.status(200).send({msg: "Updated" });
+    }
+
+    getListOfTypeSacks(req:Request,res:Response){
+        let response = SackType;
+        res.status(200).send(response)
     }
 
 }
