@@ -14,8 +14,8 @@ import IntransitDao from '../dao/intransitDao';
 
 
 //import models
-import {arrtypes, types} from '../models/ingenio';
-import {TYPEINGENIO} from '../models/Order';
+import { arrTypesFilters, arrTypesFiltersCompare } from '../models/ingenio';
+import { TYPEINGENIO } from '../models/Order';
 
 //import helpers
 import PdfHelper from '../utils/Pdf-Helper';
@@ -33,7 +33,7 @@ logger.level = 'debug';
 
 export default class OrderController {
     public intransitDao: IntransitDao;
-    public outputDao: OutputDao; 
+    public outputDao: OutputDao;
     public aplicatedDao: AplicatedDao;
     public orderDao: OrderDao;
     public ingenioDao: IngenioDao;
@@ -43,19 +43,19 @@ export default class OrderController {
     public subOrdersDao: SubOrdersDao;
     public sumagroIntransit: SumagroIntransit;
     public sumagroOutputDao: sumagroOutputDao;
-    public entranceDao:EntranceDao;
+    public entranceDao: EntranceDao;
     constructor(mysql: Mysql) {
-        this.intransitDao= new IntransitDao(mysql);
-        this.outputDao= new OutputDao(mysql);
-        this.entranceDao= new EntranceDao(mysql);
-        this.aplicatedDao= new AplicatedDao(mysql);
-        this.sumagroOutputDao=new sumagroOutputDao(mysql);
-        this.sumagroIntransit= new SumagroIntransit(mysql);
+        this.intransitDao = new IntransitDao(mysql);
+        this.outputDao = new OutputDao(mysql);
+        this.entranceDao = new EntranceDao(mysql);
+        this.aplicatedDao = new AplicatedDao(mysql);
+        this.sumagroOutputDao = new sumagroOutputDao(mysql);
+        this.sumagroIntransit = new SumagroIntransit(mysql);
         this.orderDao = new OrderDao(mysql);
         this.ingenioDao = new IngenioDao(mysql);
         this.addressDao = new AddressDao(mysql);
         this.subOrdersDao = new SubOrdersDao(mysql);
-        this.inventoryDao= new InventoryDao(mysql);
+        this.inventoryDao = new InventoryDao(mysql);
         this.pdfHelper = new PdfHelper();
     }
 
@@ -103,7 +103,7 @@ export default class OrderController {
         logger.info(`orderidquery: ${orderidquery}`);
         if (orderidquery) {
             await this.subOrdersDao.saveSubOrders(subOrders, orderidquery);
-            await this.orderDao.updateRemission(object.remissionNumber); 
+            await this.orderDao.updateRemission(object.remissionNumber);
             res.status(201).send();
         } else {
             res.status(404).send(`Order not found`);
@@ -126,85 +126,20 @@ export default class OrderController {
     async getOrders(req: Request, res: Response) {
         logger.info('CONTROLLER: Method getOrders Startting');
         let status = req.query.status;
-        let type:any;
-        let dateStart:any;
-        let dateEnd:any;
-        let ingenioId:any = req.query.ingenioId;
-        let resquery:any;
-        logger.info(`typo: ${req.query.type}`);
-        logger.info(`fechaInicio: ${req.query.dateStart}`);
-        logger.info(`fechaFin: ${req.query.dateEnd}`);
+        let ingenioId: any = req.query.ingenioId;
+        let resquery: any;
 
-        if(arrtypes.includes(req.query.type)){
-            if(!req.query.dateStart) return res.status(400).send(`DateStart is required`);
-            if(!req.query.dateEnd) return res.status(400).send(`DateEnd is required`);
-           
-            if(!(req.query.dateStart <= req.query.dateEnd)) return res.status(400).send(`dateStart is greater than dateEnd`); 
-            dateStart = req.query.dateStart;
-            dateEnd = req.query.dateEnd;
-            type = req.query.type;
-            
-            if(type == types.inventory){
-                if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
-                logger.info(`entro al inventario`);
-                let dataInventory = await this.inventoryDao.getdatainventoryByDate(dateStart, dateEnd, ingenioId);
-                logger.info(`datos: ${dataInventory}`);
-                return res.status(200).send(dataInventory);
-            }else if(type == types.aplicated){
-                if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
-                logger.info(`entro a aplicados`);
-                let dataAplicates = await this.aplicatedDao.getdataaplicatedByDate(dateStart, dateEnd, ingenioId);
-                logger.info(`datos: ${dataAplicates}`);
-                return res.status(200).send(dataAplicates);
-            }else if(type == types.entrance){
-                if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
-                logger.info(`entro a entrance`);
-                let orders:any= await this.entranceDao.getAllDataByDate(ingenioId, dateStart, dateEnd);
-                let incrementable:any=[];
-                for(let element of orders){
-                    let im:any = await this.orderDao.orderById(+ element.orderid)
-                    logger.info(im[0]);
-                    incrementable.push(im[0]);
-                }
-                resquery=incrementable;
-            }else if(type == types.outputs){
-                if(!ingenioId){
-                    logger.info(`entro a salidas sin ingenio`);
-                    let outputs:any= await this.sumagroOutputDao.getAllDataByDate(dateStart, dateEnd);
-                    return res.status(200).send(outputs);
-                }else{
-                    logger.info(`entro a salidas con ingenio`);
-                    let outputs:any= await this.outputDao.getAllDataByDateByIngenio(dateStart, dateEnd, ingenioId);
-                    return res.status(200).send(outputs);
-                }
-            } else if(type == types.intransit){
-                if(!ingenioId){
-                    logger.info(`entro a en transito sin ingenioId`);
-                    let intransit= await this.intransitDao.getAllDataByDateSumagro(dateStart, dateEnd);
-                    return res.status(200).send(intransit);
-                }else {
-                    logger.info(`entro a en transito`);
-                    let intransit= await this.intransitDao.getAllDataByDate(dateStart, dateEnd, ingenioId);
-                    return res.status(200).send(intransit);
-                }
-            }else{  
-                return res.status(200).send([]);
-            }
-        }else{
-            if(!ingenioId){
-                if(!status)
+        if (!ingenioId) {
+            if (!status)
                 resquery = await this.orderDao.getOrdersByStatus();
-                else
+            else
                 resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}'`);
-            }else{
-                if(!status)
+        } else {
+            if (!status)
                 resquery = await this.orderDao.getOrdersByStatus(`where ingenioid=${ingenioId}`);
-                else
+            else
                 resquery = await this.orderDao.getOrdersByStatus(`WHERE status='${status}' AND ingenioid=${ingenioId}`);
-            }
         }
-
-         
 
         let orders: any = [];
 
@@ -227,7 +162,7 @@ export default class OrderController {
             orders.push({
                 id: `${order.id}`,
                 client: `${order.client}`,
-                ingenioId:`${order.ingenioid}`,
+                ingenioId: `${order.ingenioid}`,
                 dateentrance: `${order.dateentrance}`,
                 clientAddress: `${address[0].localidad}`,
                 operationUnit: `${order.operationunit}`,
@@ -247,8 +182,8 @@ export default class OrderController {
         logger.info('CONTROLLER: Method getOrderById Startting');
         let orderId = req.params.orderId;
         if (!orderId) throw res.status(400).send('{ "msg":"orderId is required"}');
-        let dataOrder:any = await this.orderDao.orderById(orderId);
-        if(!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
+        let dataOrder: any = await this.orderDao.orderById(orderId);
+        if (!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
         let address: any = await this.addressDao.getAddressById(orderId);
         let subOrder: any = await this.subOrdersDao.getsubOrdersById(orderId);
         let order: any = {};
@@ -284,12 +219,12 @@ export default class OrderController {
         res.status(200).send(order);
     }
 
-    async generatePdf(req:any,res:Response){
+    async generatePdf(req: any, res: Response) {
         logger.info('CONTROLLER: method generatePdf Starting');
-        if(!req.params.orderId) throw res.status(400).send("orderId is required");
+        if (!req.params.orderId) throw res.status(400).send("orderId is required");
         let orderId = req.params.orderId;
-        let dataOrder:any = await this.orderDao.orderById(orderId);
-        if(!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
+        let dataOrder: any = await this.orderDao.orderById(orderId);
+        if (!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
         let response = parseInt(dataOrder[0].addressid)
         logger.info(response)
         let address: any = await this.addressDao.getAddressById(response);
@@ -322,25 +257,25 @@ export default class OrderController {
             status: `${dataOrder[0].status}`,
             subOrders: sub
         }
-        let report =await this.pdfHelper.getRemissionDocument(order);
+        let report = await this.pdfHelper.getRemissionDocument(order);
         logger.info(report);
-        pdf.create(report).toStream((function(err,stream){
-                res.writeHead(200, {
-                  'Content-Type': 'application/pdf',
-                  'responseType': 'blob',
-                  'Content-disposition': `attachment; filename=${orderId}.pdf`
-              });
-              stream.pipe(res);
-      }))
-    logger.debug('CONTROLLER: method generatePdf Ending');
+        pdf.create(report).toStream((function (err, stream) {
+            res.writeHead(200, {
+                'Content-Type': 'application/pdf',
+                'responseType': 'blob',
+                'Content-disposition': `attachment; filename=${orderId}.pdf`
+            });
+            stream.pipe(res);
+        }))
+        logger.debug('CONTROLLER: method generatePdf Ending');
     }
 
-    async getChargeData(req: any,res: Response){
+    async getChargeData(req: any, res: Response) {
         logger.info('CONTROLLER: method getChargeData Starting');
-        if(!req.params.orderId) throw res.status(400).send("orderId is required");
+        if (!req.params.orderId) throw res.status(400).send("orderId is required");
         let orderId = req.params.orderId;
-        let dataOrder:any = await this.orderDao.orderById(orderId);
-        if(!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
+        let dataOrder: any = await this.orderDao.orderById(orderId);
+        if (!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
         let response = parseInt(dataOrder[0].addressid)
         logger.info(response)
         let address: any = await this.addressDao.getAddressById(response);
@@ -372,33 +307,35 @@ export default class OrderController {
             remissionNumber: `${dataOrder[0].remissionnumber}`,
             shippingDate: `${dataOrder[0].shippingdate}`,
             status: `${dataOrder[0].status}`,
-            modelunit : `${dataOrder[0].modelunit}`,
-            mark : `${dataOrder[0].mark}`,
+            modelunit: `${dataOrder[0].modelunit}`,
+            mark: `${dataOrder[0].mark}`,
             subOrders: sub
         }
-        let chargeData =await this.pdfHelper.getChargeFormat(order);
+        let chargeData = await this.pdfHelper.getChargeFormat(order);
         logger.info(chargeData);
-        pdf.create(chargeData,{ format: 'Letter',border: {
-            top: "1in",            // default is 0, units: mm, cm, in, px
-            right: "0in",
-            bottom: "1in",
-            left: "0in"
-          } }).toStream((function(err,stream){
+        pdf.create(chargeData, {
+            format: 'Letter', border: {
+                top: "1in",            // default is 0, units: mm, cm, in, px
+                right: "0in",
+                bottom: "1in",
+                left: "0in"
+            }
+        }).toStream((function (err, stream) {
             res.writeHead(200, {
-              'Content-Type': 'application/pdf',
-              'Content-disposition': `attachment; filename=SUMAGRO.pdf`
-          });
-          stream.pipe(res);
+                'Content-Type': 'application/pdf',
+                'Content-disposition': `attachment; filename=SUMAGRO.pdf`
+            });
+            stream.pipe(res);
         }))
         logger.debug('CONTROLLER: method getChargeData Ending');
     }
 
-    async getStatusOrder(req: Request,res: Response){
+    async getStatusOrder(req: Request, res: Response) {
         logger.info('CONTROLLER: method getStatusOrder Starting');
         let orderId = req.params.orderId;
-        if(!orderId) throw res.status(400).send('orderId is required');
-        let data:any = await this.orderDao.orderById(orderId);
-        if(!data.length) { throw res.status(404).send('order not found'); }
+        if (!orderId) throw res.status(400).send('orderId is required');
+        let data: any = await this.orderDao.orderById(orderId);
+        if (!data.length) { throw res.status(404).send('order not found'); }
         let status = {
             status: data[0].status
         };
@@ -406,9 +343,9 @@ export default class OrderController {
         logger.debug('CONTROLLER: method getStatusOrder Ending');
     }
 
-    async warehouseOrders(req:Request,res:Response){
+    async warehouseOrders(req: Request, res: Response) {
         logger.info('CONTROLLER: method warehouseOrders Starting');
-        let resquery:any = await this.orderDao.getOrdersWareHouse();
+        let resquery: any = await this.orderDao.getOrdersWareHouse();
         let orders: any = [];
 
         for (let order of resquery) {
@@ -452,88 +389,188 @@ export default class OrderController {
         res.status(200).send(orders);
     }
 
-    async getRemissionNumber(req: Request,res: Response){
+    async getRemissionNumber(req: Request, res: Response) {
         logger.info('CONTROLLER: method getRemissionNumber Starting');
-        let response:any = await this.orderDao.getRemissionNumber();
+        let response: any = await this.orderDao.getRemissionNumber();
         logger.debug('CONTROLLER: method getRemissionNumber Ending');
-        res.status(200).send({currentRemissionNumber: response[0].count});
+        res.status(200).send({ currentRemissionNumber: response[0].count });
     }
 
-    async getOrdersByIngenio(req:Request,res:Response){
+    async getOrdersByIngenio(req: Request, res: Response) {
         let ingenioId = req.params.ingenioId;
         let status = req.params.status;
-        let data = await this.orderDao.getOrdersByIngenio(ingenioId,status);
+        let data = await this.orderDao.getOrdersByIngenio(ingenioId, status);
 
         res.status(200).send(data);
     }
 
-    async outputs(req:Request, res:Response){
+    async outputs(req: Request, res: Response) {
         logger.info('CONTROLLER: Method outputs Startting');
-        let data:any=await this.sumagroOutputDao.getAllDataOutputs();
-        let response:any=[];
-        for(let element of data){
-            let ingenio:any = await this.ingenioDao.getIngenioById(element.ingenioid)
+        let data: any = await this.sumagroOutputDao.getAllDataOutputs();
+        let response: any = [];
+        for (let element of data) {
+            let ingenio: any = await this.ingenioDao.getIngenioById(element.ingenioid)
             response.push({
-                id:`${element.id}`,
+                id: `${element.id}`,
                 date: `${element.date}`,
-                ingenioName:`${ingenio[0].name}`,
-                description:`${element.description}`,
-                operator:`${element.operator}`,
-                orderId:`${element.orderid}`,
+                ingenioName: `${ingenio[0].name}`,
+                description: `${element.description}`,
+                operator: `${element.operator}`,
+                orderId: `${element.orderid}`,
             });
         }
         logger.debug('CONTROLLER: Method outputs Ending');
         res.status(200).send(response);
     }
 
-    async intransit(req:Request,res:Response){
+    async intransit(req: Request, res: Response) {
         logger.info('CONTROLLER: Method intransit Startting');
-        let data:any = await this.sumagroIntransit.getalldataIntransit();
-        let response:any=[];
-        for(let element of data){
-            let ingenio:any = await this.ingenioDao.getIngenioById(element.ingenioid)
+        let data: any = await this.sumagroIntransit.getalldataIntransit();
+        let response: any = [];
+        for (let element of data) {
+            let ingenio: any = await this.ingenioDao.getIngenioById(element.ingenioid)
             response.push({
-                id:`${element.id}`,
+                id: `${element.id}`,
                 description: `${element.description}`,
-                ingenioName:`${ingenio[0].name}`,
-                operationUnit:`${element.operationunit}`,
-                plates:`${element.plates}`,
-                orderId:`${element.orderid}`,
-                operator:`${element.operator}`
+                ingenioName: `${ingenio[0].name}`,
+                operationUnit: `${element.operationunit}`,
+                plates: `${element.plates}`,
+                orderId: `${element.orderid}`,
+                operator: `${element.operator}`
             });
         }
         logger.debug('CONTROLLER: Method intransit Ending');
         res.status(200).send(response);
     }
 
-    async countFormule(req:Request,res:Response){
+    async countFormule(req: Request, res: Response) {
         logger.info('CONTROLLER: Method countFormule Startting');
-        if(!req.params.type) res.status(400).send(`Type is requiered`);
-        let type:any =req.params.type;
-        let objectdata:any=[];
-        if(TYPEINGENIO.intransit == type){
-            let data:any = await this.sumagroIntransit.getcountFormuleIntransit('sumagrointransit ');
-            if(!data.length) throw res.status(404).send([]);
-            for(let element of data){
+        if (!req.params.type) res.status(400).send(`Type is requiered`);
+        let type: any = req.params.type;
+        let objectdata: any = [];
+        if (TYPEINGENIO.intransit == type) {
+            let data: any = await this.sumagroIntransit.getcountFormuleIntransit('sumagrointransit ');
+            if (!data.length) throw res.status(404).send([]);
+            for (let element of data) {
                 objectdata.push({
-                    name:`${element.description}`,
-                    quantity:`${element.count}`,
+                    name: `${element.description}`,
+                    quantity: `${element.count}`,
                 });
             }
             res.status(200).send(objectdata);
-        }else if(TYPEINGENIO.outputs == type){
-            let data:any = await this.sumagroIntransit.getcountFormuleIntransit('sumagrooutputs ');
-            if(!data.length) throw res.status(404).send([]);
-            for(let element of data){
+        } else if (TYPEINGENIO.outputs == type) {
+            let data: any = await this.sumagroIntransit.getcountFormuleIntransit('sumagrooutputs ');
+            if (!data.length) throw res.status(404).send([]);
+            for (let element of data) {
                 objectdata.push({
-                    name:`${element.description}`,
-                    quantity:`${element.count}`,
+                    name: `${element.description}`,
+                    quantity: `${element.count}`,
                 });
             }
             res.status(200).send(objectdata);
         }
-
         logger.debug('CONTROLLER: Method countFormule Ending');
+    }
+
+    async getDataForProductFilter(req: Request, res: Response) {
+
+        logger.info('CONTROLLER: Method getDataForProductFilter Startting');
+        if (!req.query.dateStart) throw res.status(400).send(`dateStart is required`);
+        if (!req.query.dateEnd) throw res.status(400).send(`dateEnd is required`);
+        if (!req.query.table) throw res.status(400).send(`table is required`);
+        if (!req.query.type) throw res.status(400).send(`type is required`);
+        logger.info(`validación ${!(req.query.dateStart <= req.query.dateEnd)}`);
+        if (!(req.query.dateStart <= req.query.dateEnd)) return res.status(400).send({ msg: 'dateStart is greater than dateEnd' });
+
+        logger.info(`typo: ${req.query.type} debe ser orden|producto`);
+        logger.info(`table: ${req.query.table} 
+        debe ser intransit|outputs|entrance|inventory|sumagrointransit|sumagrooutputs`);
+        logger.info(`fechaInicio: ${req.query.dateStart}`);
+        logger.info(`fechaFin: ${req.query.dateEnd}`);
+        logger.info(`ingenioId: ${req.query.ingenioId}`);
+
+        // let allDataCount: any = [];
+
+
+        if (arrTypesFilters.includes(req.query.table)) {
+
+            let table: any = req.query.table;
+            let ingenioId: any = req.query.ingenioId;
+            let type: any = req.query.type;
+            let dateStart: any = req.query.dateStart;
+            let dateEnd: any = req.query.dateEnd;
+
+            switch (table) {
+                case arrTypesFiltersCompare.inventory:
+                    logger.info(`entro al inventario`);
+                    if (type == 'producto') {
+                        if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
+                        let dataInventory: any = await this.inventoryDao.getdatainventoryByDate(dateStart, dateEnd, ingenioId);
+                        logger.info(`datos: ${dataInventory}`);
+                        return res.status(200).send(dataInventory);
+                    } else {
+                        return res.status(400).send({ msg: `cannot be done by ${type}` });
+                    }
+                    break;
+                case arrTypesFiltersCompare.intransit:
+                    logger.info(`entro a en transito`);
+                    if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
+                    if (type == 'producto') {
+                        let resp: any = await this.intransitDao.getDataByDateAndIngenioOfproduct(dateStart, dateEnd, ingenioId, 'intransit');
+                        return res.status(200).send(resp);
+                    } else if (type == 'orden') {
+                        let resp: any = await this.intransitDao.getDataByDateAndIngenioOfOrder(dateStart, dateEnd, ingenioId, 'intransit');
+                        return res.status(200).send(resp);
+                    }
+                    break;
+                case arrTypesFiltersCompare.sumagrointransit:
+                    logger.info(`entro a sumagrointransit`);
+                    if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
+                    if (type == 'producto') {
+                        let resp: any = await this.intransitDao.getDataByDateAndIngenioOfproduct(dateStart, dateEnd, ingenioId, 'sumagrointransit');
+                        return res.status(200).send(resp);
+                    } else if (type == 'orden') {
+                        let resp: any = await this.intransitDao.getDataByDateAndIngenioOfOrder(dateStart, dateEnd, ingenioId, 'sumagrointransit');
+                        return res.status(200).send(resp);
+                    }
+                    break;
+                case arrTypesFiltersCompare.outputs:
+                    logger.info('entro a outputs');
+                    if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
+                    if (type == 'producto') {
+                        let resp: any = await this.outputDao.getDataByIngenioAndDateForProduct(dateStart, dateEnd, ingenioId);
+                        return res.status(200).send(resp);
+                    } else {
+                        return res.status(400).send({ msg: `cannot be done by ${type}` });
+                    }
+                    break;
+                case arrTypesFiltersCompare.sumagrooutputs:
+                    logger.info('entro a sumagrooutputs');
+                    if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
+                    if (type == 'producto') {
+                        let resp: any = await this.sumagroOutputDao.getDataByIngenioAndDateForProducts(dateStart, dateEnd, ingenioId);
+                        return res.status(200).send(resp);
+                    } else if (type == 'orden') {
+                        let resp: any = await this.sumagroOutputDao.getDataByIngenioAndDateForOrders(dateStart, dateEnd, ingenioId);
+                        return res.status(200).send(resp);
+                    }
+                    break;
+                case arrTypesFiltersCompare.aplicated:
+                    logger.info('entro a sumagrooutputs');
+                    if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
+                    if (type == 'producto') {
+                        let resp: any = await this.aplicatedDao.getDataByIngenioAndDateForProducts(dateStart, dateEnd, ingenioId);
+                        return res.status(200).send(resp);
+                    } else {
+                        return res.status(400).send({ msg: `cannot be done by ${type}` });
+                    }
+                    break;
+
+                default: return res.status(400).send({ msg: `something went wrong` });
+                    break;
+            }
+        }
+        return res.status(400).send({ msg: `something went wrong` });
     }
 
 }

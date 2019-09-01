@@ -65,11 +65,20 @@ export default class AplicatedDao{
         return await this.mysql.query(query);
     }
 
-    async getdataaplicatedByDate(dateStart:string, dateEnd: string, ingenioId:any){
-        logger.info('DAO: Method getdataaplicatedByDate Startting');
-        let sql=`SELECT * FROM aplicated where ingenioId=${ingenioId} and date >= '${dateStart}T00:00:00.000Z' 
-        and date <= '${dateEnd}T23:59:59.000Z'`;
-        logger.debug('Dao: Method getdataaplicatedByDate Ending');
+    // async getdataaplicatedByDate(dateStart:string, dateEnd: string, ingenioId:any){
+    //     logger.info('DAO: Method getdataaplicatedByDate Startting');
+    //     let sql=`SELECT * FROM aplicated where ingenioId=${ingenioId} and date >= '${dateStart}T00:00:00.000Z' 
+    //     and date <= '${dateEnd}T23:59:59.000Z'`;
+    //     logger.debug('Dao: Method getdataaplicatedByDate Ending');
+    //     return await this.mysql.query(sql);
+    // }
+
+    async getDataByIngenioAndDateForProducts(dateStart:any, dateEnd:any, ingenioId:any){
+        logger.info('DAO: Method getDataByIngenioAndDateForProducts Startting');
+        let sql=`select distinct(description), count(description) as quantity from aplicated
+        where ingenioid=${ingenioId} and date between '${dateStart}T00:00:00.000Z' and '${dateEnd}T23:59:59.000Z'
+        group by description`;
+        logger.debug('DAO: Method getDataByIngenioAndDateForProducts Ending');
         return await this.mysql.query(sql);
     }
 }

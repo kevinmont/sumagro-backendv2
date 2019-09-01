@@ -110,7 +110,7 @@ export default class SackController{
         if(!record.ingenioName) res.status(400).send('ingenioName is missing');
         if(!record.description) res.status(400).send('description is missing');
         if(!record.userId) res.status(400).send('userId is missing');
-        let response = await this.outputDao.saveOutputs(record,operatorName);
+        let response = await this.outputDao.saveOutputs(record,operatorName,productor);
         let response2 = await this.aplicatedDao.saveAplicated(record,productor);
         logger.info("RESPONSE UPDATE INVENTORY",response2);
         let inventoryId = parseInt(record.id);
