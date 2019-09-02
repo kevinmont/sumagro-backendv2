@@ -52,4 +52,19 @@ export default class DatabaseDao {
         logger.info("DAO: Method getRecordsByIngenioId Ended");
         return await this.mysql.query(sql);
     }
+
+    async updateProperty(codigo: string,type:string,value:string){
+        let query = "update `database` set "+ `${type}='${value}' where codigo='${codigo}';`;
+        logger.debug(query);
+        let response = await this.mysql.query(query);
+        return response;
+    }
+
+    async getCoordenatesIdsByProductor(productor:string){
+        logger.info("DAO: Method getRecordsByIngenioId Startting");
+        let sql ='SELECT coordenatesid,codigo from `sumagro-dev`.database'+` where productor='${productor}'`;
+        logger.info("QUERY ",sql);
+        logger.info("DAO: Method getRecordsByIngenioId Ended");
+        return await this.mysql.query(sql);
+    }
 }

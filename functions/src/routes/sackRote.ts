@@ -26,8 +26,13 @@ export default class SackRoute{
         )
 
         app.route('/sumagro-backend/output-ingenio/sacks')
-        .post((req: express.Request, res: express.Response, next: express.NextFunction) => {
+        .post(this.firebase.authentication,(req: express.Request, res: express.Response, next: express.NextFunction) => {
             this.sackController.updateInventory(req, res)
         })
+
+        app.route('/sumagro-app/ingenio/sack-used')
+            .post((req:express.Request,res: express.Response)=>{
+                this.sackController.registerSackUsed(req,res);
+            });
     }
 }
