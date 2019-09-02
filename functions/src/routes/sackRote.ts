@@ -34,5 +34,9 @@ export default class SackRoute{
             .post((req:express.Request,res: express.Response)=>{
                 this.sackController.registerSackUsed(req,res);
             });
+        app.route('/sumagro-app/typesack/list')
+            .get((req:express.Request,res:express.Response)=>{
+                this.sackController.getListOfTypeSacks(req,res);
+            });
     }
 }

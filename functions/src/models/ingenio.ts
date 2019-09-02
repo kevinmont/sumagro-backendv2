@@ -26,6 +26,26 @@ export const arrtypes=[
     "intransit"
 ]
 
+export const arrTypesFilters=[
+    "outputs",
+    "entrance",
+    "aplicated",
+    "inventory",
+    "intransit",
+    "sumagrointransit",
+    "sumagrooutputs"
+]
+
+export enum arrTypesFiltersCompare{
+    outputs= "outputs",
+    entrance= "entrance",
+    aplicated= "aplicated",
+    inventory= "inventory",
+    intransit="intransit",
+    sumagrointransit="sumagrointransit",
+    sumagrooutputs="sumagrooutputs"
+}
+
 export enum types{
     outputs= "outputs",
     entrance= "entrance",

@@ -299,7 +299,6 @@ export default class IngenioController {
                 }`, address: structureaddress})
         }
         logger.debug('CONTROLLER: Method getIngenios Ending');
-        res.header('x-total-count',structureIngenios.length);
         res.status(200).send(structureIngenios);
     }
 

@@ -9,10 +9,11 @@ import CoordenatesDao from '../dao/coordenatesDao';
 import * as log4js from 'log4js';
 import Mysql from '../utils/mysql';
 import QrdataDao from '../dao/qrdataDao';
-import Output from '../dao/outputDao';
+import Output from '../dao/sumagroOutputDao';
 import AplicatedDao from '../dao/aplicatedDao';
 import DatabaseDao from '../dao/databaseDao';
 import GeolocationDistance from '../utils/GeolocationDistance';
+import { SackType } from '../models/sackType';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -109,6 +110,7 @@ export default class SackController{
         if(!record.ingenioName) res.status(400).send('ingenioName is missing');
         if(!record.description) res.status(400).send('description is missing');
         if(!record.userId) res.status(400).send('userId is missing');
+<<<<<<< HEAD
         await this.coordenateDao.saveCordenate(record);
         let coordenate:any = await this.coordenateDao.getCordenate(record)
         let coordenateId:number = parseInt(coordenate[0].id);
@@ -118,6 +120,9 @@ export default class SackController{
         await this.outputDao.saveOutputs(record,qrDataId);
         await this.aplicatedDao.saveAplicated(record, coordenateId);
         let response = await this.outputDao.saveOutputs(record,operatorName);
+=======
+        let response = await this.outputDao.saveOutputs(record,operatorName,productor);
+>>>>>>> 4e4c02f3d32619a5c799373568d252ba0f597dd8
         let response2 = await this.aplicatedDao.saveAplicated(record,productor);
         logger.info("RESPONSE UPDATE INVENTORY",response2);
         let inventoryId = parseInt(record.id);
@@ -159,6 +164,11 @@ export default class SackController{
         await this.aplicatedDao.saveParcelaSack(id,parcelaMatch);
         logger.info("RegisterSackUsed is ended");
         res.status(200).send({msg: "Updated" });
+    }
+
+    getListOfTypeSacks(req:Request,res:Response){
+        let response = SackType;
+        res.status(200).send(response)
     }
 
 }

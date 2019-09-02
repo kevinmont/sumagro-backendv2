@@ -158,9 +158,9 @@ export default class PdfHelper{
                     <tr><td colspan="5" style="height: 20px;"> </td></tr>
                     <tr>
                         <td colspan="2" style="text-align: center;"> ${currentDate.getDate() +`/`+ (currentDate.getMonth()+1)+`/`+currentDate.getFullYear()}</td>
-                        <td style="text-align: center;">${ (order.dateEntrance)?'<u>'+order.dateEntrance+'</u>':'______:______'}</td>
+                        <td style="text-align: center;">${ (order.dateEntrance)?'<u>'+order.dateentrance.split(':')[0]+':'+order.dateentrance.split(':')[1]+'</u>':'______:______'}</td>
                         <td></td>
-                        <td style="text-align: center;">${(order.dateOutput)?'<u>'+order.dateOutput+'</u>':'______:______'}</td>
+                        <td style="text-align: center;">${(order.dateOutput)?'<u>'+order.dateoutput.split(':')[0]+':'+order.dateoutput.split(':')[1]+'</u>':'______:______'}</td>
                     </tr>
                     <tr><td colspan="5" style="height: 20px;"> </td></tr>
                     <tr>
