@@ -19,4 +19,14 @@ export default class EntranceDao{
         logger.debug('Dao: Method getAllDataByDate Ending');
         return await this.mysql.query(sql);
     }
+
+    async getDataReportEntranceByOrder(ingenioId:number,dateStart:string,dateEnd:string){
+        logger.info('DAO: Method getDataReportEntranceByOrder');
+        let query = `select distinct(orderid),description,count(description) as count from ` +"`sumagro-dev`.entrance"+ ` where ingenioid=${ingenioId} and 
+        date between '${dateStart}' and '${dateEnd}' group by orderid,description;`
+        logger.info('Getting data',query);
+        return await this.mysql.query(query);
+    }
+
+    
 }

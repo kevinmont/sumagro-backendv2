@@ -16,12 +16,14 @@ export default class DatabaseController{
     public coordenatesDao:CoordenatesDao;
     public aplicatedDao:AplicatedDao;
     public pdfHelper: PdfHelper;
+    public mysql: Mysql;
     constructor (mysql: Mysql){
         this.coordenatesDao= new CoordenatesDao(mysql);
         this.addressDao= new AddressDao(mysql);
         this.databaseDao = new DatabaseDao();
         this.aplicatedDao = new AplicatedDao(mysql);
         this.pdfHelper = new PdfHelper();
+        this.mysql=mysql;
     }
 
     async uploadDatabaseIngenio (req:Request, res:Response){
@@ -44,6 +46,7 @@ export default class DatabaseController{
             logger.info("coordenatesId: " + typeof coordenatesId);
             logger.info("coordenatesId 2: " + coordenatesId);
             let err:any= await this.databaseDao.saveDatabase(record, addressId,coordenatesId,ingenioId)
+             await this.parcelaDetails(record,ingenioId);
             if(typeof err == "string"){
                 error.push(err); 
             }
@@ -51,6 +54,13 @@ export default class DatabaseController{
 
         logger.debug('CONTROLLER: Method uploadDatabaseIngenio Ending');
         (!error.length)? res.status(200).send(`{}`):res.status(409).send(error);   
+    }
+
+    async parcelaDetails(recods:any,ingenioId:number){
+        logger.info("SAVIN IN ENTITY PARCELAS");
+        let query = "INSERT INTO `sumagro-dev`.parcelas(codigo,bultos,productor,aplicated,zona,ejido,ingenioid)"+` values('${recods[1]}','${recods[28]}','${recods[2]}',0,'${recods[0]}','${recods[10]}',${ingenioId});`;
+        logger.info("SAVED IN ENTITY PARCELA");
+        return this.mysql.query(query);
     }
 
     async getDatabase(req: Request,res: Response){
@@ -112,6 +122,7 @@ export default class DatabaseController{
             }
             parcelas.push({
                 clave: `${parcela.codigo}`,
+                productor: parcela.productor,
                 formula: parcela.formula,
                 ingenioId: `${parcela.ingenioid}`,
                 latitud:`${coordenate[0].latitud}`,
@@ -156,6 +167,10 @@ export default class DatabaseController{
         if(!PropertiesUpdatables.includes(type.toLowerCase())) throw res.status(409).send("Type parameter is invalid");
 
         let responseQuery = await this.databaseDao.updateProperty(codigo,type,value);
+        if(type=="bultos"){
+        await this.databaseDao.updatedParcelas(codigo,type,value);
+        }
+
         logger.info("Updated Property",responseQuery);
         res.status(200).send({msg:"updated"});
 

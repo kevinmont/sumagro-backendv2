@@ -75,10 +75,7 @@ export default class OrderRoute{
             this.orderController.countFormule(req,res);
         })
 
-        app.route('/sumagro-app/reportertype')
-        .get((req:express.Request, res: express.Response)=>{
-            this.orderController.getDataForProductFilter(req,res);
-        })
+        
     }
 
 }

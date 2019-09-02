@@ -162,6 +162,9 @@ export default class SackController{
         
         await this.aplicatedDao.updatedAplicated(id,longitud,latitud,dateAplicated,bool);
         await this.aplicatedDao.saveParcelaSack(id,parcelaMatch);
+        let parcela:any = await this.databaseDao.getParcelaRest(parcelaMatch);
+        let count = parcela.aplicated+1;
+        await this.databaseDao.updatedParcelasRest(count,parcelaMatch,dateAplicated);
         logger.info("RegisterSackUsed is ended");
         res.status(200).send({msg: "Updated" });
     }
