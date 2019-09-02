@@ -12,6 +12,12 @@ export default class SumagroReportRouter{
             .post((req: express.Request,res:express.Response)=>{
                 this.sumagroReportController.generateReport(req,res);
             })
+
+        app.route('/sumagro-app/reportertype')
+        .get((req:express.Request, res: express.Response)=>{
+                this.sumagroReportController.getDataForProductFilter(req,res);
+        })
     }
+
 
 }

@@ -14,7 +14,6 @@ import IntransitDao from '../dao/intransitDao';
 
 
 //import models
-import { arrTypesFilters, arrTypesFiltersCompare } from '../models/ingenio';
 import { TYPEINGENIO } from '../models/Order';
 
 //import helpers
@@ -470,107 +469,6 @@ export default class OrderController {
             res.status(200).send(objectdata);
         }
         logger.debug('CONTROLLER: Method countFormule Ending');
-    }
-
-    async getDataForProductFilter(req: Request, res: Response) {
-
-        logger.info('CONTROLLER: Method getDataForProductFilter Startting');
-        if (!req.query.dateStart) throw res.status(400).send(`dateStart is required`);
-        if (!req.query.dateEnd) throw res.status(400).send(`dateEnd is required`);
-        if (!req.query.table) throw res.status(400).send(`table is required`);
-        if (!req.query.type) throw res.status(400).send(`type is required`);
-        logger.info(`validación ${!(req.query.dateStart <= req.query.dateEnd)}`);
-        if (!(req.query.dateStart <= req.query.dateEnd)) return res.status(400).send({ msg: 'dateStart is greater than dateEnd' });
-
-        logger.info(`typo: ${req.query.type} debe ser orden|producto`);
-        logger.info(`table: ${req.query.table} 
-        debe ser intransit|outputs|entrance|inventory|sumagrointransit|sumagrooutputs`);
-        logger.info(`fechaInicio: ${req.query.dateStart}`);
-        logger.info(`fechaFin: ${req.query.dateEnd}`);
-        logger.info(`ingenioId: ${req.query.ingenioId}`);
-
-        // let allDataCount: any = [];
-
-
-        if (arrTypesFilters.includes(req.query.table)) {
-
-            let table: any = req.query.table;
-            let ingenioId: any = req.query.ingenioId;
-            let type: any = req.query.type;
-            let dateStart: any = req.query.dateStart;
-            let dateEnd: any = req.query.dateEnd;
-
-            switch (table) {
-                case arrTypesFiltersCompare.inventory:
-                    logger.info(`entro al inventario`);
-                    if (type == 'producto') {
-                        if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
-                        let dataInventory: any = await this.inventoryDao.getdatainventoryByDate(dateStart, dateEnd, ingenioId);
-                        logger.info(`datos: ${dataInventory}`);
-                        return res.status(200).send(dataInventory);
-                    } else {
-                        return res.status(400).send({ msg: `cannot be done by ${type}` });
-                    }
-                    break;
-                case arrTypesFiltersCompare.intransit:
-                    logger.info(`entro a en transito`);
-                    if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
-                    if (type == 'producto') {
-                        let resp: any = await this.intransitDao.getDataByDateAndIngenioOfproduct(dateStart, dateEnd, ingenioId, 'intransit');
-                        return res.status(200).send(resp);
-                    } else if (type == 'orden') {
-                        let resp: any = await this.intransitDao.getDataByDateAndIngenioOfOrder(dateStart, dateEnd, ingenioId, 'intransit');
-                        return res.status(200).send(resp);
-                    }
-                    break;
-                case arrTypesFiltersCompare.sumagrointransit:
-                    logger.info(`entro a sumagrointransit`);
-                    if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
-                    if (type == 'producto') {
-                        let resp: any = await this.intransitDao.getDataByDateAndIngenioOfproduct(dateStart, dateEnd, ingenioId, 'sumagrointransit');
-                        return res.status(200).send(resp);
-                    } else if (type == 'orden') {
-                        let resp: any = await this.intransitDao.getDataByDateAndIngenioOfOrder(dateStart, dateEnd, ingenioId, 'sumagrointransit');
-                        return res.status(200).send(resp);
-                    }
-                    break;
-                case arrTypesFiltersCompare.outputs:
-                    logger.info('entro a outputs');
-                    if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
-                    if (type == 'producto') {
-                        let resp: any = await this.outputDao.getDataByIngenioAndDateForProduct(dateStart, dateEnd, ingenioId);
-                        return res.status(200).send(resp);
-                    } else {
-                        return res.status(400).send({ msg: `cannot be done by ${type}` });
-                    }
-                    break;
-                case arrTypesFiltersCompare.sumagrooutputs:
-                    logger.info('entro a sumagrooutputs');
-                    if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
-                    if (type == 'producto') {
-                        let resp: any = await this.sumagroOutputDao.getDataByIngenioAndDateForProducts(dateStart, dateEnd, ingenioId);
-                        return res.status(200).send(resp);
-                    } else if (type == 'orden') {
-                        let resp: any = await this.sumagroOutputDao.getDataByIngenioAndDateForOrders(dateStart, dateEnd, ingenioId);
-                        return res.status(200).send(resp);
-                    }
-                    break;
-                case arrTypesFiltersCompare.aplicated:
-                    logger.info('entro a sumagrooutputs');
-                    if (!ingenioId) throw res.status(400).send({ msg: 'ingenioId is required' });
-                    if (type == 'producto') {
-                        let resp: any = await this.aplicatedDao.getDataByIngenioAndDateForProducts(dateStart, dateEnd, ingenioId);
-                        return res.status(200).send(resp);
-                    } else {
-                        return res.status(400).send({ msg: `cannot be done by ${type}` });
-                    }
-                    break;
-
-                default: return res.status(400).send({ msg: `something went wrong` });
-                    break;
-            }
-        }
-        return res.status(400).send({ msg: `something went wrong` });
     }
 
 }

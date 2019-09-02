@@ -13,7 +13,7 @@ export default class DatabaseDao {
 
     async saveDatabase(arr: any, addressId: any, coordenatesId:any,ingenioId:any) {
         logger.info('DAO: Method RegistredDatabase Startting');
-        let sql = "INSERT INTO `sumagro-dev`.`database`(campo,codigo,productor,curp,rfc,addressid,ciclo,nombreciclo,`order`,"+
+        let sql = "INSERT INTO `sumagro-dev`.`database`(zona,codigo,productor,curp,rfc,addressid,ciclo,nombreciclo,`order`,"+
             `fechasiembra,ejidolocalidad,lote,nombrelote,superficie,superficieautorizada,
             rendimientoha,toneladas,variedad,agr,tabla,fechacosecha,toneladascosechadas,datosarcgis,coordenatesid,
             conceptoapoyo,formula,pesos,bultos,fechaemision,ingenioid) values(
@@ -39,6 +39,20 @@ export default class DatabaseDao {
         return response;
     }
 
+    async getParcelaRest(codigo:string){
+        logger.info("DAO: Method getParcelaRest Starting");
+        let query="SELECT * from `sumagro-dev`.parcelas where "+`codigo=${codigo}`
+        logger.info("DAO: Method getParcelaRest Ended");
+        return this.mysql.query(query);
+    }
+
+    async updatedParcelasRest(count:number,codigo:string,dateAplicated:string){
+        logger.info("DAO: Method getParcelaRest Starting");
+        let query="UPDATE `sumagro-dev`.parcelas set aplicated="+ `${count},set date='${dateAplicated}' where codigo=${codigo}`;
+        logger.info("DAO: Method getParcelaRest Ended");
+        return this.mysql.query(query);
+    }
+
     async getEjidoByIngenio(ingenioId:any){
         logger.info(`DAO: getOrdersByIngenio Startting`);
         let sql='SELECT DISTINCT ejidolocalidad from `sumagro-dev`.database'+` where ingenioid=${ingenioId}`;
@@ -60,9 +74,16 @@ export default class DatabaseDao {
         return response;
     }
 
+    async updatedParcelas(codigo: string,type:string,value:string){
+        let query = "update `parcelas` set "+ `${type}='${value}' where codigo='${codigo}';`;
+        logger.debug(query);
+        let response = await this.mysql.query(query);
+        return response;
+    }
+
     async getCoordenatesIdsByProductor(productor:string){
         logger.info("DAO: Method getRecordsByIngenioId Startting");
-        let sql ='SELECT coordenatesid,codigo from `sumagro-dev`.database'+` where productor='${productor}'`;
+        let sql ='SELECT coordenatesid from `sumagro-dev`.database'+` where productor='${productor}'`;
         logger.info("QUERY ",sql);
         logger.info("DAO: Method getRecordsByIngenioId Ended");
         return await this.mysql.query(sql);
