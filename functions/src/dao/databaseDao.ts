@@ -88,4 +88,11 @@ export default class DatabaseDao {
         logger.info("DAO: Method getRecordsByIngenioId Ended");
         return await this.mysql.query(sql);
     }
+
+    async getRecordsByRango(ingenioId:number,rangoIni:number,rangoFin:number){
+        logger.info("DAO: Method getRecordsByIngenioId Startting");
+        let sql ='SELECT * FROM `sumagro-dev`.database'+` WHERE ingenioid=${ingenioId} AND bultos <> 'actualizando' LIMIT ${rangoIni},${rangoFin}`;
+        logger.info("DAO: Method getRecordsByIngenioId Ended");
+        return await this.mysql.query(sql);
+    }
 }

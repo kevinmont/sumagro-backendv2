@@ -35,7 +35,7 @@ export default class DatabaseRoute{
         })
 
         app.route('/sumagro-app/databases/valeGenerators')
-            .post((req:express.Request,res:express.Response)=>{
+            .get((req:express.Request,res:express.Response)=>{
                 this.databaseController.generateVale(req,res);
             })
 

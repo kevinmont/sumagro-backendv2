@@ -139,7 +139,10 @@ export default class DatabaseController{
 
     async generateVale(req:Request,res:Response){
         console.log("SERVICIO DE RETORNO DE VALES");
-        let records = JSON.parse(req.body);
+        let ingenioId:number = parseInt(req.query.ingenioId);
+        let rangoIni:number = parseInt(req.query.ranIni);
+        let rangoFin:number = parseInt(req.query.ranFin);
+        let records = await this.databaseDao.getRecordsByRango(ingenioId,rangoIni,rangoFin);
         let report =await this.pdfHelper.generateVale(records);
         console.log("SIN PROBLEMAS");
         pdf.create(report,{ format: 'Letter',border: {
