@@ -86,5 +86,13 @@ export default class ingenioDao {
         logger.info("'DAO: Method getListOfIngenios Ending'");
         return await this.mysql.query(query);           
     }
+
+    async getDataAplicated(ingenioId:any, params=''){
+        logger.info('DAO: Method getDataAplicated Startting');
+        let sql=`SELECT * FROM aplicated where ingenioid=${ingenioId} and used = '1' ${params}`;
+        logger.info(`sql method getDataAplicated: ${sql}`);
+        logger.debug(`DAO: Method getDataAplicated Ending`);
+        return await this.mysql.query(sql);
+    }
     
 }

@@ -397,18 +397,26 @@ export default class IngenioController {
                 page = 1;
             }
             discard = (page - 1) * peer_page;
-            data = await this.ingenioDao.getDatatable(type, ingenioId, `LIMIT ${peer_page} OFFSET ${discard}`);
+            if(type != types.aplicated){
+                data = await this.ingenioDao.getDatatable(type, ingenioId, `LIMIT ${peer_page} OFFSET ${discard}`);
+            }else{
+                data = await this.ingenioDao.getDataAplicated(ingenioId, `LIMIT ${peer_page} OFFSET ${discard}`);
+            }
         } else {
-            data = await this.ingenioDao.getDatatable(type, ingenioId);
+            if(type != types.aplicated){
+                data = await this.ingenioDao.getDatatable(type, ingenioId);
+            }else{
+                data = await this.ingenioDao.getDataAplicated(ingenioId);
+            }
         }
 
         if (type == types.aplicated) {
             for (let element of data) {
                 let coordenates: any = await this.coordenatesDao.getCoordenatesById(element.coordenatesid);
-                Object.assign(coordenate, {
-                    latitud: coordenates[0].latitud,
-                    longitud: coordenates[0].longitud
-                })
+                    Object.assign(coordenate, {
+                        latitud: coordenates[0].latitud,
+                        longitud: coordenates[0].longitud
+                    })
                 response.push({
                     id: `${
                         element.id
