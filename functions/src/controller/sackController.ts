@@ -151,7 +151,7 @@ export default class SackController{
         }
         
         await this.aplicatedDao.updatedAplicated(id,longitud,latitud,dateAplicated,bool);
-        await this.aplicatedDao.saveParcelaSack(id,parcelaMatch);
+        await this.aplicatedDao.saveParcelaSack(id,parcelaMatch,dateAplicated);
         let parcela:any = await this.databaseDao.getParcelaRest(parcelaMatch);
         let count = parcela.aplicated+1;
         await this.databaseDao.updatedParcelasRest(count,parcelaMatch,dateAplicated);
