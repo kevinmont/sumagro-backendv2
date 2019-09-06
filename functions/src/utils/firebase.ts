@@ -74,15 +74,15 @@ export default class Firebase{
             let key = userRecord.uid;
             delete user.password;
             user.uid = key;
-            await this.db.ref(`/sumagro/users`).child(key).set(user,(err:any)=>{
-              if(err) {
-                  console.log(err); reject("Usuario ya existente");
-              }else{
-                   resolve(userRecord);
-              }
+            resolve(userRecord);
+          //   await this.db.ref(`/sumagro/users`).child(key).set(user,(err:any)=>{
+          //     if(err) {
+          //         console.log(err); reject("Usuario ya existente");
+          //     }else{
+          //     }
               
-          }
-          );
+          // }
+          // );
 
           })
           .catch(function(error) {

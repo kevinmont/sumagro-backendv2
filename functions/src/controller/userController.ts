@@ -45,13 +45,6 @@ export default class UserController {
             ingenioId
         }
 
-        if (user.phoneNumber == undefined) {
-            delete user.phoneNumber;
-        }
-        if (user.displayName == undefined) {
-            delete user.displayName;
-        }
-
         if (user.ingenioId == undefined && (user.rol == "CAPTURIST" || user.rol == "WAREHOUSE")) {
             delete user.ingenioId;
         }
@@ -60,7 +53,6 @@ export default class UserController {
         let emailUser: any = await this.userDao.getUserById(email);
         console.log(emailUser)
         if (emailUser.length) throw res.status(400).send({ msg: "Email is register" }); 
-
 
         try {
             let response: any = await this.firebase.createUserFirebase(user);
