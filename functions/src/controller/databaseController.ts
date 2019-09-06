@@ -160,6 +160,18 @@ export default class DatabaseController{
  }))
     }
 
+    async canGenerateVale(req:Request,res:Response){
+        if(!req.query.ingenioId) throw res.status(400).send({mgs:"missing ingenioId parameter"});
+        let ingenioId = req.query.ingenioId;
+        let counts:any = await this.databaseDao.pendingQuantityRecords(ingenioId);
+        if(+counts[0].count ==0){
+            let totalReg:any = await this.databaseDao.getTotalRecords(ingenioId);
+            res.status(200).send({msg:true,totalReg: totalReg[0].count});
+        }else{
+            res.status(200).send({msg:false,totalReg: 0})
+        }
+    }
+
    async updateProperty(req: Request,res: Response){
         if(!req.params.parcela) throw res.status(400).send('parcela missing parameter');
         if(!req.params.type) throw res.status(400).send('type missing type');

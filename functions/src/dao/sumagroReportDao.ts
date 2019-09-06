@@ -30,7 +30,20 @@ export default class SumagroReportDao{
         return this.mysql.query(query);
     };
 
+    async getDataOfEntranceIntransit(type:string,table:string,dateStart:string,dateEnd:string){
+        logger.info("DAO: Starting Method getDataOfEntranceIntransit");
+        let query = "";
+        if(type=="orden"){
+            query= "select distinct(orderid),count(description) as count,operator,description,date from `sumagro-dev`."+`${table} where date between '${dateStart}' and '${dateEnd}' group by operator,description,orderid,date;`;
+        }else if(type=="cliente"){
+            query = "select distinct(orderid),count(description) as count,operator,description,ingenioid,date from `sumagro-dev`."+`${table} where  date between '${dateStart}' and '${dateEnd}' group by description,ingenioid,date;`;
+        }else if(type=="producto"){
+            query="select distinct(description),count(description) as count,operator,orderid,date from `sumagro-dev`."+`${table} where  date between '${dateStart}' and '${dateEnd}' group by operator,description,date;`;
+        }
+        logger.info("DAO: Starting Method getDataOfEntranceIntransit");
+        return await this.mysql.query(query);
 
+    }
     async getDataToReportOfParcelas(ingenioId:number,dateStart:string,dateEnd:string){
         logger.info("DAO: sumagroReportDAO Starting Method getDataToReportOfParcelas Starting");
         let query = "select a.bultos,a.productor,a.formula,a.codigo,a.ejidolocalidad,a.zona,t.date from `sumagro-dev`.database as a, `sumagro-dev`.parcelas as t where a.codigo = t.codigo and a.codigo IN (select codigo from `sumagro-dev`.parcelas where bultos=aplicated and ingenioid="+`${ingenioId} and date between '${dateStart}' and '${dateEnd}');`;

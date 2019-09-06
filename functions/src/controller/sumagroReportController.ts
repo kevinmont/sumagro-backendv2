@@ -50,7 +50,10 @@ export default class SumagroReportController{
         logger.info(`validación ${!(req.query.dateStart <= req.query.dateEnd)}`);
         if (!(req.query.dateStart <= req.query.dateEnd)) throw  res.status(400).send({ msg: 'dateStart is greater than dateEnd' });
         let dataToReport="";
-        
+        if(req.query.dateStart==req.query.dateEnd){
+            req.query.dateStart = req.query.dateStart+"T00:00:00.000Z";
+            req.query.dateEnd = req.query.dateEnd+"T23:59:59.000Z";
+        }
         let userInfo:any = await this.userDao.getUserByEmail(req.headers.email);
 
         let {table,dateStart,dateEnd,ingenioId } = req.query;
@@ -123,6 +126,22 @@ export default class SumagroReportController{
                             }        
                         }
                 break;
+                case arrTypesFiltersCompare.sumagrooutputs:
+                        if(type=='producto' || type=="orden" || type=="cliente"){
+                            let data = await this.sumagroReportDao.getDataOfEntranceIntransit(type,table,dateStart,dateEnd);
+                            dataToReport= await this.sumagroReportDao.getReportInfo("1",table,type,dateStart,dateEnd,data,"","");
+                            }else{
+                                dataToReport = "<html><body><h1>NO EXISTE EL TIPO DE REPORTE</h1></body></html>";
+                            }
+                    break;
+                case arrTypesFiltersCompare.sumagrointransit:
+                        if(type=='producto' || type=="orden" || type=="cliente"){
+                            let data = await this.sumagroReportDao.getDataOfEntranceIntransit(type,table,dateStart,dateEnd);
+                            dataToReport= await this.sumagroReportDao.getReportInfo("1",table,type,dateStart,dateEnd,data,"","");
+                            }else{
+                                dataToReport = "<html><body><h1>NO EXISTE EL TIPO DE REPORTE</h1></body></html>";
+                            }
+                    break;
                 default:
                         dataToReport = "<html><body>NO EXISTEN DATOS</body></html>";        
                     break;
@@ -135,6 +154,12 @@ export default class SumagroReportController{
 
         
         pdfH.create(dataToReport,{
+            border:{
+                top: "1in"    ,      // default is 0, units: mm, cm, in, px
+            right: "1cm",
+            bottom: "1in",
+            left: "1cm"
+            },
             footer:{
                 contents:`
                 <table style="width: 100%;">

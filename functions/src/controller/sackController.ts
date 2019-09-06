@@ -45,19 +45,19 @@ export default class SackController{
 
     async registerSacks(req: Request,res: Response){
         logger.info('CONTROLLER: Method registerSacks Starting');
-        let  { id,description,orderId,operationUnit,plates,operator,index } = req.body;
+        let  { id,description,orderId,operationUnit,plates,operator,index,date } = req.body;
         let operatorName:any = req.headers.email;
         let alldata:any = await this.orderDao.orderById(orderId);
         let ingenioId= alldata[0].ingenioid;
         logger.info(`ingenioid: ${ingenioId}`);
         let parseid = parseInt(id);
-        let record = { SackId:id,ingenioId,description,orderId, operationUnit,plates,operator };
+        let record = { SackId:id,ingenioId,description,orderId, operationUnit,plates,operator,date };
         await this.sackDao.saveSack(record);
         let ingenio:any = await this.ingenioDao.getIngenioById(ingenioId);
         if(!ingenio.length) throw res.status(404).send({msg:"ingenio not found"});
         let order:any = await this.orderDao.orderById(orderId);
         if(!order.length) throw res.status(404).send({msg:"order not found"});
-        await this.sackDao.saveSackIntrasit(record,parseid);
+        await this.sackDao.saveSackIntrasit(record,operatorName,parseid);
         await this.sackDao.saveSackOutputs(record,operatorName,parseid)
         await this.subOrderDao.updatestatus(index);
         await this.subOrderDao.updateCaptured(index);
@@ -84,45 +84,35 @@ export default class SackController{
             description: req.body.description,
             ingenioId: ingenioId,
             operatorid: operatorName,
-            orderId: orderId
-
+            orderId: orderId,
+            date: req.body.date
         };
         let inventory = {
             id: parseInt(req.body.sack),
             ingenioId: ingenioId,
             description: req.body.description,
             operador: req.body.operator,
+            date: req.body.date
         }
         await this.sackDao.saveSackEntrance(entrance);
         await this.sackDao.saveSackInventory(inventory);
         await this.subOrderDao.updateRecived(subOrderId);
+        await this.sackDao.delIntransit(+req.body.sack);
         logger.info('CONTROLLER: Method receptSacks Ending');
         res.status(200).send({msg:"Costal recibido"});
     }
 
     async updateInventory(req: any, res: Response){
         logger.info('CONTROLLER: Method updateInventory Starting');
-        let {id, ingenioId, description, userId,ingenioName,productor} = req.body;
-        let record = {id, ingenioId, description, userId,ingenioName};
+        let {id, ingenioId, description, userId,ingenioName,productor,date} = req.body;
+        let record = {id, ingenioId, description, userId,ingenioName,date};
         let operatorName:any = req.headers.email;
         if(!record.id) res.status(400).send('id is missing');
         if(!record.ingenioId) res.status(400).send('ingenioId is missing');
         if(!record.ingenioName) res.status(400).send('ingenioName is missing');
         if(!record.description) res.status(400).send('description is missing');
         if(!record.userId) res.status(400).send('userId is missing');
-<<<<<<< HEAD
-        await this.coordenateDao.saveCordenate(record);
-        let coordenate:any = await this.coordenateDao.getCordenate(record)
-        let coordenateId:number = parseInt(coordenate[0].id);
-        await this.qrdataDao.registeringQrData(record, coordenateId);
-        let qrDatas:any = await this.qrdataDao.getQrDataCoordenateId(coordenateId);
-        let qrDataId = parseInt(qrDatas[0].id);
-        await this.outputDao.saveOutputs(record,qrDataId);
-        await this.aplicatedDao.saveAplicated(record, coordenateId);
-        let response = await this.outputDao.saveOutputs(record,operatorName);
-=======
-        let response = await this.outputDao.saveOutputs(record,operatorName,productor);
->>>>>>> 4e4c02f3d32619a5c799373568d252ba0f597dd8
+        await this.outputDao.saveOutputs(record,operatorName,productor);
         let response2 = await this.aplicatedDao.saveAplicated(record,productor);
         logger.info("RESPONSE UPDATE INVENTORY",response2);
         let inventoryId = parseInt(record.id);

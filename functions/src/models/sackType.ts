@@ -1,4 +1,5 @@
 export const SackType = [
+    "UREA",
     "SAM",
     "DAP",
     "MAP",

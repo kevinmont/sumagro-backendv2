@@ -13,9 +13,9 @@ export default class OrderDao{
 
     async saveOrder(object: any) {
         logger.info('Dao: Method saveOrder Startting');
-        let sql = `INSERT INTO orders(ingenioid,shippingdate,client,addressid,remissionnumber,status) 
+        let sql = `INSERT INTO orders(ingenioid,shippingdate,client,addressid,remissionnumber,status,isshowed) 
         VALUES(${object.ingenioId}, '${object.shippingDate}', '${object.client}', 
-        ${object.addressid}, ${object.remissionNumber},'PENDING')`;
+        ${object.addressid}, ${object.remissionNumber},'PENDING','0')`;
         let t:any= await this.mysql.query(sql);
         logger.info('Dao: Method saveOrder Ending');
         return t.insertId;
@@ -65,7 +65,7 @@ export default class OrderDao{
 
     async getOrdersWareHouse(){
         logger.info('DAO: Method getOrdersWareHouse Startting');
-        let sql=`SELECT * FROM orders WHERE isshowed = true`;
+        let sql=`SELECT * FROM orders WHERE isshowed = '0'`;
         logger.debug('DAO: Method getOrdersWareHouse Ending');
         return await this.mysql.query(sql);
     }
@@ -89,7 +89,8 @@ export default class OrderDao{
         let sql = `update orders set operationunit='${updateRequest.operationUnit}',
         plates='${updateRequest.plates}',
         operator='${updateRequest.operator}',
-        plates='${updateRequest.flet}',
+        flet='${updateRequest.flet}',
+        plates='${updateRequest.plates}',
         modelunit='${updateRequest.modelUnit}',
         mark='${updateRequest.mark}',
         dateoutput='${updateRequest.dateOutput}',

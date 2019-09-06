@@ -7,7 +7,7 @@ export default class PdfHelper{
         let content = "";
         subOrders.forEach((element:any)=>{
             content=content+`<tr><td style="text-align: center; border: 1px solid black;"><span>${element.quantity}</span></td>`+
-            `<td style="text-align: center; border: 1px solid black;"><span>${element.received}</span></td>`+
+            `<td style="text-align: center; border: 1px solid black;"><span>BULTOS</span></td>`+
             `<td style="text-align: center; border: 1px solid black;"><span>${element.description}</span></td>`+
             `<td style="text-align: left; border: 1px solid black;">$</td>`+
             `<td style="text-align: left; border: 1px solid black;">$</td></tr>\n`;
@@ -77,7 +77,7 @@ export default class PdfHelper{
             </tr>
             <tr>
                 <td><strong>UNIDAD</strong></td>
-                <td><strong>${order.operationUnit}</strong></td>
+                <td><strong>${order.operationunit}</strong></td>
                 <td colspan="3"></td>
             </tr>
             <tr>
@@ -158,9 +158,9 @@ export default class PdfHelper{
                     <tr><td colspan="5" style="height: 20px;"> </td></tr>
                     <tr>
                         <td colspan="2" style="text-align: center;"> ${currentDate.getDate() +`/`+ (currentDate.getMonth()+1)+`/`+currentDate.getFullYear()}</td>
-                        <td style="text-align: center;">${ (order.dateEntrance)?'<u>'+order.dateentrance.split(':')[0]+':'+order.dateentrance.split(':')[1]+'</u>':'______:______'}</td>
+                        <td style="text-align: center;">${ (order.dateentrance)?'<u>'+order.dateentrance.split(':')[0]+':'+order.dateentrance.split(':')[1]+'</u>':'______:______'}</td>
                         <td></td>
-                        <td style="text-align: center;">${(order.dateOutput)?'<u>'+order.dateoutput.split(':')[0]+':'+order.dateoutput.split(':')[1]+'</u>':'______:______'}</td>
+                        <td style="text-align: center;">${(order.dateoutput)?'<u>'+order.dateoutput.split(':')[0]+':'+order.dateoutput.split(':')[1]+'</u>':'______:______'}</td>
                     </tr>
                     <tr><td colspan="5" style="height: 20px;"> </td></tr>
                     <tr>
@@ -280,13 +280,14 @@ export default class PdfHelper{
     }
 
     bodyVale(vale:any,qr:any,totalBultos:number){
+        let dateOfEmission = new Date(vale.fechaemision);
         return `
             <table width="100%" border="0" style="border:1px solid #000000; margin-bottom: 48px;">
                 <tr style="height: 40px;">
                     <td>Valido por:</td>
                     <td colspan="2"><span style="text-decoration: underline; text-aling: center;">${totalBultos} bultos </span></td>
                     <td> Fecha de emision:</td>
-                    <td><span style="text-decoration: underline">${vale.fechaemision}</span></td>
+                    <td><span style="text-decoration: underline">${dateOfEmission.getDate()}-${dateOfEmission.getMonth()+1}-${dateOfEmission.getFullYear()}</span></td>
                 </tr>
                 <tr style="height: 40px;">
                     <td>A favor de:</td>
@@ -295,17 +296,17 @@ export default class PdfHelper{
                     <td><span style="text-decoration: underline">${vale.curp}</span></td>
                 </tr>
                 <tr style="height: 40px;">
-                    <td colspan="2">Concepto de apoyo autorizado:</td>
-                    <td colspan="3">${vale.conceptoapoyo}</td>
+                    <td colspan="2"></td>
+                    <td colspan="3"></td>
                 </tr>
                 <tr style="height: 40px;">
-                    <td colspan="2"> Superficie autorizada en hectáreas:</td>
-                    <td colspan="3">${vale.superficieautorizada}</td>
+                    <td colspan="2"> </td>
+                    <td colspan="3"></td>
                     
                 </tr>
                 <tr style="height: 40px;"> 
                 <td colspan="2"><img src="${qr}" width="200px" height="200px"></td>
-                <td colspan="3" style="text-align: center"> Vigencia de 90 días a partir de su emisión.</td>
+                <td colspan="3" style="text-align: center"> </td>
                 </tr>
             </table>
            `;
@@ -320,27 +321,43 @@ export default class PdfHelper{
     async generateVale(records:any){
         let content = this.headVale();
         let properties:any = {};
-        
-        for(let i=0;i<records.length;i++){
-           properties['productor'] = records[i].productor;
-           properties['productos']=[];
-            let keys= Object.keys(records[i]);
-            let totalBultos = 0;
-            for(let key of keys){
-                if(key!='productor' && key!="fechaemision" && key!='curp' && key!='conceptoapoyo' && key!='superficieautorizada'){
-                properties['productos'].push({formula: key,quantity: records[i][key]});
-                totalBultos += records[i][key]
-                }
+        console.log("DATA RECIBIDA",records);
+        for(let reg of records){
+            if(properties[reg.productor]){
+                properties[reg.productor].push({
+                    productor: reg.productor,
+                    curp: reg.curp,
+                    fechaemision: reg.fechaemision,
+                    formula: reg.formula,
+                    quantity: reg.count
+                })
+            }else{
+                properties[reg.productor]=[{
+                    productor: reg.productor,
+                    curp: reg.curp,
+                    fechaemision: reg.fechaemision,
+                    formula: reg.formula,
+                    quantity: reg.count
+                }];
             }
-            let qr = await QRCode.toDataURL(JSON.stringify(properties));
-            console.log("qr:",qr);
-            content= content + this.bodyVale(records[i],qr,totalBultos);
-                
+        }
+        let keys:any= Object.keys(properties);
+        for(let item of keys){
+            let totalBultos =0; 
+            let itemToCode:any = {
+                productor: item,
+                productos: properties[item].map((element:any) => { return {formula:element.formula,quantity:element.quantity} })
+            };
+            for(let item2 of properties[item]){
+                totalBultos+=item2.quantity;
             }
+            let qr = await QRCode.toDataURL(JSON.stringify(itemToCode));
+            content+=  this.bodyVale(properties[item][0],qr,totalBultos);
+        }
            
         
         
-        content = content + this.footvale();
+        content += this.footvale();
     
         return content;
     }

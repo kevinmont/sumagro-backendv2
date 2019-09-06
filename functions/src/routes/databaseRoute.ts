@@ -43,5 +43,9 @@ export default class DatabaseRoute{
             .put((req:express.Request,res:express.Response)=>{
                 this.databaseController.updateProperty(req,res);
             })
+        app.route('/sumagro-app/can-gen-vales')
+            .get((req:express.Request,res:express.Response)=>{
+                this.databaseController.canGenerateVale(req,res);
+            });
     }
 }

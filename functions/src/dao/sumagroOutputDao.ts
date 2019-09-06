@@ -19,9 +19,9 @@ export default class SumagroOutputDao{
 
     async saveOutputs(record:any,operatorName:any,productor:any){
         logger.info('DAO: Method saveOutputs Starting');
-        let sql = `INSERT INTO outputs(id,description,operator,userid,ingenioid,productor) 
+        let sql = `INSERT INTO outputs(id,description,operator,userid,ingenioid,productor,date) 
         VALUES(${record.id}, "${record.description}", "${operatorName}", 
-        "${record.userId}", ${record.ingenioId},"${productor}")`;
+        "${record.userId}", ${record.ingenioId},"${productor}","${record.date}")`;
         logger.debug('DAO: Method saveOutputs Ending');
         return await this.mysql.query(sql);
     }

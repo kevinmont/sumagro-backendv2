@@ -124,12 +124,9 @@ export default class UserController {
         let token = req.body.token;
         let uid = req.headers.uid;
         logger.info("TOKEN A REGISTRAR...", token)
-        let userFirebase: any = await this.firebase.getUserFirebase(uid);
-        let userRds: any = await this.userDao.getUserByEmail(userFirebase.email)
-        await this.userDao.saveToken(userRds[0].id, token)
-        let response = await this.firebase.saveToken(uid, token);
+        await this.userDao.saveToken(uid, token)
         logger.debug("Controller: Methos saveToken Ending");
-        res.send(response);
+        res.send();
     }
 
     async deleteToken(req : any, res : Response) {
@@ -236,9 +233,8 @@ export default class UserController {
         let ingenioId = req.params.ingenioId;
         let updateRequest = req.body;
         if(updateRequest.status=="CAPTURED"){
-            let data = await this.firebase.updateOrderStatus();
-            res.status(200).send(data);
-        }
+            res.status(200).send();
+        }else{
         let ingenio:any = await this.ingenioDao.getIngenioById(ingenioId);
         if (!ingenio.length) throw res.status(404).send({ msg: 'ingenio not fund' });
         let order:any = await this.orderDao.orderById(orderId)
@@ -246,6 +242,7 @@ export default class UserController {
         await this.orderDao.updateOrderByOrderIdAndIngenioId(orderId,ingenioId,updateRequest);
         logger.debug('CONTROLLER: method updateOrderStatus Ending');
         res.status(200).send({msg:"Updated"});
+    }
     }
 
     async deleteOrder(req: Request,res: Response){

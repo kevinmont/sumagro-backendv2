@@ -26,11 +26,12 @@ export class ReportTemplate{
         producto: "por producto",
         ejido: "por ejido",
         zona:"por zona",
-        parcela: "por parcela"
+        parcela: "por parcela",
+        cliente: "por cliente"
     }
     async getReport(clase:string,table:string,type:string,dateStart:string,dateEnd:string,data:any,ingenioData:any,ingenioAddress:any,subtype?:string){
         let response = "";
-        let head= await  this.getHead(table,type,ingenioData[0].name,dateStart,dateEnd,ingenioAddress);
+        let head= await  this.getHead(table,type,(table!="sumagrointransit" && table!="sumagrooutputs")?ingenioData[0].name:"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
         let body ="";
         switch(table){
             case 'entrance':
@@ -58,6 +59,8 @@ export class ReportTemplate{
                     }else if(type=="ejido" || type=="parcela" || type=="zona"){
                         head= await this.getHeadParcelas(table,type,ingenioData[0].name,dateStart,dateEnd,ingenioAddress);
                         body = await this.getBodyOnlyParcelas(data,type);
+                    }else{
+                        response = '<html><body>NO EXISTE ESA ENTIDAD</body></html>'
                     }
                   
                 }else if(subtype=="notaplicated"){
@@ -76,6 +79,32 @@ export class ReportTemplate{
 
                 response = head+body;
                 break;
+            case 'sumagrointransit':
+                if(type=="producto"){
+                    head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
+                    body = await this.getBody(data,type);
+                }else if(type=="cliente"){
+                    head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
+                    body = await this.byClient(data);
+                }else if(type=="orden"){
+                    head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
+                    body = await this.getBody(data,type);
+                }
+                response= head+body;
+                break;
+            case 'sumagrooutputs':
+                    if(type=="producto"){
+                        head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
+                        body = await this.getBody(data,type);
+                    }else if(type=="cliente"){
+                        head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
+                        body = await this.byClient(data);
+                    }else if(type=="orden"){
+                        head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
+                        body = await this.getBody(data,type);
+                    }
+                    response= head+body;
+                break; 
             default:
                response = '<html><body>NO EXISTE ESA ENTIDAD</body></html>'
                 break;
@@ -83,6 +112,99 @@ export class ReportTemplate{
         return response;
     }
 
+    async byClient(data:any){
+        let object:any = {};
+        for(let item of data){
+            if(object[item.ingenioid]){
+                if(object[item.ingenioid][item.orderid]){
+                    if(object[item.ingenioid][item.orderid][item.description]){
+                        if(object[item.ingenioid][item.orderid][item.description].date < item.date){
+                            object[item.ingenioid][item.orderid][item.description].date = item.date;
+                            object[item.ingenioid][item.orderid][item.description].count += item.count;
+                        }else{
+                            object[item.ingenioid][item.orderid][item.description].count += item.count;
+                        }
+                        
+                    }else{
+                        object[item.ingenioid][item.orderid][item.description]={
+                            count: item.count,
+                            date: item.date
+                        };    
+                    };
+                }else{
+                    object[item.ingenioid][item.orderid]={};
+                    object[item.ingenioid][item.orderid][item.description]={
+                        count: item.count,
+                        date: item.date
+                    };
+                }
+                }else{
+                    object[item.ingenioid]={};
+                    object[item.ingenioid][item.orderid]={};
+                    object[item.ingenioid][item.orderid][item.description]={
+                        count: item.count,
+                        date: item.date
+                    };
+                }
+           
+        }
+        let keys = Object.keys(object);
+       let body="";
+       let totalBultos=0;
+       for(let item of keys){
+           let nombreIngenio:any = await this.mysql.query(`select name from ingenios where id=${item}`);
+            body += `
+            <tr class="border">
+            <td>Cliente: ${nombreIngenio[0].name}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            </tr>
+            <tr>
+            <td>Orden</td>
+            <td>Formula</td>
+            <td>Fecha</td>
+            <td>Cantidad</td>
+            </tr>
+            `;
+        let ordenes = Object.keys(object[item]);
+        console.log("KEYSECS",ordenes)
+        let totalCount = 0;
+        for(let orden of ordenes){
+            let formulas = Object.keys(object[item][orden]);
+          
+                for(let formula of formulas){
+                        body+=`
+                        <tr>
+                        <td>${orden}</td>
+                        <td>${formula}</td>
+                        <td>${object[item][orden][formula].date}</td>
+                        <td>${object[item][orden][formula].count}</td>
+                        </tr>
+                        `;
+                        totalCount += object[item][orden][formula].count;
+                }
+        
+        
+        }
+        body+=`
+        <tr>
+        <td></td><td></td><td style="text-align:right">SubTotal:</td><td class="border">${totalCount}</td>
+        </tr>
+        `;
+        totalBultos+=totalCount;
+       }
+
+       body+=`
+       <tr class="border">
+       <td></td><td></td><td colspan="2">Total General:  ${totalBultos} Bultos</td>
+       </tr>
+       </table></body></html>
+       `;
+       return body;
+
+        
+    };
     async reportOutOfParcel(data:any){
         let object:any = {};
         for(let item of data){
@@ -99,6 +221,7 @@ export class ReportTemplate{
                     }];
                 }
             }else{
+                object[item.operator]={};
                 object[item.operator][item.description]=[{
                         count: item.count,
                         date: item.date
@@ -112,45 +235,41 @@ export class ReportTemplate{
             let parcelas:any = await this.mysql.query("select codigo,ejido,zona from `sumagro-dev`.parcelas "+ `where productor='${item}' and bultos>aplicated`);
             body+=`
             <tr class="border">
-            <td>Parcela</td>
-            <td>Ejido</td>
-            <td>Zona</td>
-            <td>Formula</td>
-            <td>Fecha</td>
-            <td>count</td>
-            <td>operator</td>
+            <td colspan="7">Aplicados afuera de parcela</td>
             </tr>
             <tr>
-            <td colspan="3">    
-            `;
+            <td colspan="7" style="text-align: left">Productor: ${item}</td>
+            </tr>
+            <tr>
+            <td colspan="2">Formula</td>
+            <td colspan="2">Cantidad</td>
+            <td colspan="3">Fecha</td>
+            </tr>`;
             let totalCount = 0;
-            
-            for(let parcela of parcelas){
-                body+=`
-                ${parcela.codigo}-${parcela.ejido}-${parcela.zona}\n
-                `;    
+            let formulas = Object.keys(object[item]);
+            for(let formula of formulas){
+                for(let item2 of object[item][formula]){
+                body+=`<tr><td colspan="2">${formula}</td><td colspan="2">${item2.count}</td><td colspan="3">${item2.date}</td></tr>`;
+                totalCount+=item2.count;
+                }
             }
-        for(let item2 of object[item]){
-            body+=`</td>
-            <td>${item2.description}</td>
-            <td>${item2.date}</td>
-            <td>${item2.count}</td>
-            <td>${item2.operator}</td>
-            </tr>`; 
-        }
+            if(parcelas.length){
+            body+=`<tr><td coslpan="7" style="text-align:center">Parcelas pendientes</td></tr>`;
+            }
+            for(let parcela of parcelas){
+                body+=`<tr><td colspan="2">${parcela.zona}</td><td colspan="2">${parcela.ejido}</td><td colspan="3">${parcela.codigo}</td></tr>`;    
+            }
         body+=`
         <tr>
-        <td colspan="7">Subtotal no aplicados: ${totalCount}</td>
+        <td colspan="7">Subtotal aplicados fuera de parcela: ${totalCount}</td>
         </tr>
         `;
-        globalTotal = totalCount;
+        globalTotal += totalCount;
         }
 
-        body+=`
-        <tr class="border">
-        <td colspan="7"> Total de no aplicados: ${globalTotal}</td>
-        </tr>
-        `;
+        body+=`<tr class="border">
+        <td colspan="7"> Total de aplicados fuera de parcela: ${globalTotal}</td>
+        </tr>`;
 
         return body;
     }
@@ -181,17 +300,19 @@ export class ReportTemplate{
                 <table class="border">
                     <tr>
                         <td>Tipo de documento: ${this.reportTypes[table]}</td>
-                        <td colspan="2">Direccion: ${ingenioAddress[0].calle},#${ingenioAddress[0].numero} ${ingenioAddress[0].ciudad}</td>
+                        ${((table=="sumagrooutputs" || table=="sumagrointransit") && type=="cliente")?'<td></td>':""}
+                        <td colspan="2">Direccion: ${(table!="sumagrooutputs" && table!="sumagrointransit")?ingenioAddress[0].calle+",#"+ingenioAddress[0].numero+" "+ingenioAddress[0].ciudad:"Alamacen Sumagro"}</td>
                     </tr>
                     <tr>
                         <td>${(type=='producto')?'Producto:':'Orden'}: Todos</td>
+                        ${((table=="sumagrooutputs" || table=="sumagrointransit") && type=="cliente")?'<td></td>':""}
                         <td>Desde fecha: ${dateStart}</td>
                         <td>Hasta fecha: ${dateEnd}</td>
                         
                     </tr>
                    
                     <tr>
-                        <td>Considerando todos los conceptos</td>
+                        <td ${((table=="sumagrooutputs" || table=="sumagrointransit") && type=="cliente")?'colspan="4"':'colspan="3"'}>Considerando todos los conceptos</td>
                     </tr>
         `
     }
@@ -240,7 +361,7 @@ export class ReportTemplate{
 
     getBody(data:any,type:string){
        let object:any = {};
-       console.log("OBJECT",object);
+       console.log("OBJECT",object,data);
        if(type=="producto"){
        for(let item of data){
            if(object[item.description]){

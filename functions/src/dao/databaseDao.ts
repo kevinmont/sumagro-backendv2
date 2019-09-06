@@ -91,8 +91,22 @@ export default class DatabaseDao {
 
     async getRecordsByRango(ingenioId:number,rangoIni:number,rangoFin:number){
         logger.info("DAO: Method getRecordsByIngenioId Startting");
-        let sql ='SELECT * FROM `sumagro-dev`.database'+` WHERE ingenioid=${ingenioId} AND bultos <> 'actualizando' LIMIT ${rangoIni},${rangoFin}`;
+        let sql ="select distinct(formula),sum(bultos) as count,curp,fechaemision,productor from `sumagro-dev`.database"+` where ingenioid=${ingenioId} group by productor,formula LIMIT ${rangoIni},${rangoFin}`;
         logger.info("DAO: Method getRecordsByIngenioId Ended");
+        return await this.mysql.query(sql);
+    }
+
+    async pendingQuantityRecords(ingenioId:number){
+        logger.info("DAO: Method pendingQuantityRecords Startting");
+        let sql ="select count(*) as count  from `sumagro-dev`.database where  codigo IN (select codigo from `sumagro-dev`.database where "+`ingenioid=${ingenioId} ) and (bultos='actualizando' or formula='actualizando' or pesos='actualizando'); `;
+        logger.info("DAO: Method pendingQuantityRecords Ended");
+        return await this.mysql.query(sql);
+    }
+
+    async getTotalRecords(ingenioId:number){
+        logger.info("DAO: Method pendingQuantityRecords Startting");
+        let sql ="select count(*) as count from `sumagro-dev`.database where"+` ingenioid=${ingenioId}; `;
+        logger.info("DAO: Method pendingQuantityRecords Ended");
         return await this.mysql.query(sql);
     }
 }

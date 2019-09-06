@@ -10,11 +10,18 @@ export default class SackDao{
         this.mysql = mysql;
     }
 
-    async saveSackIntrasit(record:any,parseId:number){
+    async saveSackIntrasit(record:any,operatorName:string,parseId:number){
         logger.info('DAO: Method saveSackIntrasit Starting');
-        let sql = `INSERT INTO sumagrointransit(id,description,ingenioid,operationunit,plates,orderid,operator) 
+        let sql = `INSERT INTO sumagrointransit(id,description,ingenioid,operationunit,plates,orderid,operator,date) 
         VALUES(${parseId},"${record.description}", ${record.ingenioId}, "${record.operationUnit}", 
-        "${record.plates}", ${record.orderId}, "${record.operator}")`;
+        "${record.plates}", ${record.orderId}, "${operatorName}","${record.date}")`;
+        logger.debug('DAO: Method saveSackIntrasit Ending');
+        return await this.mysql.query(sql);
+    }
+
+    async delIntransit(sackId:number){
+        logger.info('DAO: Method saveSackIntrasit Starting');
+        let sql = `DELETE FROM sumagrointransit where id=${sackId}`;
         logger.debug('DAO: Method saveSackIntrasit Ending');
         return await this.mysql.query(sql);
     }
@@ -22,7 +29,7 @@ export default class SackDao{
     async saveSackOutputs(record:any,operatorName:any, parseId:number){
         logger.info('DAO: Method saveSackOutputs Starting');
         let sql = `INSERT INTO sumagrooutputs(id,date,description,ingenioid,operator,orderid) 
-        VALUES(${parseId},"${new Date()}", "${record.description}", ${record.ingenioId}, 
+        VALUES(${parseId},"${record.date}", "${record.description}", ${record.ingenioId}, 
         "${operatorName}", ${record.orderId})`;
         logger.debug('DAO: Method saveSackOutputs Ending');
         return await this.mysql.query(sql);
@@ -38,7 +45,7 @@ export default class SackDao{
     async saveSack(record:any){
         logger.info('DAO: Method saveSack Starting');
         let sql = `INSERT INTO sacks(id,description,userid,coordenatesid,clave) 
-        VALUES(${record.SackId}, "${record.description}", null, 0, null)`;
+        VALUES(${record.SackId}, "${record.description}", null, null, null)`;
         logger.debug('DAO: Method saveSack Ending');
         return await this.mysql.query(sql);
     }
@@ -46,7 +53,7 @@ export default class SackDao{
     async saveSackEntrance(entrance:any){
         logger.info('DAO: Method saveSackEntrance Starting');
         let sql = `INSERT INTO entrance(id,date,description,ingenioid,operatorid,orderid) 
-        VALUES(${entrance.id}, "${new Date()}", "${entrance.description}", ${entrance.ingenioId}, "${entrance.operatorid}", ${entrance.orderId})`;
+        VALUES(${entrance.id}, "${entrance.date}", "${entrance.description}", ${entrance.ingenioId}, "${entrance.operatorid}", ${entrance.orderId})`;
         logger.debug('DAO: Method saveSackEntrance Ending');
         return await this.mysql.query(sql);
     }
@@ -54,7 +61,7 @@ export default class SackDao{
     async saveSackInventory(inventory:any){
         logger.info('DAO: Method saveSackEntrance Starting');
         let sql = `INSERT INTO inventory(id,ingenioid,description,operator,date) 
-        VALUES(${inventory.id}, ${inventory.ingenioId}, "${inventory.description}", "${inventory.operator}", "${new Date()}")`;
+        VALUES(${inventory.id}, ${inventory.ingenioId}, "${inventory.description}", "${inventory.operator}", "${inventory.date}")`;
         logger.debug('DAO: Method saveSackEntrance Ending');
         return await this.mysql.query(sql);
     }

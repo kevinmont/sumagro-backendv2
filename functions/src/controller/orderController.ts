@@ -183,7 +183,7 @@ export default class OrderController {
         if (!orderId) throw res.status(400).send('{ "msg":"orderId is required"}');
         let dataOrder: any = await this.orderDao.orderById(orderId);
         if (!dataOrder[0]) throw res.status(400).send('{ "msg":"orderId not found"}');
-        let address: any = await this.addressDao.getAddressById(orderId);
+        let address: any = await this.addressDao.getAddressById(dataOrder[0].addressid);
         let subOrder: any = await this.subOrdersDao.getsubOrdersById(orderId);
         let order: any = {};
         let sub: any = [];
@@ -205,6 +205,7 @@ export default class OrderController {
             ingenioId: `${dataOrder[0].ingenioid}`,
             shippingdate: `${dataOrder[0].shippingdate}`,
             dateentrance: `${dataOrder[0].dateentrance}`,
+            flet: dataOrder[0].flet,
             clientAddress: `${address[0].localidad}`,
             operationUnit: `${dataOrder[0].operationunit}`,
             operator: `${dataOrder[0].operator}`,
@@ -248,7 +249,7 @@ export default class OrderController {
             shippingdate: `${dataOrder[0].shippingdate}`,
             dateentrance: `${dataOrder[0].dateentrance}`,
             clientAddress: `${address[0].localidad}`,
-            operationUnit: `${dataOrder[0].operationunit}`,
+            operationunit: `${dataOrder[0].operationunit}`,
             operator: `${dataOrder[0].operator}`,
             plates: `${dataOrder[0].plates}`,
             remissionNumber: `${dataOrder[0].remissionnumber}`,
@@ -281,16 +282,20 @@ export default class OrderController {
         let subOrder: any = await this.subOrdersDao.getsubOrdersById(orderId);
         let order: any = {};
         let sub: any = [];
-        subOrder.forEach((i: any) => {
+        if(subOrder.length){
+            for(let i=0;i<subOrder.length;i++){
+        
             sub.push({
-                id: `${i.id}`,
-                captured: `${i.captured}`,
-                description: `${i.description}`,
-                quantity: `${i.quantity}`,
-                received: `${i.received}`,
-                status: `${i.status}`
+                id: `${subOrder[i].id}`,
+                captured: `${subOrder[i].captured}`,
+                description: `${subOrder[i].description}`,
+                quantity: `${subOrder[i].quantity}`,
+                received: `${subOrder[i].received}`,
+                status: `${subOrder[i].status}`
             })
-        });
+        
+            }
+         }
 
         order = {
             id: `${dataOrder[0].id}`,
@@ -313,12 +318,12 @@ export default class OrderController {
         let chargeData = await this.pdfHelper.getChargeFormat(order);
         logger.info(chargeData);
         pdf.create(chargeData, {
-            format: 'Letter', border: {
-                top: "1in",            // default is 0, units: mm, cm, in, px
-                right: "0in",
-                bottom: "1in",
-                left: "0in"
-            }
+            format: 'Letter',border:{
+                top: "1in"    ,      // default is 0, units: mm, cm, in, px
+            right: "1cm",
+            bottom: "1in",
+            left: "1cm"
+            },
         }).toStream((function (err, stream) {
             res.writeHead(200, {
                 'Content-Type': 'application/pdf',
