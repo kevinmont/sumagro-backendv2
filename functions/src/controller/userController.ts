@@ -224,7 +224,9 @@ export default class UserController {
         let orderId = req.params.orderId;
         let ingenioId = req.params.ingenioId;
         let updateRequest = req.body;
+        logger.info("El status: " + updateRequest.status);
         if(updateRequest.status=="CAPTURED"){
+            await this.orderDao.updateOrderByOrderIdAndIngenioId(orderId,ingenioId,updateRequest);
             res.status(200).send();
         }else{
         let ingenio:any = await this.ingenioDao.getIngenioById(ingenioId);
