@@ -9,6 +9,10 @@ export default class Mysql{
         this.connection = mysql.createPool({
             host: 'sumagro-dev.c3xbluk1m0qi.us-east-1.rds.amazonaws.com',
             user: 'sumagroMaster',
+            connectTimeout  : 60 * 60 * 1000,
+            acquireTimeout  : 60 * 60 * 1000,
+            timeout         : 60 * 60 * 1000,
+            connectionLimit:1000,
             password: 'Dist2019',
             database: 'sumagro-dev',
             });
@@ -21,7 +25,7 @@ export default class Mysql{
             this.connection.getConnection((err:any,c:any)=>{
                 if(err){
                 logger.error("Error al conectar",err);
-                    
+                reject(err);
                 }else{
                 c.query(query, (err:any, result:any)=>{
                 if(err) {

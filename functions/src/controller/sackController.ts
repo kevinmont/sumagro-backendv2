@@ -107,17 +107,17 @@ export default class SackController{
         let {id, ingenioId, description, userId,ingenioName,productor,date} = req.body;
         let record = {id, ingenioId, description, userId,ingenioName,date};
         let operatorName:any = req.headers.email;
-        if(!record.id) res.status(400).send('id is missing');
-        if(!record.ingenioId) res.status(400).send('ingenioId is missing');
-        if(!record.ingenioName) res.status(400).send('ingenioName is missing');
-        if(!record.description) res.status(400).send('description is missing');
-        if(!record.userId) res.status(400).send('userId is missing');
+        if(!record.id) throw res.status(400).send('id is missing');
+        if(!record.ingenioId) throw res.status(400).send('ingenioId is missing');
+        if(!record.ingenioName) throw res.status(400).send('ingenioName is missing');
+        if(!record.description) throw res.status(400).send('description is missing');
+        if(!record.userId) throw res.status(400).send('userId is missing');
         await this.outputDao.saveOutputs(record,operatorName,productor);
         let response2 = await this.aplicatedDao.saveAplicated(record,productor);
         logger.info("RESPONSE UPDATE INVENTORY",response2);
         let inventoryId = parseInt(record.id);
         await this.sackDao.deleteInventory(inventoryId);
-
+        
         logger.info('CONTROLLER: Method updateInventory Ending');
         res.send({msg:'salida registrada'});
     }
@@ -153,7 +153,7 @@ export default class SackController{
         await this.aplicatedDao.updatedAplicated(id,longitud,latitud,dateAplicated,bool);
         await this.aplicatedDao.saveParcelaSack(id,parcelaMatch,dateAplicated);
         let parcela:any = await this.databaseDao.getParcelaRest(parcelaMatch);
-        let count = parcela.aplicated+1;
+        let count = +parcela[0].aplicated+1;
         await this.databaseDao.updatedParcelasRest(count,parcelaMatch,dateAplicated);
         logger.info("RegisterSackUsed is ended");
         res.status(200).send({msg: "Updated" });

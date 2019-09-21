@@ -1,106 +1,95 @@
 import * as log4js from 'log4js';
-import Mysql from './mysql';
+
 const logger = log4js.getLogger('ReportTemplate');
 logger.level='info';
 export class ReportTemplate{
-    private mysql:Mysql;
-    constructor(mysql:Mysql){
-        this.mysql= mysql;
-    }
+    
+    
     reportTypes:any={
-        entrance: "Reporte de entradas",
-        aplicated: "Reporte de aplicados",
-        outputs: "Reporte de salidas",
-        intransit: "Reporte en transito",
-        inventory: "Reporte de inventario",
-        sumagrooutputs: "Reporte de salidas de almacen sumagro",
-        sumagrointransit: "Reporte de ordenes en transito sumagro"
+        entrance: "REPORTE DE ENTRADAS",
+        aplicated: "REPORTE DE APLICADOS",
+        outputs: "REPORTE DE SALIDAS",
+        intransit: "REPORTE EN TRANSITO",
+        inventory: "REPORTE DE INVENTARIO",
+        sumagrooutputs: "REPORTE DE SALIDAS DE ALMACEN",
+        sumagrointransit: "REPORTE EN TRANSITO DE ALMACEN "
     };
 
     reportClases:any = {
-        producto: "por producto",
-        orden: "por orden"
+        producto: "POR PRODUCTO",
+        orden: "POR ORDEN"
     }
 
     reportParcelasType:any={
-        producto: "por producto",
-        ejido: "por ejido",
-        zona:"por zona",
-        parcela: "por parcela",
-        cliente: "por cliente"
+        producto: "POR PRODUCTO",
+        ejido: "POR EJIDO",
+        zona:"POR ZONA",
+        parcela: "POR PARCELA",
+        cliente: "POR CLIENTE"
     }
-    async getReport(clase:string,table:string,type:string,dateStart:string,dateEnd:string,data:any,ingenioData:any,ingenioAddress:any,subtype?:string){
+    async getReport(table:string,type:string,dateStart:string,dateEnd:string,data:any,ingenioName:any,subType?:string){
+        console.log("INGENIO NAME2: ",ingenioName);
         let response = "";
-        let head= await  this.getHead(table,type,(table!="sumagrointransit" && table!="sumagrooutputs")?ingenioData[0].name:"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
+        let head:any="";
         let body ="";
         switch(table){
             case 'entrance':
+                if(type=="orden" || type=="producto"){
+                    head= await this.getHead(table,type,ingenioName,dateStart,dateEnd,"");
                     body = await this.getBody(data,type);   
                     response= head+body;
+                }else{
+                    response="<html><body>NO EXISTE ESE TIPO DE REPORTE</body></html>"
+                }
                 break;
             case 'outputs': 
-                    body= await this.getBodyOnlyProducts(data);
-                    response=head+body;
+                    if(type=="producto"){
+                        head= await this.getHead(table,type,ingenioName,dateStart,dateEnd,"");
+                    body = await this.getBodyByProduct(data);   
+                    response= head+body;
+                    }else{
+                        response="<html><body>NO EXISTE ESE TIPO DE REPORTE</body></html>"
+                    }
             break;
             case 'intransit':
-                    body = await this.getBody(data,type);   
-                    response= head+body;
+                    if(type=="orden" || type=="producto"){
+                        head= await this.getHead(table,type,ingenioName,dateStart,dateEnd,"");
+                        body = await this.getBody(data,type);   
+                        response= head+body;
+                    }else{
+                        response="<html><body>NO EXISTE ESE TIPO DE REPORTE</body></html>"
+                    }
                 break;
             case 'inventory':
-                    body = await this.getBodyOnlyProducts(data);   
+                    if(type=="producto"){
+                        head= await this.getHead(table,type,ingenioName,dateStart,dateEnd,"");
+                    body = await this.getBodyByProduct(data);   
                     response= head+body;
+                    }else{
+                        response="<html><body>NO EXISTE ESE TIPO DE REPORTE</body></html>"
+                    }
                 break;
             case 'aplicated':
-                
-                if(subtype=="aplicated"){
-                    if(type=="producto"){
-                    head= await this.getHead(table,type,ingenioData[0].name,dateStart,dateEnd,ingenioAddress);
-                    body = await this.getBodyOnlyProducts(data);
-                    }else if(type=="ejido" || type=="parcela" || type=="zona"){
-                        head= await this.getHeadParcelas(table,type,ingenioData[0].name,dateStart,dateEnd,ingenioAddress);
-                        body = await this.getBodyOnlyParcelas(data,type);
+                    if(type=="producto" || type=="ejido" || type=="parcela" || type=="zona"){
+                        head= await this.getHead(table,type,ingenioName,dateStart,dateEnd,subType);
+                        
+                    body = await this.getBodyOfAplicatedTypes(data,type,subType);   
+                    response= head+body;
                     }else{
-                        response = '<html><body>NO EXISTE ESA ENTIDAD</body></html>'
+                        response="<html><body>NO EXISTE ESE TIPO DE REPORTE</body></html>"
                     }
-                  
-                }else if(subtype=="notaplicated"){
-                    if(type=="producto"){
-                        head= await this.getHeadParcelas(table,type,ingenioData[0].name,dateStart,dateEnd,ingenioAddress);
-                        body = await this.getBodyOnlyParcelasNotAplicated(data);
-                        }else if(type=="ejido" || type=="parcela" || type=="zona"){
-                            head= await this.getHeadParcelas(table,type,ingenioData[0].name,dateStart,dateEnd,ingenioAddress);
-                            body = await this.getBodyOnlyParcelasNotAplicatedByTypes(data,type);
-                        }
-                }else if(subtype=="outOfParcel"){
-                     head= await this.getHeadParcelas(table,type,ingenioData[0].name,dateStart,dateEnd,ingenioAddress);
-                     body = await this.reportOutOfParcel(data);
-                }
                 
-
-                response = head+body;
                 break;
             case 'sumagrointransit':
-                if(type=="producto"){
-                    head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
-                    body = await this.getBody(data,type);
-                }else if(type=="cliente"){
-                    head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
-                    body = await this.byClient(data);
-                }else if(type=="orden"){
-                    head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
-                    body = await this.getBody(data,type);
-                }
-                response= head+body;
-                break;
             case 'sumagrooutputs':
                     if(type=="producto"){
-                        head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
+                        head= await this.getHead(table,type,"ALMACEN",dateStart,dateEnd,"");
                         body = await this.getBody(data,type);
                     }else if(type=="cliente"){
-                        head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
-                        body = await this.byClient(data);
+                        head= await this.getHead(table,type,"ALMACEN",dateStart,dateEnd,"");
+                        body = await this.getBody(data,type);
                     }else if(type=="orden"){
-                        head= await this.getHead(table,type,"Almacen Sumagro",dateStart,dateEnd,ingenioAddress);
+                        head= await this.getHead(table,type,"ALMACEN",dateStart,dateEnd,"");
                         body = await this.getBody(data,type);
                     }
                     response= head+body;
@@ -112,175 +101,36 @@ export class ReportTemplate{
         return response;
     }
 
-    async byClient(data:any){
-        let object:any = {};
-        for(let item of data){
-            if(object[item.ingenioid]){
-                if(object[item.ingenioid][item.orderid]){
-                    if(object[item.ingenioid][item.orderid][item.description]){
-                        if(object[item.ingenioid][item.orderid][item.description].date < item.date){
-                            object[item.ingenioid][item.orderid][item.description].date = item.date;
-                            object[item.ingenioid][item.orderid][item.description].count += item.count;
-                        }else{
-                            object[item.ingenioid][item.orderid][item.description].count += item.count;
-                        }
-                        
-                    }else{
-                        object[item.ingenioid][item.orderid][item.description]={
-                            count: item.count,
-                            date: item.date
-                        };    
-                    };
-                }else{
-                    object[item.ingenioid][item.orderid]={};
-                    object[item.ingenioid][item.orderid][item.description]={
-                        count: item.count,
-                        date: item.date
-                    };
-                }
-                }else{
-                    object[item.ingenioid]={};
-                    object[item.ingenioid][item.orderid]={};
-                    object[item.ingenioid][item.orderid][item.description]={
-                        count: item.count,
-                        date: item.date
-                    };
-                }
-           
-        }
-        let keys = Object.keys(object);
-       let body="";
-       let totalBultos=0;
-       for(let item of keys){
-           let nombreIngenio:any = await this.mysql.query(`select name from ingenios where id=${item}`);
-            body += `
-            <tr class="border">
-            <td>Cliente: ${nombreIngenio[0].name}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            </tr>
-            <tr>
-            <td>Orden</td>
-            <td>Formula</td>
-            <td>Fecha</td>
-            <td>Cantidad</td>
-            </tr>
-            `;
-        let ordenes = Object.keys(object[item]);
-        console.log("KEYSECS",ordenes)
-        let totalCount = 0;
-        for(let orden of ordenes){
-            let formulas = Object.keys(object[item][orden]);
-          
-                for(let formula of formulas){
-                        body+=`
-                        <tr>
-                        <td>${orden}</td>
-                        <td>${formula}</td>
-                        <td>${object[item][orden][formula].date}</td>
-                        <td>${object[item][orden][formula].count}</td>
-                        </tr>
-                        `;
-                        totalCount += object[item][orden][formula].count;
-                }
-        
-        
-        }
-        body+=`
-        <tr>
-        <td></td><td></td><td style="text-align:right">SubTotal:</td><td class="border">${totalCount}</td>
-        </tr>
-        `;
-        totalBultos+=totalCount;
-       }
-
-       body+=`
-       <tr class="border">
-       <td></td><td></td><td colspan="2">Total General:  ${totalBultos} Bultos</td>
-       </tr>
-       </table></body></html>
-       `;
-       return body;
-
-        
-    };
-    async reportOutOfParcel(data:any){
-        let object:any = {};
-        for(let item of data){
-            if(object[item.operator]){
-                if(object[item.operator][item.description]){
-                    object[item.operator][item.description].push({
-                        count: item.count,
-                        date: item.date
-                    });
-                }else{
-                    object[item.operator][item.description]=[{
-                        count: item.count,
-                        date: item.date
-                    }];
-                }
-            }else{
-                object[item.operator]={};
-                object[item.operator][item.description]=[{
-                        count: item.count,
-                        date: item.date
-                }]
-            }
-        }
-        let keys = Object.keys(object);
-        let body="";
-        let globalTotal=0;
-        for(let item of keys){
-            let parcelas:any = await this.mysql.query("select codigo,ejido,zona from `sumagro-dev`.parcelas "+ `where productor='${item}' and bultos>aplicated`);
-            body+=`
-            <tr class="border">
-            <td colspan="7">Aplicados afuera de parcela</td>
-            </tr>
-            <tr>
-            <td colspan="7" style="text-align: left">Productor: ${item}</td>
-            </tr>
-            <tr>
-            <td colspan="2">Formula</td>
-            <td colspan="2">Cantidad</td>
-            <td colspan="3">Fecha</td>
-            </tr>`;
-            let totalCount = 0;
-            let formulas = Object.keys(object[item]);
-            for(let formula of formulas){
-                for(let item2 of object[item][formula]){
-                body+=`<tr><td colspan="2">${formula}</td><td colspan="2">${item2.count}</td><td colspan="3">${item2.date}</td></tr>`;
-                totalCount+=item2.count;
-                }
-            }
-            if(parcelas.length){
-            body+=`<tr><td coslpan="7" style="text-align:center">Parcelas pendientes</td></tr>`;
-            }
-            for(let parcela of parcelas){
-                body+=`<tr><td colspan="2">${parcela.zona}</td><td colspan="2">${parcela.ejido}</td><td colspan="3">${parcela.codigo}</td></tr>`;    
-            }
-        body+=`
-        <tr>
-        <td colspan="7">Subtotal aplicados fuera de parcela: ${totalCount}</td>
-        </tr>
-        `;
-        globalTotal += totalCount;
-        }
-
-        body+=`<tr class="border">
-        <td colspan="7"> Total de aplicados fuera de parcela: ${globalTotal}</td>
-        </tr>`;
-
-        return body;
-    }
-
-    async getHead(table:string,type:string,ingenioName:string,dateStart:string,dateEnd:string,ingenioAddress:any){
+    async getHead(table:string,type:string,ingenioName:string,dateStart:string,dateEnd:string,subType?:string){
+        let dateS = new Date(dateStart);
+        let dateE= new Date(dateEnd);
         return `
         <!DOCTYPE html>
         <html lang="en">
             <head>
             </head>
                 <style>
+                    div.container{
+                        text-align: center;
+                    }
+                    .titulo{
+                        vertical-align: middle;
+                        font-family: Arial;
+                        font-size: 26px;
+                    }
+                    
+                    .subtitulotipo{
+                        text-align: center;
+                        font-family: Arial;
+                        font-size: 18px;
+                    }
+                    .table{
+                        width: 90%;
+                    }
+                    .items{
+                        font-family: Arial;
+                        font-size: 16px;
+                    }
                     h2 ,h1,div {
                         text-align: center
                     }
@@ -293,787 +143,680 @@ export class ReportTemplate{
                     }
                 </style>
             <body>
-                <h2>FERTILIZANTES SUMAGRO, S.A. DE C.V.</h2>
-                    <h1>${ingenioName}</h1>
-                    <h1>${this.reportTypes[table]} ${(Object.keys(this.reportClases).includes(type))?this.reportClases[type]:this.reportParcelasType[type]}</h1>
+            <div class="container">
+            ${(table=="sumagrooutputs" || table=="sumagrointransit")?`
+            <label class="titulo">FERTILIZANTES SUMAGRO</label><br>
+                <label class="titulo">S.A. DE C.V.<label></div>
+            <p class="subtitulotipo"><strong>${ingenioName}</strong></p>
+            `:`
+            <label class="titulo">NOMBRE DEL CLIENTE</label><br>
+                <label class="titulo">${ingenioName}<label></div>
+            `}
+                    <p class="subtitulotipo">${this.reportTypes[table]} ${(Object.keys(this.reportClases).includes(type))?this.reportClases[type]:this.reportParcelasType[type]}</p>
             <div>
-                <table class="border">
+                <table class="table">
                     <tr>
-                        <td>Tipo de documento: ${this.reportTypes[table]}</td>
-                        ${((table=="sumagrooutputs" || table=="sumagrointransit") && type=="cliente")?'<td></td>':""}
-                        <td colspan="2">Direccion: ${(table!="sumagrooutputs" && table!="sumagrointransit")?ingenioAddress[0].calle+",#"+ingenioAddress[0].numero+" "+ingenioAddress[0].ciudad:"Alamacen Sumagro"}</td>
-                    </tr>
-                    <tr>
-                        <td>${(type=='producto')?'Producto:':'Orden'}: Todos</td>
-                        ${((table=="sumagrooutputs" || table=="sumagrointransit") && type=="cliente")?'<td></td>':""}
-                        <td>Desde fecha: ${dateStart}</td>
-                        <td>Hasta fecha: ${dateEnd}</td>
+                    ${(subType=="notaplicated" || subType=="aplicated")?`
+                    <td colspan="${(subType=="notaplicated")?"2":"3"}" style="text-align:left"><label class="items" >${type.charAt(0).toUpperCase()+type.slice(1,type.length)}: TODOS</label></td>
+                        <td colspan="2"><label class="items">Desde: ${dateS.getDate()}/${dateS.getMonth()+1}/${dateS.getFullYear()}</label></td>
+                        <td colspan="2"><label class="items">Hasta: ${dateE.getDate()}/${dateE.getMonth()+1}/${dateE.getFullYear()}</label></td>
+                    `:`
+                    <td colspan="${(type=="cliente")?"1":"2"}" style="text-align:left"><label class="items" >${type.charAt(0).toUpperCase()+type.slice(1,type.length)}: TODOS</label></td>
+                        <td colspan="${(type=="cliente")?"2":"1"}"><label class="items">Desde: ${dateS.getDate()}/${dateS.getMonth()+1}/${dateS.getFullYear()}</label></td>
+                        <td colspan="${(type=="cliente")?"2":"1"}"><label class="items">Hasta: ${dateE.getDate()}/${dateE.getMonth()+1}/${dateE.getFullYear()}</label></td>
+                    `}
                         
                     </tr>
-                   
-                    <tr>
-                        <td ${((table=="sumagrooutputs" || table=="sumagrointransit") && type=="cliente")?'colspan="4"':'colspan="3"'}>Considerando todos los conceptos</td>
-                    </tr>
+                    
         `
     }
 
-    async getHeadParcelas(table:string,type:string,ingenioName:string,dateStart:string,dateEnd:string,ingenioAddress:any){
-        return `
-        <!DOCTYPE html>
-        <html lang="en">
-            <head>
-            </head>
-                <style>
-                    h2 ,h1,div {
-                        text-align: center
-                    }
-                    table {
-                        margin: 0 auto;
-                        border-collapse:collapse;
-                    }
-                    .border{
-                        border-top:1px solid black
-                    }
-                </style>
-            <body>
-                <h2>FERTILIZANTES SUMAGRO, S.A. DE C.V.</h2>
-                    <h1>${ingenioName}</h1>
-                    <h1>${this.reportTypes[table]} ${this.reportParcelasType[type]}</h1>
-            <div>
-                <table class="border">
-                    <tr>
-                        <td colspan="3">Tipo de documento: ${this.reportTypes[table]}</td>
-                        <td colspan="4">Direccion: ${ingenioAddress[0].calle},#${ingenioAddress[0].numero} ${ingenioAddress[0].ciudad}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">${type}: Todas</td>
-                        <td colspan="2">Desde fecha: ${dateStart}</td>
-                        <td colspan="3">Hasta fecha: ${dateEnd}</td>
-                        
-                    </tr>
-                   
-                    <tr>
-                        <td colspan="7">Considerando todos los conceptos</td>
-                        
-                    </tr>
-        `
-    }
-
+    
+//----------------------------------------------------------------------------------------->
     getBody(data:any,type:string){
        let object:any = {};
        console.log("OBJECT",object,data);
        if(type=="producto"){
        for(let item of data){
            if(object[item.description]){
-               if(object[item.description][item.orderid]){
-                   
-                       if(object[item.description][item.orderid].date<item.date){
-                           object[item.description][item.orderid].date=item.date;
-                           object[item.description][item.orderid].count+=item.count;
-                       }else{
-                            object[item.description][item.orderid].count+=item.count;
-                       }
-                   
-                
-               }else{
-                   object[item.description][item.orderid]={
-                       date: item.date,
-                       count: 1
-                   };
-               }
+              if(object[item.description][item.orderid]){
+               
+                    object[item.description][item.orderid].count +=1;
+                    if(object[item.description][item.orderid].date<item.date){
+                        object[item.description][item.orderid].date = item.date;
+                    }
+               
+              }else{
+                 
+                 object[item.description][item.orderid] = {
+                     remissionNumber: item.remissionnumber,
+                     ingenioName: item.name,
+                     count: 1,
+                     date:item.date
+                 }; 
+              }
            }else{
-               object[item.description]={};
-               object[item.description][item.orderid]={
-                   date: item.date,
-                   count: 1
-               }
+              object[item.description] = {};
+              object[item.description][item.orderid]= {
+                  remissionNumber: item.remissionnumber,
+                  ingenioName:item.name,
+                  count: 1,
+                  date: item.date
+              };
            }
        }
-    }else{
+    }else if(type=="orden"){
         for(let item of data){
         if(object[item.orderid]){
-            if(object[item.orderid][item.description]){
-                
-                    if(object[item.orderid][item.description].date<item.date){
-                        object[item.orderid][item.description].date=item.date;
-                        object[item.orderid][item.description].count+=item.count;;
-                    }else{
-                         object[item.orderid][item.description].count+=item.count;
-                    }
-                
-             
+            if(object[item.orderid]['productos'][item.description]){
+                if(object[item.orderid]['productos'][item.description].date<item.date){
+                    object[item.orderid]['productos'][item.description].date = item.date
+                }
+                object[item.orderid]['productos'][item.description].count +=1;
             }else{
-                object[item.orderid][item.description]={
+                object[item.orderid]['productos'][item.description] = {
                     date: item.date,
                     count: 1
-                };
+                }
             }
         }else{
-            object[item.orderid]={};
-            object[item.orderid][item.description]={
+            object[item.orderid] = {
+                remissionNumber: item.remissionnumber,
+                ingenioName: item.name
+            }    
+            object[item.orderid]['productos'] = {};
+            object[item.orderid]['productos'][item.description] = {
                 date: item.date,
                 count: 1
             }
         }
     }
+    }else if(type=="cliente"){
+            for(let item of data){
+                if(object[item.name]){
+                    if(object[item.name][item.orderid]){
+                        if(object[item.name][item.orderid][item.description]){
+                            if(object[item.name][item.orderid][item.description].date<item.date){
+                                object[item.name][item.orderid][item.description].date = item.date;
+                            }
+                            object[item.name][item.orderid][item.description].count +=1;
+                        }else{
+                            object[item.name][item.orderid][item.description]= {
+                                date: item.date,
+                                count: 1
+                            }
+                        }
+                    }else{
+                        object[item.name][item.orderid] = {
+                            remissionNumber: item.remissionnumber
+                        };
+                        object[item.name][item.orderid]['productos'] ={};
+                        object[item.name][item.orderid]['productos'][item.description]= {
+                            date: item.date,
+                            count: 1
+                        }
+                    }
+                }else{
+                    object[item.name]= {}
+                    object[item.name][item.orderid]={
+                        remissionNumber: item.remissionnumber
+                    };
+                    object[item.name][item.orderid]['productos']={};
+                    object[item.name][item.orderid]['productos'][item.description] = {
+                        date: item.date,
+                        count: 1
+                    }
+                }
+            }
     }
 
        let keys = Object.keys(object);
        let body="";
-       let totalBultos=0;
-       for(let item of keys){
-            body += `
+       
+       if(type=="cliente" && keys.length){
+        let totalGeneral = 0;
+        for(let item of keys){
+            let totalByOrder = 0;
+        body+=`
+             <tr class="border">
+                 <td colspan="4" style="text-align:left"><label class="items">${type.charAt(0).toUpperCase()+type.slice(1,type.length)}: ${item}</label></td>
+                 
+             </tr>
+             <tr class="border">
+             <td><label class="items">Orden</label></td><td><label class="items">Producto</label></td><td><label class="items">Fecha</label></td><td><label class="items">Unidad</label></td><td><label class="items">Cantidad</label></td>
+             </tr>
+             <tr>
+             `;
+             let ordenes = Object.keys(object[item]);
+             for(let orden of ordenes){
+                 let formulas = Object.keys(object[item][orden]['productos']);
+                 for(let formula of formulas){
+                 let dateToParse=new Date(object[item][orden]['productos'][formula].date);
+                 body +=`
+                 <td><label class="items">${object[item][orden].remissionNumber}</label></td>
+                 <td><label class="items">${formula}</label></td>
+                 <td><label class="items">${dateToParse.getDate()}/${dateToParse.getMonth()+1}/${dateToParse.getFullYear()} ${dateToParse.getHours()}:${dateToParse.getMinutes()}</label></td>
+                 <td><label class="items">Bultos</label></td>
+                 <td><label class="items">${object[item][orden]['productos'][formula].count}</label></td>
+                 `;
+                 totalByOrder+=object[item][orden]['productos'][formula].count;
+                 totalGeneral+=totalByOrder;
+                 }
+             }
+             body+=`
+             </tr>
+             <tr >
+             <td colspan="3"></td>
+             <td  style="text-align:center"><label class="items">Sub-total</label></td>
+             <td class="border"><label class="items">${totalByOrder}</label></td>
+             </tr>
+             `;
+         }
+         body+=`
+         <tr class="border">
+             <td colspan="4" style="text-align:right"><label class="items">Total general</label></td>
+             <td><label class="items">${totalGeneral}</label></td>
+             </tr>
+             </table></body></html>
+         `;
+       }else if(type=="orden" && keys.length){
+        let totalGeneral = 0;
+        for(let item of keys){
+            let totalByProduct = 0;
+        body+=`
+             <tr class="border">
+                 <td colspan="2" style="text-align:left"><label class="items">${type.charAt(0).toUpperCase()+type.slice(1,type.length)}: ${object[item].remissionNumber}</label></td>
+                 <td colspan="2" style="text-align:left"><label class="items">Cliente: ${object[item].ingenioName}</label></td>
+             </tr>
+             <tr class="border">
+             <td><label class="items">Producto</label></td><td><label class="items">Fecha</label></td><td><label class="items">Unidad</label></td><td><label class="items">Cantidad</label></td>
+             </tr>
+             <tr>
+             `;
+             let productos = Object.keys(object[item]['productos']);
+             for(let producto of productos){
+                 let dateToParse=new Date(object[item]['productos'][producto].date);
+                 body +=`
+                 <td><label class="items">${producto}</label></td>
+                 <td><label class="items">${dateToParse.getDate()}/${dateToParse.getMonth()+1}/${dateToParse.getFullYear()} ${dateToParse.getHours()}:${dateToParse.getMinutes()}</label></td>
+                 <td><label class="items">Bultos</label></td>
+                 <td><label class="items">${object[item]['productos'][producto].count}</label></td>
+                 `;
+                 totalByProduct+=object[item]['productos'][producto].count;
+                 totalGeneral+=totalByProduct;
+             }
+             body+=`
+             </tr>
+             <tr >
+             <td colspan="2"></td>
+             <td  style="text-align:center"><label class="items">Sub-total</label></td>
+             <td class="border"><label class="items">${totalByProduct}</label></td>
+             </tr>
+             `;
+         }
+         body+=`
+         <tr class="border">
+             <td colspan="3" style="text-align:right"><label class="items">Total general</label></td>
+             <td><label class="items">${totalGeneral}</label></td>
+             </tr>
+             </table></body></html>
+         `;
+       }else if(type=="producto" && keys.length){
+           let totalGeneral = 0;
+           for(let item of keys){
+               let totalByOrder = 0;
+           body+=`
+                <tr class="border">
+                    <td colspan="4" style="text-align:left"><label class="items">${type.charAt(0).toUpperCase()+type.slice(1,type.length)}: ${item}</label></td>
+                </tr>
+                <tr class="border">
+                <td><label class="items">Orden</label></td><td><label class="items">Cliente</label></td><td><label class="items">Unidad</label></td><td><label class="items">Cantidad</label></td>
+                </tr>
+                <tr>
+                `;
+                let ordenes = Object.keys(object[item]);
+                for(let orden of ordenes){
+                    body +=`
+                    <td><label class="items">${object[item][orden].remissionNumber}</label></td>
+                    <td><label class="items">${object[item][orden].ingenioName}</label></td>
+                    <td><label class="items">Bultos</label></td>
+                    <td><label class="items">${object[item][orden].count}</label></td>
+                    `;
+                    totalByOrder+=object[item][orden].count;
+                    totalGeneral+=totalByOrder;
+                }
+                body+=`
+                </tr>
+                <tr >
+                <td colspan="2"></td>
+                <td  style="text-align:center"><label class="items">Sub-total</label></td>
+                <td class="border"><label class="items">${totalByOrder}</label></td>
+                </tr>
+                `;
+            }
+            body+=`
             <tr class="border">
-            <td>${(type=="producto")?"Producto:":"Orden:"} ${item}</td>
-            <td></td>
-            <td></td>
+                <td colspan="3" style="text-align:right"><label class="items">Total general</label></td>
+                <td><label class="items">${totalGeneral}</label></td>
+                </tr>
+                </table></body></html>
+            `;
+       }else{
+           body=`</table></body></html>`;
+       }
+              return body;
+    }
+
+    //----------------------------------------------------------------------------------------->
+    async getBodyByProduct(data:any){
+        let body="";
+        let object:any={};
+
+
+        for(let item of data){
+            if(object[item.description]){
+                object[item.description].push({
+                    date: item.dateFormat,
+                    count: item.count
+                });
+            }else{
+                object[item.description]=[
+                    {
+                        date: item.dateFormat,
+                        count: item.count
+                    }
+                ]
+            }
+        }
+
+        let formulas = Object.keys(object);
+        let totalGeneral=0;
+        for(let formula of formulas){
+            body+=`
+            <tr class="border">
+            <td colspan="4" style="text-align:left;">Producto: ${formula}</td>
             </tr>
             <tr>
-            <td>${(type!="producto")?"Producto":"Orden"}</td>
-            <td>Fecha</td>
-            <td>Cantidad</td>
+            <td></td>
+                <td  style="text-align:center;">Fecha</td>
+                <td>Unidad</td>
+                <td>Cantidad</td>
             </tr>
             `;
-        let keysSec = Object.keys(object[item]);
-        console.log("KEYSECS",keysSec)
-        let totalCount = 0;
-        for(let itemsec of keysSec){
-            body+=`
-            <tr>
-            <td>${itemsec}</td>
-            <td>${object[item][itemsec]['date']}</td>
-            <td>${object[item][itemsec]['count']}</td>
-            </tr>
-            `
-            totalCount += object[item][itemsec]['count'];
+            let totalByFormula = 0;
+            for(let rowFomula of object[formula]){
+                body+=`
+                <tr>
+                <td></td>
+                <td style="text-align:center;">${rowFomula.date}</td>
+                <td>BULTOS</td>
+                <td>${rowFomula.count}</td>
+                </tr>
+                `;
+                totalByFormula+=rowFomula.count;
+                
+            }
+            totalGeneral+=totalByFormula;   
+            body+=`<tr>
+            <td colspan="2"></td>
+            <td style="text-align:center;">Sub-total:</td>
+            <td class="border">${totalByFormula}</td>
+            </tr>`
         }
         body+=`
-        <tr>
-        <td></td><td style="text-align:right">SubTotal:</td><td class="border">${totalCount}</td>
-        </tr>
+        <tr class="border">
+        <td colspan="2"></td>
+            <td style="text-align:center;">Total general:</td>
+            <td class="border">${totalGeneral}</td>
+        </tr></table></body></html>
         `;
-        totalBultos+=totalCount;
-       }
 
-       body+=`
-       <tr class="border">
-       <td></td><td colspan="2">Total General:  ${totalBultos} Bultos</td>
-       </tr>
-       </table></body></html>
-       `;
-       return body;
+        return body;
+        
     }
 
-    async getBodyOnlyProducts(data:any){
-        let object:any = {};
-        for(let item of data){
-        if(object[item.description]){
-            if(object[item.description]){
-                
-                    if(object[item.description][item.date]){
-                        object[item.description][item.date].count+=item.count;
+    async getBodyOfAplicatedTypes(data:[any],type:string,subType?:string){
+        let object:any={};
+        if(type=="producto"){
+            for(let item of data){
+                if(object[item.producto]){
+                    if(object[item.producto][item.zona]){
+                        if(object[item.producto][item.zona][item.ejido]){
+                            if(object[item.producto][item.zona][item.ejido][item.productor]){
+                                object[item.producto][item.zona][item.ejido][item.productor].push({
+                                    parcela: item.parcela,
+                                    date: item.date,
+                                    cantidad: item.cantidad
+                                });
+                            }else{
+                                object[item.producto][item.zona][item.ejido][item.productor] = [
+                                    {
+                                        parcela: item.parcela,
+                                        date: item.date,
+                                        cantidad: item.cantidad
+                                    }
+                                ]    
+                            }
+                        }else{
+                            object[item.producto][item.zona][item.ejido]={};
+                            object[item.producto][item.zona][item.ejido][item.productor] = [
+                                {
+                                    parcela: item.parcela,
+                                    date: item.date,
+                                    cantidad: item.cantidad
+                                }
+                            ]    
+                        }
                     }else{
-                         object[item.description][item.date]={};
-                         object[item.description][item.date].count=item.count;
+                        object[item.producto][item.zona]={};
+                        object[item.producto][item.zona][item.ejido]={};
+                        object[item.producto][item.zona][item.ejido][item.productor] = [
+                            {
+                                parcela: item.parcela,
+                                date: item.date,
+                                cantidad: item.cantidad
+                            }
+                        ]    
                     }
-                
-             
-            }else{
-                object[item.description][item.date]={
-                    count: item.count
-                };
-            }
-        }else{
-            object[item.description]={};
-            object[item.description][item.date]={
-                count: item.count
-            }
-        }
-    }
-
-    let keys = Object.keys(object);
-       let body="";
-       let totalBultos=0;
-       for(let item of keys){
-            body += `
-            <tr class="border">
-            <td>Producto: ${item}</td>
-            <td></td>
-            <td></td>
-            </tr>
-            <tr>
-            <td colspan="2">Fecha</td>
-            <td>Cantidad</td>
-            </tr>
-            `;
-        let keysSec = Object.keys(object[item]);
-        console.log("KEYSECS",keysSec)
-        let totalCount = 0;
-        for(let date of keysSec){
-            body+=`
-            <tr>
-           
-            <td colspan="2">${date}</td>
-            <td>${object[item][date].count}</td>
-            </tr>
-            `
-            totalCount += object[item][date].count;
-        }
-            body+=`
-        <tr>
-        <td></td><td style="text-align:right">SubTotal:</td><td class="border">${totalCount}</td>
-        </tr>
-        `;
-        totalBultos+=totalCount;
-    
-        }
-
-
-       body+=`
-       <tr class="border">
-       <td></td><td colspan="2">Total General:  ${totalBultos} Bultos</td>
-       </tr>
-       </table></body></html>
-       `;
-       return body;
-
-    }
-    
-    async getBodyOnlyParcelasNotAplicated(data:any){
-        let object:any = {};
-        for(let item of data){
-            if(object[item.formula]){
-                if(object[item.formula][item.zona]){
-                    if(object[item.formula][item.zona][item.ejido]){
-                        object[item.formula][item.zona][item.ejido].push({
-                            codigo: item.codigo,
-                            productor: item.productor,
-                            bultos: item.bultos,
-                            date:item.date,
-                            aplicated: item.aplicated
-                        })
-                    }else{
-                        object[item.formula][item.zona][item.ejido]=[{
-                            codigo: item.codigo,
+                }else{
+                    object[item.producto]={};
+                    object[item.producto][item.zona]={};
+                    object[item.producto][item.zona][item.ejido]={};
+                    object[item.producto][item.zona][item.ejido][item.productor] = [
+                        {
+                            parcela: item.parcela,
                             date: item.date,
-                            productor: item.productor,
-                            bultos: item.bultos,
-                            aplicated: item.aplicated
+                            cantidad: item.cantidad
+                        }
+                    ]
+                }
+            }
+        }else if(type=="zona"){
+            for(let item of data){
+                if(object[item.zona]){
+                    if(object[item.zona][item.ejido]){
+                        if(object[item.zona][item.ejido][item.productor]){
+                            object[item.zona][item.ejido][item.productor].push({
+                                parcela: item.parcela,
+                                producto: item.producto,
+                                date: item.date,
+                                cantidad: item.cantidad
+                            });
+                        }else{
+                            object[item.zona][item.ejido][item.productor]=[
+                                {
+                                parcela: item.parcela,
+                                producto: item.producto,
+                                date: item.date,
+                                cantidad: item.cantidad
+                                }
+                            ];
+                        }
+                    }else{
+                            object[item.zona][item.ejido]={};
+                            object[item.zona][item.ejido][item.productor]=[
+                                {
+                                parcela: item.parcela,
+                                producto: item.producto,
+                                date: item.date,
+                                cantidad: item.cantidad
+                                }
+                            ];
+                    }
+                }else{
+                        object[item.zona]={};
+                        object[item.zona][item.ejido]={};
+                            object[item.zona][item.ejido][item.productor]=[
+                                {
+                                parcela: item.parcela,
+                                producto: item.producto,
+                                date: item.date,
+                                cantidad: item.cantidad
+                                }
+                            ];
+                }
+            }
+        }else if(type=="ejido"){
+            for(let item of data){
+                if(object[item.ejido]){
+                    if(object[item.ejido][item.zona]){
+                        if(object[item.ejido][item.zona][item.productor]){
+                            object[item.ejido][item.zona][item.productor].push({
+                                parcela: item.parcela,
+                                producto: item.producto,
+                                date: item.date,
+                                cantidad: item.cantidad
+                            })
+                        }else{
+                            object[item.ejido][item.zona][item.productor]=[{
+                                parcela: item.parcela,
+                                producto: item.producto,
+                                date: item.date,
+                                cantidad: item.cantidad
+                            }]
+                        }
+                    }else{
+                        object[item.ejido][item.zona]={}
+                        object[item.ejido][item.zona][item.productor]=[{
+                            parcela: item.parcela,
+                            producto: item.producto,
+                            date: item.date,
+                            cantidad: item.cantidad
                         }]
                     }
                 }else{
-                    object[item.formula][item.zona]={};
-                    object[item.formula][item.zona][item.ejido]=[{
-                            codigo: item.codigo,
-                            date: item.date,
-                            productor: item.productor,
-                            bultos: item.bultos,
-                            aplicated: item.aplicated
-                        }
-                    ]
+                    object[item.ejido]={};
+                    object[item.ejido][item.zona]={};
+                    object[item.ejido][item.zona][item.productor]=[{
+                        parcela: item.parcela,
+                        producto: item.producto,
+                        date: item.date,
+                        cantidad: item.cantidad
+                    }];
                 }
-            }else{
-                object[item.formula]={};
-                object[item.formula][item.zona]={};
-                object[item.formula][item.zona][item.ejido]=[{
-                            codigo: item.codigo,
-                            date: item.date,
-                            productor: item.productor,
-                            bultos: item.bultos,
-                            aplicated: item.aplicated
-                        }
-                    ]
             }
         }
-
-        let body ="";
-        let formulas = Object.keys(object);
-        let totalGlobal = 0;
-        for(let formula of formulas){
-            body += `
-            <tr class="border">
-            <td>Producto: ${formula}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            </tr>
-            <tr>
-            <td>Zona</td>
-            <td>Ejido</td>
-            <td>Parcela</td>
-            <td>Fecha de ultima aplicación</td>
-            <td>Productor</td>
-            <td>bultos asignados </td>
-            <td>bultos aplicados</td>
-            </tr>
+        let body="";
+        if(type=="parcela"){
+            for(let parcela of data){
+                let currentDate =new Date(parcela.date);
+                
+                body+=`
+                <tr class="border">
+                <td colspan="${(subType=="notaplicated")?6:7}" style="text-align:left;"><label class="item">Parcela: ${parcela.parcela}</label></td>
+                </tr>
+                <tr class="border">
+                <td>Zona</td>
+                <td>Ejido</td>
+                <td>Productor</td>
+                <td>Producto</td>
+                ${(subType!="notaplicated")?"<td>Fecha</td>":""}
+                <td>Unidad</td>
+                <td>Cantidad</td>
+                </tr>
+                <tr>
+                <td>${parcela.zona}</td>
+                <td>${parcela.ejido}</td>
+                <td>${parcela.productor}</td>
+                <td>${parcela.producto}</td>
+                ${(subType!="notaplicated")? "<td>"+currentDate.getDate()+"/"+(currentDate.getMonth()+1)+"/"+currentDate.getFullYear()+"</td>":""};
+                <td>BULTOS</td>
+                <td>${parcela.cantidad}</td>
+                </tr>
+                `;
+            }
+            body+=`
+            </table></body></html>
             `;
-            let totalCountByFormule = 0;
-            let zonas = Object.keys(object[formula]);
-            
+        }else if(type=="zona"){
+            let zonas = Object.keys(object);
+            let totalGeneral=0;
             for(let zona of zonas){
-                let ejidos = Object.keys(object[formula][zona]);
+                let ejidos = Object.keys(object[zona]);
+                body+=`
+                            <tr class="border">
+                            <td colspan="${(subType=="notaplicated")?6:7}" style="text-align:left;"><label class="items">Zona: ${zona}</label></td>
+                            </tr>
+                            <tr>
+                            <td>Ejido</td>
+                            <td>Productor</td>
+                            <td>Parcela</td>
+                            <td>Producto</td>
+                            ${(subType!="notaplicated")?"<td>Fecha</td>":""}
+                            <td>Unidad</td>
+                            <td>Cantidad</td>
+                            </tr>
+                            `;
                 for(let ejido of ejidos){
-                    for(let parcela of object[formula][zona][ejido]){
+                    let productores = Object.keys(object[zona][ejido]);
+                    for(let productor of productores){
+                        let parcelas = object[zona][ejido][productor];
+                        
+                            let subTotal=0;
+                        for(let parcela of parcelas){
+                            let currentDate =new Date(parcela.date);
+                            body+=`
+                            <tr>
+                            <td>${ejido}</td>
+                            <td>${productor}</td>
+                            <td>${parcela.parcela}</td>
+                            <td>${parcela.producto}</td>
+                            ${(subType!="notaplicated")? "<td>"+currentDate.getDate()+"/"+(currentDate.getMonth()+1)+"/"+currentDate.getFullYear()+"</td>":""};
+                            <td>BULTOS</td>
+                            <td>${parcela.cantidad}</td>
+                            </tr>
+                            `;
+                            subTotal+=+parcela.cantidad;
+                        }
+                        totalGeneral+=subTotal;
+                            body+=`
+                            <tr class="border">
+                            <td colspan="${(subType=="notaplicated")?5:6}" style="text-align:right;">Sub-total: </td><td>${subTotal}</td>
+                            </tr>
+                            `;
+                    }
+                }
+            }
+                    body+=`
+                            <tr class="border">
+                            <td colspan="${(subType=="notaplicated")?5:6}" style="text-align:right;">Total general: </td><td>${totalGeneral}</td>
+                            </tr>
+                            `;
+        }else if(type=="producto"){
+                let totalGeneral=0;
+                let productos = Object.keys(object);
+                for(let producto of productos){
+                    let zonas = Object.keys(object[producto]);
+                    let subTotal=0;
+                    for(let zona of zonas){
+                        let ejidos = Object.keys(object[producto][zona]);
+                        body+=`
+                                    <tr class="border">
+                                    <td colspan="${(subType=="aplicated")?6:7}" style="text-align:left;"><label class="items">Producto: ${producto}</label></td>
+                                    </tr>
+                                    <tr class="border">
+                                    <td>Zona</td>
+                                    <td>Ejido</td>
+                                    <td>Productor</td>
+                                    <td>Parcela</td>
+                                    ${(subType!="notaplicated")?"<td>Fecha</td>":""}
+                                    <td>Unidad</td>
+                                    <td>Cantidad</td>
+                                    </tr>
+                                    `;
+                        for(let ejido of ejidos){
+                            let productores = Object.keys(object[producto][zona][ejido]);
+                            for(let productor of productores){
+                                for(let parcela of object[producto][zona][ejido][productor]){
+                                    let currentDate= new Date(parcela.date);
+                                    body+=`
+                                    <tr>
+                                    <td>${zona}</td>
+                                    <td>${ejido}</td>
+                                    <td>${productor}</td>
+                                    <td>${parcela.parcela}</td>
+                                    ${(subType!="notaplicated")? "<td>"+currentDate.getDate()+"/"+(currentDate.getMonth()+1)+"/"+currentDate.getFullYear()+"</td>":""};
+                                    <td>BULTOS</td>
+                                    <td>${parcela.cantidad}</td>
+                                    </tr>
+                                    `;
+                                    subTotal+=+parcela.cantidad;
+                                }
+                            }
+                        }
                         body+=`
                         <tr>
-                        <td>${zona}</td>
-                        <td>${ejido}</td>
-                        <td>${parcela.codigo}</td>
-                        <td>${parcela.date}</td>
-                        <td>${parcela.productor}</td>
-                        <td>${parcela.bultos}</td>
-                        <td>${parcela.aplicated}</td>
+                        <td colspan="${(subType=="notaplicated")?5:6}" style="text-align:right">Sub-Total</td>
+                        <td class="border">${subTotal}</td>
                         </tr>
                         `;
-                        totalCountByFormule +=(parcela.bultos-parcela.aplicated);
                     }
+                    totalGeneral+=subTotal;
                 }
-            }
-            body+=`
-            <tr class="border">
-            <td colspan="7" style="text-align: right">No aplicados:  ${totalCountByFormule} Bultos</td>
-            </tr>
-            </table></body></html>
-            `;
-            totalGlobal += totalCountByFormule;
-
-
-        }
-        body+=`
-            <tr class="border">
-            <td colspan="7" style="text-align: right">Total no aplicados:  ${totalGlobal} Bultos</td>
-            </tr>
-            </table></body></html>
-            `;
-        return body;
-    }
-
-    async getBodyOnlyParcelas(data:any,type:string){
-        let body ="";
-        if(type!="parcela"){
-            if(type=="ejido"){
-                let obj:any = {};
-                for(let item of data){
-                    if(obj[item.ejidolocalidad]){
-                        if(obj[item.ejidolocalidad][item.zona]){
-                            obj[item.ejidolocalidad][item.zona].push({
-                                    codigo: item.codigo,
-                                    bultos: item.bultos,
-                                    formula: item.formula,
-                                    date: item.date,
-                                    productor: item.productor
-                                  
-                            });
-                        }else{
-                            obj[item.ejidolocalidad][item.zona]=[{
-                                    codigo: item.codigo,
-                                    bultos: item.bultos,
-                                    formula: item.formula,
-                                    date: item.date,
-                                    productor: item.productor
-                                
-                            }]
-                            
-                        }
-                    }else{
-                        obj[item.ejidolocalidad]={
-                            [item.zona]:[{
-                                    codigo: item.codigo,
-                                    bultos: item.bultos,
-                                    formula: item.formula,
-                                    date: item.date,
-                                    productor: item.productor
-                                }]
-                            }
-                        };
-                    }
-                    let keys = Object.keys(obj);
-                    for(let ejido of keys){
-                        body+=`
-                        <tr>
-                        <td colspan="7" class="border">
-                        Ejido: ${ejido}
-                        </td>
-                        </tr><tr>
-                        <td>Zona</td>
-                        <td>Parcela</td>
-                        <td>fecha</td> 
-                        <td>Productor</td>
-                        <td>Producto</td>
-                        <td>US</td>
-                        <td>Cantidad</td>
-                        </tr>`;
-                        let zonas = Object.keys(obj[ejido]);
-                        for(let zona of zonas){
-
-                            for(let item of obj[ejido][zona]){
-                            body +=  `
-                            <tr>
-                            <td>${zona}</td><td>${item.codigo}</td><td>${item.date}</td><td>${item.productor}</td><td>${item.formula}</td><td>BULTOS</td><td>${item.bultos}</td>
-                            </tr>
-                            `
-                            }
-                        }
-                       
-                        
-                        
-                    }
-            }else if(type=="zona"){
-                let obj:any = {};
-                for(let item of data){
-                    if(obj[item.zona]){
-                        if(obj[item.zona][item.ejidolocalidad]){
-                            obj[item.zona][item.ejidolocalidad].push({
-                                    codigo: item.codigo,
-                                    bultos: item.bultos,
-                                    formula: item.formula,
-                                    date: item.date,
-                                    productor: item.productor
-                                  
-                            });
-                        }else{
-                            obj[item.zona][item.ejidolocalidad]=[{
-                                    codigo: item.codigo,
-                                    bultos: item.bultos,
-                                    formula: item.formula,
-                                    date: item.date,
-                                    productor: item.productor
-                                
-                            }]
-                            
-                        }
-                    }else{
-                        obj[item.zona]={
-                            [item.ejidolocalidad]:[{
-                                    codigo: item.codigo,
-                                    bultos: item.bultos,
-                                    formula: item.formula,
-                                    date: item.date,
-                                    productor: item.productor
-                                }]
-                            }
-                        };
-                    }
-                    let keys = Object.keys(obj);
-                    for(let zona of keys){
-                        body+=`
-                        <tr>
-                        <td colspan="7" class="border">
-                        Zona: ${zona}
-                        </td>
-                        </tr><tr>
-                        <td>Ejido</td>
-                        <td>Parcela</td>
-                        <td>fecha</td> 
-                        <td>Productor</td>
-                        <td>Producto</td>
-                        <td>US</td>
-                        <td>Cantidad</td>
-                        </tr>`;
-                        let ejidos = Object.keys(obj[zona]);
-                        console.log("EJIDOS",ejidos);
-                        for(let ejido of ejidos){
-
-                            for(let item of obj[zona][ejido]){
-                            body +=  `
-                            <tr>
-                            <td>${ejido}</td><td>${item.codigo}</td><td>${item.date}</td><td>${item.productor}</td><td>${item.formula}</td><td>BULTOS</td><td>${item.bultos}</td>
-                            </tr>
-                            `
-                            }
-                        }
-                       
-                        
-                        
-                    }
-            }
-        }else{
-        
-     
-        for(let item of data){
-            body+=`
-            <tr>
-            <td colspan="7" class="border">
-            Parcela: ${item.codigo}
-            </td>
-            </tr> 
-            <tr>
-            <td>Zona</td>
-            <td>Ejido</td>
-            <td>fecha</td> 
-            <td>Productor</td>
-            <td>Producto</td>
-            <td>US</td>
-            <td>Cantidad</td>
-            </tr>
-            <tr>
-            <td>${item.zona}</td><td>${item.ejidolocalidad}</td><td>${item.date}</td><td>${item.productor}</td><td>${item.formula}</td><td>BULTOS</td><td>${item.bultos}</td>
-            </tr>
-            `
-            
-            
-        }
-    }
-        return body;
-    }
-
-    async getBodyOnlyParcelasNotAplicatedByTypes(data:any,type:string){
-        let object:any = {};
-
-        for(let item of data){
-            if(type=="ejido"){
-            if(object[item.ejido]){
-                if(object[item.ejido][item.zona]){
-                    
-                        object[item.ejido][item.zona].push({
-                            formula: item.formula,
-                            codigo: item.codigo,
-                            productor: item.productor,
-                            bultos: item.bultos,
-                            date:item.date,
-                            aplicated: item.aplicated
-                        })
-                   
-                }else{
-                    object[item.ejido][item.zona]=[{
-                            formula:item.formula,
-                            codigo: item.codigo,
-                            date: item.date,
-                            productor: item.productor,
-                            bultos: item.bultos,
-                            aplicated: item.aplicated
-                        }
-                    ]
-                }
-            }else{
-                object[item.ejido]={};
-                object[item.ejido][item.zona]=[{
-                            formula:item.formula,
-                            codigo: item.codigo,
-                            date: item.date,
-                            productor: item.productor,
-                            bultos: item.bultos,
-                            aplicated: item.aplicated
-                        }
-                    ]
-            }
-        }else if(type=="zona"){
-            if(object[item.zona]){
                 
-                    if(object[item.zona][item.ejido]){
-                        object[item.zona][item.ejido].push({
-                            formula:item.formula,
-                            codigo: item.codigo,
-                            productor: item.productor,
-                            bultos: item.bultos,
-                            date:item.date,
-                            aplicated: item.aplicated
-                        })
-                    
-                }else{
-                    object[item.zona][item.ejido]=[{
-                            formula:item.formula,
-                            codigo: item.codigo,
-                            date: item.date,
-                            productor: item.productor,
-                            bultos: item.bultos,
-                            aplicated: item.aplicated
-                        }
-                    ]
-                }
-            }else{
-                object[item.zona]={};
-                object[item.zona][item.ejido]=[{
-                            formula:item.formula,
-                            codigo: item.codigo,
-                            date: item.date,
-                            productor: item.productor,
-                            bultos: item.bultos,
-                            aplicated: item.aplicated
-                        }
-                    ]
-            }
-        
-        }
-    }
-
-        let body ="";
-        if(type=="parcela"){
-        let totalGlobal = 0;
-        for(let parcela of data){
-            
-            body += `
-            <tr class="border">
-            <td>Parcela: ${parcela.codigo}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            </tr>
-            <tr>
-            <td>Zona</td>
-            <td>Ejido</td>
-            <td>Formula</td>
-            <td>Fecha de ultima aplicación</td>
-            <td>Productor</td>
-            <td>bultos asignados </td>
-            <td>bultos aplicados</td>
-            </tr>
-                        <tr>
-                        <td>${parcela.zona}</td>
-                        <td>${parcela.ejido}</td>
-                        <td>${parcela.formula}</td>
-                        <td>${parcela.date}</td>
-                        <td>${parcela.productor}</td>
-                        <td>${parcela.bultos}</td>
-                        <td>${parcela.aplicated}</td>
+                body+=`
+                        <tr class="border">
+                        <td colspan="${(subType=="notaplicated")?5:6}" style="text-align:right">Total general</td>
+                        <td>${totalGeneral}</td>
                         </tr>
+                        `;
+
+                console.log("BODY",JSON.stringify(object));
+        }else if(type=="ejido"){
+            let ejidos = Object.keys(object);
+            let totalGeneral=0;
+            for(let ejido of ejidos){
+                let zonas = Object.keys(object[ejido]);
+                body+=`
+                            <tr class="border"><td colspan="${(subType=="aplicated")?6:7}" style="text-align: left;"><label class="items">Ejido: ${ejido}</label></td></tr>
+                            <tr class="border">
+                            <td>Zona</td>
+                            <td>Productor</td>
+                            <td>Parcela</td>
+                            <td>Producto</td>
+                            ${(subType!="notaplicated")?"<td>Fecha</td>":""}
+                            <td>Unidad</td>
+                            <td>Cantidad</td>
+                            </tr>
+                            `;
+                            let subTotal = 0;        
+                for(let zona of zonas){
+                    let productores = Object.keys(object[ejido][zona]);
+                    for(let productor of productores){
+                        let parcelas = object[ejido][zona][productor];
                         
-            <tr class="border">
-            <td colspan="7" style="text-align: right">No aplicados:  ${(parcela.bultos-parcela.aplicated)} Bultos</td>
-            </tr>
-            </table></body></html>
-            `;
-            totalGlobal += (parcela.bultos-parcela.aplicated);
+                        for(let parcela of parcelas){
+                            let currentDate= new Date(parcela.date);
+                            body+=`
+                            <tr>
+                            <td>${zona}</td>
+                            <td>${productor}</td>
+                            <td>${parcela.parcela}</td>
+                            <td>${parcela.producto}</td>
+                            ${(subType!="notaplicated")? "<td>"+currentDate.getDate()+"/"+(currentDate.getMonth()+1)+"/"+currentDate.getFullYear()+"</td>":""};
+                            <td>BULTOS</td>
+                            <td>${parcela.cantidad}</td>
+                            </tr>
+                            `;
+                            subTotal+=+parcela.cantidad;
+                        }
                     }
-            
-                    body+=`
-                    <tr class="border">
-                    <td colspan="7" style="text-align: right">Total no aplicados:  ${totalGlobal} Bultos</td>
-                    </tr>
-                    </table></body></html>
-                    `;
-                }else if(type=="ejido"){
-                    let totalGlobal = 0;
-                    let ejidos = Object.keys(object);
-                    for(let ejido of ejidos){
-                        
-                        body += `
-                        <tr class="border">
-                        <td>Ejidos: ${ejido}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        </tr>
-                        <tr>
-                        <td>Zona</td>
-                        <td>Parcela</td>
-                        <td>Formula</td>
-                        <td>Fecha de ultima aplicación</td>
-                        <td>Productor</td>
-                        <td>bultos asignados </td>
-                        <td>bultos aplicados</td>
-                        </tr>`;
-                        let zonas = Object.keys(object[ejido]);
-                        let total = 0;
-                        for(let zona of zonas){
-                            
-                            for(let item of object[ejido][zona]){
-                                
-                                    body+=`
-                                                <tr>
-                                                <td>${zona}</td>
-                                                <td>${item.codigo}</td>
-                                                <td>${item.formula}</td>
-                                                <td>${item.date}</td>
-                                                <td>${item.productor}</td>
-                                                <td>${item.bultos}</td>
-                                                <td>${item.aplicated}</td>
-                                                </tr>
-                                                
-                                    <tr class="border">
-                                    <td colspan="7" style="text-align: right">No aplicados:  ${(item.bultos-item.aplicated)} Bultos</td>
-                                    </tr>
-                                    </table></body></html>
-                                    `;
-                                    total += item.bultos-item.aplicated;
-                            }
-                        }
-                        totalGlobal += total;
-                                }
-                        
-                                body+=`
-                                <tr class="border">
-                                <td colspan="7" style="text-align: right">Total no aplicados:  ${totalGlobal} Bultos</td>
-                                </tr>
-                                </table></body></html>
-                                `;
-
-
-                }else if(type=="zona"){
-                    let totalGlobal = 0;
-                    let zonas = Object.keys(object);
-                    console.log("ZONA",JSON.stringify(object));
-                    for(let zona of zonas){
-                        
-                        body += `
-                        <tr class="border">
-                        <td>Zona: ${zona}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        </tr>
-                        <tr>
-                        <td>Ejido</td>
-                        <td>Parcela</td>
-                        <td>Formula</td>
-                        <td>Fecha de ultima aplicación</td>
-                        <td>Productor</td>
-                        <td>bultos asignados </td>
-                        <td>bultos aplicados</td>
-                        </tr>`;
-                        let ejidos = Object.keys(object[zona]);
-                        let total = 0;
-                        for(let ejido of ejidos){
-                            
-                            for(let item of object[zona][ejido]){
-                                    body+=`
-                                                <tr>
-                                                <td>${ejido}</td>
-                                                <td>${item.codigo}</td>
-                                                <td>${item.formula}</td>
-                                                <td>${item.date}</td>
-                                                <td>${item.productor}</td>
-                                                <td>${item.bultos}</td>
-                                                <td>${item.aplicated}</td>
-                                                </tr>
-                                                
-                                    <tr class="border">
-                                    <td colspan="7" style="text-align: right">No aplicados:  ${(item.bultos-item.aplicated)} Bultos</td>
-                                    </tr>
-                                    </table></body></html>
-                                    `;
-                                    total += item.bultos-item.aplicated;
-                            }
-                        }
-                        totalGlobal += total;
-                                }
-                        
-                                body+=`
-                                <tr class="border">
-                                <td colspan="7" style="text-align: right">Total no aplicados:  ${totalGlobal} Bultos</td>
-                                </tr>
-                                </table></body></html>
-                                `;
-
-
                 }
-            
-
-
-        
+                totalGeneral+=subTotal;
+                body+=`
+                <tr class="border">
+                <td colspan="${(subType=="notaplicated")?5:6}" style="text-align:right;">Sub-total: </td><td class="boder">${subTotal}</td>
+                </tr>
+                `;
+            }
+            body+=`
+                <tr class="border">
+                <td colspan="${(subType=="notaplicated")?5:6}" style="text-align:right;">Total general: </td><td>${totalGeneral}</td>
+                </tr>
+                `;
+        }
         
         return body;
     }
+    
 }

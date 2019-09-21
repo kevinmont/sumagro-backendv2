@@ -405,6 +405,7 @@ export default class IngenioController {
         if (type == types.aplicated) {
             for (let element of data) {
                 let coordenates: any = await this.coordenatesDao.getCoordenatesById(element.coordenatesid);
+                if(coordenates[0]!=undefined){
                 Object.assign(coordenate, {
                     latitud: coordenates[0].latitud,
                     longitud: coordenates[0].longitud
@@ -434,6 +435,8 @@ export default class IngenioController {
                     coordenates: coordenate
                 })
             }
+            }
+
         } else if (type == types.entrance) {
             for (let element of data) {
                 response.push({

@@ -60,7 +60,7 @@ export default class AplicatedDao{
 
     async saveParcelaSack(id:number,parcela:string,date:string){
         logger.info('DAO: Method saveParcelaSack Startting');
-        let query = 'insert into `parcela-sacks`(id,parcela,date)'+ ` values(${id},'${parcela}',${date})`;
+        let query = 'insert into `parcela-sacks`(id,parcela,date)'+ ` values(${id},'${parcela}','${date}')`;
         logger.info('DAO: Method saveParcelaSack Ending');
         return await this.mysql.query(query);
     }

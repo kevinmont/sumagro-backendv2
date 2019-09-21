@@ -8,15 +8,21 @@ export default class SumagroReportRouter{
     }
 
     addRoutes(app: express.Application){
-        app.route('/sumagro-app/almacen-sumagro/report-sumagro')
+        app.route('/sumagro-app/ingenios-type/report')
             .post((req: express.Request,res:express.Response)=>{
                 this.sumagroReportController.generateReport(req,res);
             })
 
-        app.route('/sumagro-app/reportertype')
+        app.route('/sumagro-app/ingenio-type/multiple-report')
+            .post((req:express.Request,res:express.Response)=>{
+                this.sumagroReportController.generateReportAplicated(req,res);
+            })
+
+        app.route('/sumagro-app/almacen-type/report')
         .post((req:express.Request, res: express.Response)=>{
-                this.sumagroReportController.getDataForProductFilter(req,res);
+                this.sumagroReportController.getReportByType(req,res);
         })
+
     }
 
 

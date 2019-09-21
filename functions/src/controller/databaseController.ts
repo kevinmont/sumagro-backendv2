@@ -92,7 +92,7 @@ export default class DatabaseController{
         let ingenioId = req.params.ingenioId;
         let parseId:number = parseInt(ingenioId)
         let ejido:any = await this.databaseDao.getEjidoByIngenio(parseId);
-        if(!ejido.length) res.status(200).send({})
+        if(!ejido.length) throw res.status(200).send({})
         logger.info(ejido);
         let objectdata:any=[];
         for(let element of ejido){

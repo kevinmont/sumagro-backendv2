@@ -41,7 +41,7 @@ export default class DatabaseDao {
 
     async getParcelaRest(codigo:string){
         logger.info("DAO: Method getParcelaRest Starting");
-        let query="SELECT * from `sumagro-dev`.parcelas where "+`codigo=${codigo}`
+        let query="SELECT * from `sumagro-dev`.parcelas where "+`codigo='${codigo}'`
         logger.info("DAO: Method getParcelaRest Ended");
         return this.mysql.query(query);
     }
