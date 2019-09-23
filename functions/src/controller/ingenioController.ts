@@ -503,7 +503,8 @@ export default class IngenioController {
 
     async getZonasOfIngenio(req:Request,res:Response){
         let ingenioId:number=+req.query.ingenioId;
-        let response = await this.ingenioDao.getListOfZones(ingenioId);
+        let type:string= req.query.type;
+        let response = await this.ingenioDao.getListOfZones(ingenioId,type);
         res.status(200).send(response);
     }
 }

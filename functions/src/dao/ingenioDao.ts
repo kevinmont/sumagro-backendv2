@@ -104,7 +104,7 @@ export default class ingenioDao {
 
     async getListOfZones(ingenioId:number,type:string){
         logger.info("DAO: Method getListOfZones Starting");
-        let query = "Select "+type+" from `sumagro-dev`.database where"+` ingenioid=${ingenioId};`;
+        let query = "Select "+(type=="ejido")?"ejidolocalidad":type+" from `sumagro-dev`.database where"+` ingenioid=${ingenioId};`;
         logger.info("DAO: Method getListOfZones Ended");
         return this.mysql.query(query);
     }
