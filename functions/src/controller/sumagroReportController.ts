@@ -10,6 +10,7 @@ import * as Log4js from 'log4js';
 //import EntranceDao from '../dao/entranceDao';
 
 import SumagroReportDao from '../dao/sumagroReportDao';
+import ingenioDao from '../dao/ingenioDao';
 
 
 const logger =  Log4js .getLogger('Sumagro Report Controller');
@@ -23,7 +24,7 @@ export default class SumagroReportController{
     //private entranceDao: EntranceDao;
     
     private sumagroReportDao: SumagroReportDao;
-    
+    private ingenioDao : ingenioDao;
     constructor( mysql: Mysql){
         // this.aplicatedDao = new AplicatedDao(mysql);
         // this.intransitDao= new IntransitDao(mysql);
@@ -31,6 +32,7 @@ export default class SumagroReportController{
         // //this.entranceDao = new EntranceDao(mysql);
         // this.outputDao = new OutputDao(mysql);
         // this.sumagroOutputDao= new SumagroOutputDao(mysql);
+        this.ingenioDao = new ingenioDao(mysql);
         this.sumagroReportDao= new SumagroReportDao(mysql);
         
     }
@@ -42,16 +44,18 @@ export default class SumagroReportController{
         if(!req.body.dateStart) throw res.status(400).send("Missing dateStart parameter");
         if(!req.body.dateEnd) throw res.status(400).send("Missing dateEnd parameter");
         if(!req.body.ingenioId) throw res.status(400).send("Missing ingenioId parameter");
-        if(!req.body.ingenioName) throw res.status(400).send("Missing ingenioId parameter");
-        let {tableName,productos,dateStart,dateEnd,ingenioId,ingenioName} = req.body;
+        
+        let {tableName,productos,dateStart,dateEnd,ingenioId} = req.body;
+        
+        let ingenioName:any = await this.ingenioDao.getIngenioDetails(+ingenioId);
         let dataToReport:any;
         let data:any;
         switch(tableName){
             case 'inventory':
             case 'outputs':
-                try{
+                try{ 
                     data=await this.sumagroReportDao.getDataByProduct(ingenioId,productos,tableName,dateStart,dateEnd);
-                    dataToReport = await this.sumagroReportDao.getReportInfo(tableName,"producto",dateStart,dateEnd,data,ingenioName);
+                    dataToReport = await this.sumagroReportDao.getReportInfo(tableName,"producto",dateStart,dateEnd,data,ingenioName[0].name);
                 }catch(err){
                     throw res.status(500).send("Error en conexion a MYSQL");    
                 }
@@ -96,8 +100,19 @@ export default class SumagroReportController{
         if(!req.body.tableName) throw res.status(400).send("Missing tableName parameter");
         if(!req.body.dateStart) throw res.status(400).send("Missing dateStart parameter");
         if(!req.body.dateEnd) throw res.status(400).send("Missing dateEnd parameter");
-        if(!req.body.ingenios) throw res.status(400).send("Missing ingenios parameter");
-        let { tableName,type,dateStart,dateEnd,ingenios,productos} = req.body;
+       
+        if(!req.body.ordenes) throw res.status(400).send("Missing ordenes parameter");
+        let { tableName,type,dateStart,dateEnd,productos,ordenes} = req.body;
+        let ingenios = [];
+        if(req.body.ingenios) {
+           ingenios = req.body.ingenios;
+        }
+        let ingenioName:any ={
+            name: "ALMACEN"
+        };
+        if(req.body.ingenioId) {
+            ingenioName = await this.ingenioDao.getIngenioDetails(+req.body.ingenioId);
+        }
         if(tableName!="sumagrooutputs" && tableName!="sumagrointransit" && tableName!="entrance" && tableName!="intransit") throw res.status(400).send("Report isn't available");
         let dataToReport:any;
         let data:any;
@@ -106,10 +121,10 @@ export default class SumagroReportController{
             case 'orden':
             case 'producto':
                     try{
-                    data = await this.sumagroReportDao.getDataOfWarehouse(tableName,dateStart,dateEnd,ingenios,productos);
-                    dataToReport= await this.sumagroReportDao.getReportInfo(tableName,type,dateStart,dateEnd,data,(!req.body.ingenioName)?"":req.body.ingenioName);
+                    data = await this.sumagroReportDao.getDataOfWarehouse(tableName,dateStart,dateEnd,ingenios,productos,ordenes);
+                    dataToReport= await this.sumagroReportDao.getReportInfo(tableName,type,dateStart,dateEnd,data,ingenioName[0].name);
                     }catch(err){
-                       throw res.status(500).send("Error en conexion a MYSQL"); 
+                       throw res.status(500).send(err); 
                     }
                 break;
             default:
@@ -151,7 +166,7 @@ export default class SumagroReportController{
     async generateReportAplicated(req:express.Request,res:express.Response){
         
         if(!req.body.ingenioId) throw res.status(400).send("Missin ingenioId parameter");
-        if(!req.body.ingenioName) throw res.status(400).send("Missin ingenioName parameter");
+        
         if(!req.body.zonas) throw res.status(400).send("Missin zonas parameter");
         if(!req.body.ejidos) throw res.status(400).send("Missin ejidos parameter");
         if(!req.body.productos) throw res.status(400).send("Missin productos parameter");
@@ -160,7 +175,9 @@ export default class SumagroReportController{
         if(!req.body.subType) throw res.status(400).send("Missin subType parameter");
         if(!req.body.dateStart) throw res.status(400).send("Missin dateStart parameter");
         if(!req.body.dateEnd) throw res.status(400).send("Missin dateEnd parameter");
-        let { ingenioId,zonas,ejidos,productos,parcelas,type,dateStart,dateEnd,subType,ingenioName} = req.body;
+        let { ingenioId,zonas,ejidos,productos,parcelas,type,dateStart,dateEnd,subType} = req.body;
+        let ingenioName:any="";
+        ingenioName=await this.ingenioDao.getIngenioDetails(ingenioId);
         let dataToReport:any;
         let data:any;
         
@@ -171,12 +188,19 @@ export default class SumagroReportController{
                     try{
                     data= await this.sumagroReportDao.getAplicatedEntityInfo(ingenioId,zonas,ejidos,parcelas,productos,subType,dateStart,dateEnd,type);
                     
-                    dataToReport =await this.sumagroReportDao.getReportInfo("aplicated",type,dateStart,dateEnd,data,ingenioName,subType); 
+                    dataToReport =await this.sumagroReportDao.getReportInfo("aplicated",type,dateStart,dateEnd,data,ingenioName[0].name,subType); 
                 }catch(err){
                     throw res.status(500).send("Error al conectar a la Base de Datos");    
                 }
+                }else if(type=='outofparcel'){
+                    try{    
+                        data = await this.sumagroReportDao.getAplicatedOutParcel(dateStart,dateEnd);
+                        dataToReport =await this.sumagroReportDao.getReportInfo("outofparcel",type,dateStart,dateEnd,data,ingenioName,subType); 
+                    }catch(err){
+                        throw res.status(500).send("Error al conectar a la Base de Datos");    
+                    }
                 }else{
-                    dataToReport = `<html><body>TIPO DE REPORTE INVALIDO</body></html>`;    
+                    dataToReport = `<html><body>TIPO DE REPORTE INVALIDO</body></html>`;
                 }
             break;
             default:

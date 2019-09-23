@@ -77,7 +77,7 @@ export default class PdfHelper{
             </tr>
             <tr>
                 <td><strong>UNIDAD</strong></td>
-                <td><strong>${order.operationunit}</strong></td>
+                <td><strong>${order.operationUnit}</strong></td>
                 <td colspan="3"></td>
             </tr>
             <tr>

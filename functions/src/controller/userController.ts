@@ -45,13 +45,6 @@ export default class UserController {
             ingenioId
         }
 
-        if (user.phoneNumber == undefined) {
-            delete user.phoneNumber;
-        }
-        if (user.displayName == undefined) {
-            delete user.displayName;
-        }
-
         if (user.ingenioId == undefined && (user.rol == "CAPTURIST" || user.rol == "WAREHOUSE")) {
             delete user.ingenioId;
         }
@@ -61,14 +54,13 @@ export default class UserController {
         console.log(emailUser)
         if (emailUser.length) throw res.status(400).send({ msg: "Email is register" }); 
 
-
         try {
-            let response: any = await this.firebase.createUserFirebase(user);
+            let uid: any = await this.firebase.createUserFirebase(user);
             if (user.rol == "WAREHOUSE" || user.rol == "CAPTURIST") {
                 user.ingenioId = 0;
             }
-            logger.info(response);
-            await this.userDao.createUser(user,response.uid);
+            logger.info(uid);
+            await this.userDao.createUser(user,uid);
             await this.nodemailers.sendMailNewAccount(email, { email: user.email, password });
             res.status(200).send({ msg: "Usuario registrado" });
         } catch (err) {
@@ -232,7 +224,9 @@ export default class UserController {
         let orderId = req.params.orderId;
         let ingenioId = req.params.ingenioId;
         let updateRequest = req.body;
+        logger.info("El status: " + updateRequest.status);
         if(updateRequest.status=="CAPTURED"){
+            await this.orderDao.updateOrderByOrderIdAndIngenioId(orderId,ingenioId,updateRequest);
             res.status(200).send();
         }else{
         let ingenio:any = await this.ingenioDao.getIngenioById(ingenioId);

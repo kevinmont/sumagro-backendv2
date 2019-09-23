@@ -86,5 +86,27 @@ export default class ingenioDao {
         logger.info("'DAO: Method getListOfIngenios Ending'");
         return await this.mysql.query(query);           
     }
+
+    async getDataAplicated(ingenioId:any, params=''){
+        logger.info('DAO: Method getDataAplicated Startting');
+        let sql=`SELECT * FROM aplicated where ingenioid=${ingenioId} and used = '1' ${params}`;
+        logger.info(`sql method getDataAplicated: ${sql}`);
+        logger.debug(`DAO: Method getDataAplicated Ending`);
+        return await this.mysql.query(sql);
+    }
+
+    async geListOfOrderByIngenio(ingenioId:number){
+        logger.info("DAO: Method geListOfOrderByIngenio Starting");
+        let query = "Select id from orders where"+` ingenioid=${ingenioId};`;
+        logger.info("DAO: Method geListOfOrderByIngenio Ended");
+        return this.mysql.query(query);
+    }
+
+    async getListOfZones(ingenioId:number,type:string){
+        logger.info("DAO: Method getListOfZones Starting");
+        let query = "Select "+type+" from `sumagro-dev`.database where"+` ingenioid=${ingenioId};`;
+        logger.info("DAO: Method getListOfZones Ended");
+        return this.mysql.query(query);
+    }
     
 }

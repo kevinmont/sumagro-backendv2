@@ -48,5 +48,19 @@ export default class OrderRoute{
             .get((req: express.Request,res:express.Response)=>{
                 this.ingenioController.getIngeniosList(req,res);
             })
+
+        app.route("/sumagro-app/orders/options")
+        .get((req: express.Request,res:express.Response)=>{
+            this.ingenioController.getOrderByIngenioOptions(req,res);
+        })
+
+        app.route("/sumagro-app/databasetypes/list")
+        .get((req: express.Request,res:express.Response)=>{
+            this.ingenioController.getZonasOfIngenio(req,res);
+        })
+
+        
+
+        
     }
 }

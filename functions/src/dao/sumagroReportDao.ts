@@ -17,7 +17,7 @@ export default class SumagroReportDao{
 
 
 
-    async getDataOfWarehouse(tableName:string,dateStart:string,dateEnd:string,ingenios:any,productos:any){
+    async getDataOfWarehouse(tableName:string,dateStart:string,dateEnd:string,ingenios:any,productos:any,ordenes:any){
         logger.info("DAO: sumagroReportDAO Method getDataOfWarehouse Starting");
         let queryIngenioIds = "";
         let orderIds = "";
@@ -53,6 +53,22 @@ export default class SumagroReportDao{
                 }
             }
         }
+        }
+
+        if(ordenes.length){
+            for(let i=0;i<ordenes.length;i++){
+            if(i<ordenes.length-1){
+                if(orderIds==""){
+                    orderIds+=" ( ";
+                }
+                orderIds+=` a.orderid=${ordenes[i]} or`;    
+            }else{
+                if(orderIds==""){
+                    orderIds+=" ( ";
+                }
+                orderIds+=` a.orderid=${ordenes[i]} )`;    
+            }
+            }
         }
         if(productos.length){
             productosIds=" ( ";
@@ -193,6 +209,60 @@ export default class SumagroReportDao{
         logger.info("DAO: sumagroReportDAO getAplicatedEntityInfo Ended");
         
         return await this.mysql.query(query);
+    }
+
+    async getAplicatedOutParcel(dateStart:string,dateEnd:string){
+        let object:any = {};
+        logger.info("DAO: SumagroReportDAO method getAplicatedOutParcel Starting");
+        let query = "select distinct(a/.description),count(a.description) as count,a.id,a.operator,a.date from `sumagro-dev`.aplicated as a "+ `
+        where a.used='1' and a.inplot='0' and a.date between '${dateStart}' and '${dateEnd}' group by a.operator
+        `;
+        let data:any = await this.mysql.query(query);
+        for(let item of data){
+            if(object[item.operator]){
+                if(object[item.operator][item.description]){
+                    object[item.operator][item.description]={
+                        count:item.count,
+                        date: item.date
+                    };
+                }else{
+                    object[item.operator][item.description]={
+                        count: item.count,
+                        date: item.date
+                    };
+                }
+            }else{
+                object[item.operator] = {};
+                object[item.operator][item.description]={
+                    count: item.count,
+                    date:item.date
+                };
+            }
+        }
+
+       let productores = Object.keys(object);
+       logger.info("DAO: SumagroReportDAO method getAplicatedOutParcel Ended");
+       if(productores.length){
+           let queryOfParcel = "select a.codigo,a.zona,a.ejido from `sumagro-dev`.parcelas as a where a.bultos!=a.aplicated and a.productor in (";
+                for(let productor of productores){
+                    queryOfParcel+=`${productor},`;
+                }
+                queryOfParcel+=");";
+                queryOfParcel.replace(",);",");");
+        let parcelas:any  = await this.mysql.query(queryOfParcel);
+                for(let parcela of parcelas){
+                    if(object[parcela.productor].parcelas){
+                        object[parcela.productor].parcelas.push(parcela);
+                    }else{
+                        object[parcela.productor].parcelas=[parcela];
+                    }
+                }
+           return object;
+       }else{
+           return {};
+       }
+       
+
     }
 
 }

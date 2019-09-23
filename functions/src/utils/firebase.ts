@@ -67,23 +67,12 @@ export default class Firebase{
 
     async createUserFirebase(user:any){
       return new Promise(async(resolve,reject)=>{
-       await admin.auth().createUser({email: user.email, password: user.password})
-          .then(async (userRecord)=> {
+        admin.auth().createUser({email: user.email, password: user.password})
+          .then( (userRecord)=> {
             // See the UserRecord reference doc for the contents of userRecord.
             console.log("Successfully created new user:", userRecord.uid);
             let key = userRecord.uid;
-            delete user.password;
-            user.uid = key;
-            await this.db.ref(`/sumagro/users`).child(key).set(user,(err:any)=>{
-              if(err) {
-                  console.log(err); reject("Usuario ya existente");
-              }else{
-                   resolve(userRecord);
-              }
-              
-          }
-          );
-
+            resolve(key);
           })
           .catch(function(error) {
             resolve("Error creating new user:"+error);

@@ -25,7 +25,8 @@ export class ReportTemplate{
         ejido: "POR EJIDO",
         zona:"POR ZONA",
         parcela: "POR PARCELA",
-        cliente: "POR CLIENTE"
+        cliente: "POR CLIENTE",
+        outofparcel: "FUERA DE PARCELA"
     }
     async getReport(table:string,type:string,dateStart:string,dateEnd:string,data:any,ingenioName:any,subType?:string){
         console.log("INGENIO NAME2: ",ingenioName);
@@ -75,8 +76,11 @@ export class ReportTemplate{
                         
                     body = await this.getBodyOfAplicatedTypes(data,type,subType);   
                     response= head+body;
-                    }else{
-                        response="<html><body>NO EXISTE ESE TIPO DE REPORTE</body></html>"
+                    }else if(type=="outofparcel"){
+                        head= await this.getHead(table,type,ingenioName,dateStart,dateEnd,subType);
+                        
+                    body = await this.getBodyOfAplicatedTypes(data,type,subType);   
+                    response= head+body;
                     }
                 
                 break;
@@ -166,12 +170,8 @@ export class ReportTemplate{
                         <td colspan="${(type=="cliente")?"2":"1"}"><label class="items">Hasta: ${dateE.getDate()}/${dateE.getMonth()+1}/${dateE.getFullYear()}</label></td>
                     `}
                         
-                    </tr>
-                    
-        `
+                    </tr> `
     }
-
-    
 //----------------------------------------------------------------------------------------->
     getBody(data:any,type:string){
        let object:any = {};
@@ -180,14 +180,11 @@ export class ReportTemplate{
        for(let item of data){
            if(object[item.description]){
               if(object[item.description][item.orderid]){
-               
                     object[item.description][item.orderid].count +=1;
                     if(object[item.description][item.orderid].date<item.date){
                         object[item.description][item.orderid].date = item.date;
                     }
-               
-              }else{
-                 
+              }else{ 
                  object[item.description][item.orderid] = {
                      remissionNumber: item.remissionnumber,
                      ingenioName: item.name,
@@ -269,10 +266,8 @@ export class ReportTemplate{
                 }
             }
     }
-
        let keys = Object.keys(object);
        let body="";
-       
        if(type=="cliente" && keys.length){
         let totalGeneral = 0;
         for(let item of keys){
@@ -406,13 +401,10 @@ export class ReportTemplate{
        }
               return body;
     }
-
     //----------------------------------------------------------------------------------------->
     async getBodyByProduct(data:any){
         let body="";
         let object:any={};
-
-
         for(let item of data){
             if(object[item.description]){
                 object[item.description].push({
@@ -428,7 +420,6 @@ export class ReportTemplate{
                 ]
             }
         }
-
         let formulas = Object.keys(object);
         let totalGeneral=0;
         for(let formula of formulas){
@@ -454,7 +445,6 @@ export class ReportTemplate{
                 </tr>
                 `;
                 totalByFormula+=rowFomula.count;
-                
             }
             totalGeneral+=totalByFormula;   
             body+=`<tr>
@@ -470,9 +460,7 @@ export class ReportTemplate{
             <td class="border">${totalGeneral}</td>
         </tr></table></body></html>
         `;
-
         return body;
-        
     }
 
     async getBodyOfAplicatedTypes(data:[any],type:string,subType?:string){
@@ -620,7 +608,6 @@ export class ReportTemplate{
         if(type=="parcela"){
             for(let parcela of data){
                 let currentDate =new Date(parcela.date);
-                
                 body+=`
                 <tr class="border">
                 <td colspan="${(subType=="notaplicated")?6:7}" style="text-align:left;"><label class="item">Parcela: ${parcela.parcela}</label></td>
@@ -671,7 +658,6 @@ export class ReportTemplate{
                     let productores = Object.keys(object[zona][ejido]);
                     for(let productor of productores){
                         let parcelas = object[zona][ejido][productor];
-                        
                             let subTotal=0;
                         for(let parcela of parcelas){
                             let currentDate =new Date(parcela.date);
@@ -815,7 +801,65 @@ export class ReportTemplate{
                 </tr>
                 `;
         }
-        
+        if(type=="outofparcel"){
+            let productores = Object.keys(object);
+            let totalGeneral=0;
+            for(let productor of productores){
+                let subTotal=0;
+                body+=`
+                <tr class="border">
+                <td colspan="7" style="text-align:left">Productor: ${productor}</td>
+                </tr>
+                <tr class="border">
+                <td colspan="2">Codigo</td>
+                <td>Zona</td>
+                <td>Ejido</td>
+                <td>Formula</td>
+                <td>Cantidad</td>
+                <td>Fecha</td>
+                </tr>
+                `;
+                let parcelasOfProductor = object[productor].parcelas;
+                let parcelasRows = [];
+                for(let parcela of parcelasOfProductor){
+                    parcelasRows.push(`<td>${parcela.codigo}</td><td>${parcela.zona}</td><td>${parcela.ejido}</td>`);
+                }
+                let productos = [];
+                for(let producto of object[productor]){
+                    if(producto!='parcelas'){
+                        productos.push(`<td>${producto.description}</td><td>${producto.count}</td><td>${producto.date}</td>`);
+                    }
+                }
+                if(productos.length>parcelasRows.length){
+                    for(let i=0;i<productos.length;i++){
+                        if(i<parcelasRows.length){
+                            body+=parcelasRows[i];
+                            
+                        }else{
+                            body+=`<td></td><td></td><td></td>`;
+                        }
+                        body+=productos[i];
+                        subTotal+=1;
+                    }
+                }else{
+                    for(let i=0;i<parcelasRows.length;i++){
+                        body+=parcelasRows[i];
+                        if(i<productos.length){
+                            body+=productos[i];
+                            subTotal+=1;
+                            }else{
+                            body+=`<td></td><td></td><td></td>`;
+                            }
+                        }
+                }
+                totalGeneral+=subTotal;
+                body+=`<tr><td colspan="4" style="text-align:right">Subtotal: </td><td>${subTotal}</td><td></td></tr>`;
+            }
+
+            body+=`<tr class="border">
+            <td colspan="4" style="text-align:right">Total: </td><td>${totalGeneral}</td><td></td>
+            </tr></table></body></html>`;
+        }
         return body;
     }
     

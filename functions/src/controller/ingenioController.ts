@@ -39,60 +39,20 @@ export default class IngenioController {
         logger.info('CONTROLLER: method createeIngenio Starting');
         if (!req.body.email) 
             throw res.status(400).send("email is required")
-
-
-        
-
-
         if (!req.body.address) 
             throw res.status(400).send("address is required")
-
-
-        
-
-
         if (!req.body.name) 
             throw res.status(400).send("name is required")
-
-
-        
-
-
         if (!req.body.address.street) 
             throw res.status(400).send("Street is required")
-
-
-        
-
-
         if (!req.body.address.number) 
             throw res.status(400).send("number is required")
-
-
-        
-
-
         if (!req.body.address.city) 
             throw res.status(400).send("city is required")
-
-
-        
-
-
         if (!req.body.address.location) 
             throw res.status(400).send("location is required")
-
-
-        
-
-
         if (!req.body.address.municipality) 
             throw res.status(400).send("municipality is required")
-
-
-        
-
-
         let {email, name} = req.body
         let {street, number, city, location, municipality} = req.body.address
         let address: Address = {
@@ -243,14 +203,8 @@ export default class IngenioController {
 
             if (! peer_page) 
                 throw res.status(400).send(`peer_page is required`);
-            
-
-
             if (! page) 
                 throw res.status(400).send(`page is required`);
-            
-
-
             if (page == 0 || page < 0) {
                 page = 1;
             }
@@ -397,9 +351,17 @@ export default class IngenioController {
                 page = 1;
             }
             discard = (page - 1) * peer_page;
-            data = await this.ingenioDao.getDatatable(type, ingenioId, `LIMIT ${peer_page} OFFSET ${discard}`);
+            if(type != types.aplicated){
+                data = await this.ingenioDao.getDatatable(type, ingenioId, `LIMIT ${peer_page} OFFSET ${discard}`);
+            }else{
+                data = await this.ingenioDao.getDataAplicated(ingenioId, `LIMIT ${peer_page} OFFSET ${discard}`);
+            }
         } else {
-            data = await this.ingenioDao.getDatatable(type, ingenioId);
+            if(type != types.aplicated){
+                data = await this.ingenioDao.getDatatable(type, ingenioId);
+            }else{
+                data = await this.ingenioDao.getDataAplicated(ingenioId);
+            }
         }
 
         if (type == types.aplicated) {
@@ -530,6 +492,18 @@ export default class IngenioController {
 
     async getIngeniosList(req:Request,res:Response){
         let response =await this.ingenioDao.getListOfIngenios(); 
+        res.status(200).send(response);
+    }
+
+    async getOrderByIngenioOptions(req:Request,res:Response){
+        let ingenioId:number= +req.query.ingenioId;
+        let response = await this.ingenioDao.geListOfOrderByIngenio(ingenioId);
+        res.status(200).send(response);
+    }
+
+    async getZonasOfIngenio(req:Request,res:Response){
+        let ingenioId:number=+req.query.ingenioId;
+        let response = await this.ingenioDao.getListOfZones(ingenioId);
         res.status(200).send(response);
     }
 }

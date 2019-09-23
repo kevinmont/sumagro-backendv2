@@ -8,7 +8,7 @@ export interface Order{
     subOrders: SubOrders[],
     status: string,
     operator: string,
-    operationunit: string,
+    operationUnit: string,
     plates: string,
     ingenioId: string,
 }

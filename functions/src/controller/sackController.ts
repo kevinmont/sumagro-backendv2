@@ -61,7 +61,6 @@ export default class SackController{
         await this.sackDao.saveSackOutputs(record,operatorName,parseid)
         await this.subOrderDao.updatestatus(index);
         await this.subOrderDao.updateCaptured(index);
-        await this.orderDao.updateStatus(record.orderId,'TRANSIT');
         res.send({msg:"Costal registrado"});
         logger.info('CONTROLLER: Method registerSacks Ending');
     }
