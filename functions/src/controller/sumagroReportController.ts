@@ -195,7 +195,7 @@ export default class SumagroReportController{
                 }else if(type=='outofparcel'){
                     try{    
                         data = await this.sumagroReportDao.getAplicatedOutParcel(dateStart,dateEnd);
-                        dataToReport =await this.sumagroReportDao.getReportInfo("outofparcel",type,dateStart,dateEnd,data,ingenioName,subType); 
+                        dataToReport =await this.sumagroReportDao.getReportInfo("outofparcel",type,dateStart,dateEnd,data,ingenioName[0].name,subType); 
                     }catch(err){
                         throw res.status(500).send("Error al conectar a la Base de Datos");    
                     }
