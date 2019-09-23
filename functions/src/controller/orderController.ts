@@ -249,7 +249,7 @@ export default class OrderController {
             shippingdate: `${dataOrder[0].shippingdate}`,
             dateentrance: `${dataOrder[0].dateentrance}`,
             clientAddress: `${address[0].localidad}`,
-            operationunit: `${dataOrder[0].operationunit}`,
+            operationUnit: `${dataOrder[0].operationunit}`,
             operator: `${dataOrder[0].operator}`,
             plates: `${dataOrder[0].plates}`,
             remissionNumber: `${dataOrder[0].remissionnumber}`,

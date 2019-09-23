@@ -168,8 +168,7 @@ export class ReportTemplate{
                     <td colspan="${(type=="cliente")?"1":"2"}" style="text-align:left"><label class="items" >${type.charAt(0).toUpperCase()+type.slice(1,type.length)}: TODOS</label></td>
                         <td colspan="${(type=="cliente")?"2":"1"}"><label class="items">Desde: ${dateS.getDate()}/${dateS.getMonth()+1}/${dateS.getFullYear()}</label></td>
                         <td colspan="${(type=="cliente")?"2":"1"}"><label class="items">Hasta: ${dateE.getDate()}/${dateE.getMonth()+1}/${dateE.getFullYear()}</label></td>
-                    `}
-                        
+                    `}    
                     </tr> `
     }
 //----------------------------------------------------------------------------------------->
