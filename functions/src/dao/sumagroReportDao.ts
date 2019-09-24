@@ -214,7 +214,7 @@ export default class SumagroReportDao{
     async getAplicatedOutParcel(dateStart:string,dateEnd:string){
         let object:any = {};
         logger.info("DAO: SumagroReportDAO method getAplicatedOutParcel Starting");
-        let query = "select distinct(a/.description),count(a.description) as count,a.id,a.operator,a.date from `sumagro-dev`.aplicated as a "+ `
+        let query = "select distinct(a.description),count(a.description) as count,a.id,a.operator,a.date from `sumagro-dev`.aplicated as a "+ `
         where a.used='1' and a.inplot='0' and a.date between '${dateStart}' and '${dateEnd}' group by a.operator
         `;
         let data:any = await this.mysql.query(query);

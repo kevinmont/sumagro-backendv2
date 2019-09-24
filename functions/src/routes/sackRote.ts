@@ -38,5 +38,10 @@ export default class SackRoute{
             .get((req:express.Request,res:express.Response)=>{
                 this.sackController.getListOfTypeSacks(req,res);
             });
+
+        app.route("/sumagro-app/sack-ids")
+        .get((req:express.Request,res:express.Response)=>{
+            this.sackController.getSacksIds(req,res);
+        });
     }
 }

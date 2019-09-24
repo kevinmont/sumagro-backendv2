@@ -73,4 +73,13 @@ export default class SackDao{
         return await this.mysql.query(sql);
     }
 
+    async getIds(ingenioId:number,table:string,producto:string,page:number,peer_page:number){
+
+        logger.info(`Dao: Method getIds Startting`);
+        let sql= `select id from ${table}  WHERE ingenioid=${ingenioId} and description='${producto}' LIMIT ${peer_page} OFFSET ${page};`;
+        logger.debug(`Dao: Method getIds Ending`);
+        return await this.mysql.query(sql);
+    }
+
+
 }

@@ -283,28 +283,19 @@ export default class PdfHelper{
         let dateOfEmission = new Date(vale.fechaemision);
         return `
             <table width="100%" border="0" style="border:1px solid #000000; margin-bottom: 48px;">
-                <tr style="height: 40px;">
+                <tr style="height: 30px;">
                     <td>Valido por:</td>
                     <td colspan="2"><span style="text-decoration: underline; text-aling: center;">${totalBultos} bultos </span></td>
                     <td> Fecha de emision:</td>
                     <td><span style="text-decoration: underline">${dateOfEmission.getDate()}-${dateOfEmission.getMonth()+1}-${dateOfEmission.getFullYear()}</span></td>
                 </tr>
-                <tr style="height: 40px;">
+                <tr style="height: 30px;">
                     <td>A favor de:</td>
                     <td colspan="2"><span style="text-decoration: underline">${vale.productor.split("-").join(" ")}</span></td>
                     <td> CURP:</td>
                     <td><span style="text-decoration: underline">${vale.curp}</span></td>
                 </tr>
-                <tr style="height: 40px;">
-                    <td colspan="2"></td>
-                    <td colspan="3"></td>
-                </tr>
-                <tr style="height: 40px;">
-                    <td colspan="2"> </td>
-                    <td colspan="3"></td>
-                    
-                </tr>
-                <tr style="height: 40px;"> 
+                <tr style="height: 30px;"> 
                 <td colspan="2"><img src="${qr}" width="200px" height="200px"></td>
                 <td colspan="3" style="text-align: center"> </td>
                 </tr>

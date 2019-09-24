@@ -48,7 +48,7 @@ export default class DatabaseDao {
 
     async updatedParcelasRest(count:number,codigo:string,dateAplicated:string){
         logger.info("DAO: Method getParcelaRest Starting");
-        let query="UPDATE `sumagro-dev`.parcelas set aplicated="+ `${count},set date='${dateAplicated}' where codigo=${codigo}`;
+        let query="UPDATE `sumagro-dev`.parcelas set aplicated="+ `${count},set date='${dateAplicated}' where codigo='${codigo}'`;
         logger.info("DAO: Method getParcelaRest Ended");
         return this.mysql.query(query);
     }

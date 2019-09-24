@@ -496,15 +496,20 @@ export default class IngenioController {
     }
 
     async getOrderByIngenioOptions(req:Request,res:Response){
-        let ingenioId:number= +req.query.ingenioId;
-        let response = await this.ingenioDao.geListOfOrderByIngenio(ingenioId);
+        let table= req.query.table;
+        let response = await this.ingenioDao.geListOfOrdersByAlmacen(table);
         res.status(200).send(response);
     }
 
     async getZonasOfIngenio(req:Request,res:Response){
         let ingenioId:number=+req.query.ingenioId;
         let type:string= req.query.type;
+        try{
         let response = await this.ingenioDao.getListOfZones(ingenioId,type);
         res.status(200).send(response);
+        }catch(err){
+            res.status(500).send(err);
+        }
+        
     }
 }
