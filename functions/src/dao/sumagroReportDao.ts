@@ -28,7 +28,7 @@ export default class SumagroReportDao{
         for(let i=0;i<ingenios.length;i++){
             
             if(i!=ingenios.length-1){
-            queryIngenioIds+= `a.ingenioid=${ingenios[i].ingenioId} or `
+            queryIngenioIds+= `a.ingenioid=${ingenios[i].ingenioId} or `;
             ingenios[i].ordenes.forEach((orden:string) => {
                 if(orderIds==""){
                     orderIds+=" ( ";
@@ -101,7 +101,7 @@ export default class SumagroReportDao{
             compQuery+=productosIds+ " and";
         }
                 
-        let query = `select a.id,a.date,a.description,a.ingenioid,a.orderid,b.name,c.remissionnumber  from  ${tableName} as a,ingenios as b,orders as c where ${compQuery} a.ingenioid=b.id and a.orderid=c.id and a.date between '${dateStart}' and '${dateEnd}' group by ingenioid;`;
+        let query = `select a.id,a.date,a.description,a.ingenioid,a.orderid,b.name,c.remissionnumber  from  ${tableName} as a,ingenios as b,orders as c where ${compQuery} a.ingenioid=b.id and a.orderid=c.id and a.date between '${dateStart}' and '${dateEnd}' group by ingenioid,date;`;
         console.log(query);
         logger.info("DAO: sumagroReportDAO Method getDataOfWarehouse Ended");
         return await this.mysql.query(query);

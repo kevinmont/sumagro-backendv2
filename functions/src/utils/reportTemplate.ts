@@ -116,6 +116,7 @@ export class ReportTemplate{
                 <style>
                     div.container{
                         text-align: center;
+                        width:100%;
                     }
                     .titulo{
                         vertical-align: middle;
@@ -135,15 +136,15 @@ export class ReportTemplate{
                         font-family: Arial;
                         font-size: 16px;
                     }
-                    h2 ,h1,div {
-                        text-align: center
+                    h2,h1,div {
+                        text-align: center;
                     }
-                    table {
+                    .table {
                         margin: 0 auto;
                         border-collapse:collapse;
                     }
                     .border{
-                        border-top:1px solid black
+                        border-top:1px solid black;
                     }
                 </style>
             <body>
@@ -157,7 +158,7 @@ export class ReportTemplate{
                 <label class="titulo">${ingenioName}<label></div>
             `}
                     <p class="subtitulotipo">${this.reportTypes[table]} ${(Object.keys(this.reportClases).includes(type))?this.reportClases[type]:this.reportParcelasType[type]}</p>
-            <div>
+            <div style="text-align:center;width:100%;">
                 <table class="table">
                     <tr>
                     ${(subType=="notaplicated" || subType=="aplicated")?`
@@ -279,7 +280,7 @@ export class ReportTemplate{
              <tr class="border">
              <td><label class="items">Orden</label></td><td><label class="items">Producto</label></td><td><label class="items">Fecha</label></td><td><label class="items">Unidad</label></td><td><label class="items">Cantidad</label></td>
              </tr>
-             <tr>
+             
              `;
              let ordenes = Object.keys(object[item]);
              for(let orden of ordenes){
@@ -287,18 +288,19 @@ export class ReportTemplate{
                  for(let formula of formulas){
                  let dateToParse=new Date(object[item][orden]['productos'][formula].date);
                  body +=`
+                 <tr>
                  <td><label class="items">${object[item][orden].remissionNumber}</label></td>
                  <td><label class="items">${formula}</label></td>
                  <td><label class="items">${dateToParse.getDate()}/${dateToParse.getMonth()+1}/${dateToParse.getFullYear()} ${dateToParse.getHours()}:${dateToParse.getMinutes()}</label></td>
                  <td><label class="items">Bultos</label></td>
                  <td><label class="items">${object[item][orden]['productos'][formula].count}</label></td>
-                 `;
+                 </tr>`;
                  totalByOrder+=object[item][orden]['productos'][formula].count;
                  totalGeneral+=totalByOrder;
                  }
              }
              body+=`
-             </tr>
+             
              <tr >
              <td colspan="3"></td>
              <td  style="text-align:center"><label class="items">Sub-total</label></td>
@@ -311,7 +313,7 @@ export class ReportTemplate{
              <td colspan="4" style="text-align:right"><label class="items">Total general</label></td>
              <td><label class="items">${totalGeneral}</label></td>
              </tr>
-             </table></body></html>
+             </table></div></body></html>
          `;
        }else if(type=="orden" && keys.length){
         let totalGeneral = 0;
@@ -325,22 +327,24 @@ export class ReportTemplate{
              <tr class="border">
              <td><label class="items">Producto</label></td><td><label class="items">Fecha</label></td><td><label class="items">Unidad</label></td><td><label class="items">Cantidad</label></td>
              </tr>
-             <tr>
+             
              `;
              let productos = Object.keys(object[item]['productos']);
              for(let producto of productos){
                  let dateToParse=new Date(object[item]['productos'][producto].date);
                  body +=`
+                 <tr>
                  <td><label class="items">${producto}</label></td>
                  <td><label class="items">${dateToParse.getDate()}/${dateToParse.getMonth()+1}/${dateToParse.getFullYear()} ${dateToParse.getHours()}:${dateToParse.getMinutes()}</label></td>
                  <td><label class="items">Bultos</label></td>
                  <td><label class="items">${object[item]['productos'][producto].count}</label></td>
+                 </tr>
                  `;
                  totalByProduct+=object[item]['productos'][producto].count;
                  totalGeneral+=totalByProduct;
              }
              body+=`
-             </tr>
+             
              <tr >
              <td colspan="2"></td>
              <td  style="text-align:center"><label class="items">Sub-total</label></td>
@@ -353,7 +357,7 @@ export class ReportTemplate{
              <td colspan="3" style="text-align:right"><label class="items">Total general</label></td>
              <td><label class="items">${totalGeneral}</label></td>
              </tr>
-             </table></body></html>
+             </table></div></body></html>
          `;
        }else if(type=="producto" && keys.length){
            let totalGeneral = 0;
@@ -366,21 +370,23 @@ export class ReportTemplate{
                 <tr class="border">
                 <td><label class="items">Orden</label></td><td><label class="items">Cliente</label></td><td><label class="items">Unidad</label></td><td><label class="items">Cantidad</label></td>
                 </tr>
-                <tr>
+                
                 `;
                 let ordenes = Object.keys(object[item]);
                 for(let orden of ordenes){
                     body +=`
+                    <tr>
                     <td><label class="items">${object[item][orden].remissionNumber}</label></td>
                     <td><label class="items">${object[item][orden].ingenioName}</label></td>
                     <td><label class="items">Bultos</label></td>
                     <td><label class="items">${object[item][orden].count}</label></td>
+                    </tr>
                     `;
                     totalByOrder+=object[item][orden].count;
                     totalGeneral+=totalByOrder;
                 }
                 body+=`
-                </tr>
+                
                 <tr >
                 <td colspan="2"></td>
                 <td  style="text-align:center"><label class="items">Sub-total</label></td>
@@ -393,10 +399,10 @@ export class ReportTemplate{
                 <td colspan="3" style="text-align:right"><label class="items">Total general</label></td>
                 <td><label class="items">${totalGeneral}</label></td>
                 </tr>
-                </table></body></html>
+                </table></div></body></html>
             `;
        }else{
-           body=`</table></body></html>`;
+           body=`</table></div></body></html>`;
        }
               return body;
     }
@@ -457,7 +463,7 @@ export class ReportTemplate{
         <td colspan="2"></td>
             <td style="text-align:center;">Total general:</td>
             <td class="border">${totalGeneral}</td>
-        </tr></table></body></html>
+        </tr></table></div></body></html>
         `;
         return body;
     }
@@ -632,7 +638,7 @@ export class ReportTemplate{
                 `;
             }
             body+=`
-            </table></body></html>
+            </table></div></body></html>
             `;
         }else if(type=="zona"){
             let zonas = Object.keys(object);
@@ -857,7 +863,7 @@ export class ReportTemplate{
 
             body+=`<tr class="border">
             <td colspan="4" style="text-align:right">Total: </td><td>${totalGeneral}</td><td></td>
-            </tr></table></body></html>`;
+            </tr></table></div></body></html>`;
         }
         return body;
     }

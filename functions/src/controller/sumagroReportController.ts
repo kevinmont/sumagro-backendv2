@@ -107,9 +107,9 @@ export default class SumagroReportController{
         if(req.body.ingenios) {
            ingenios = req.body.ingenios;
         }
-        let ingenioName:any ={
+        let ingenioName:any =[{
             name: "ALMACEN"
-        };
+        }];
         if(req.body.ingenioId) {
             ingenioName = await this.ingenioDao.getIngenioDetails(+req.body.ingenioId);
         }
@@ -123,6 +123,7 @@ export default class SumagroReportController{
                     try{
                     data = await this.sumagroReportDao.getDataOfWarehouse(tableName,dateStart,dateEnd,ingenios,productos,ordenes);
                     dataToReport= await this.sumagroReportDao.getReportInfo(tableName,type,dateStart,dateEnd,data,ingenioName[0].name);
+                    console.log("terminado");
                     }catch(err){
                        throw res.status(500).send(err); 
                     }
@@ -140,7 +141,7 @@ export default class SumagroReportController{
         pdfH.create(dataToReport,{
             format:"Letter",
             border:{
-                top: "1cm"    ,      // default is 0, units: mm, cm, in, px
+                top: "1in"    ,      // default is 0, units: mm, cm, in, px
             right: "1cm",
             bottom: "1in",
             left: "1cm"

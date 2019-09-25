@@ -63,7 +63,10 @@ export default class OrderRoute{
             this.ingenioController.getZonasOfIngenio(req,res);
         })
 
-        
+        app.route("/sumagro-app/clientes/list")
+            .get((req:express.Request,res:express.Response)=>{
+                this.ingenioController.getClientsList(req,res);
+            })        
 
         
     }

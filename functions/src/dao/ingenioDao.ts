@@ -117,4 +117,11 @@ export default class ingenioDao {
         return this.mysql.query(query);
     }
     
+    async getListOfClients(){
+        logger.info("DAO: Method getListOfClients Starting");
+        let query = "Select id,name from ingenios";
+        console.log("QUERY",query);
+        logger.info("DAO: Method getListOfClients Ended");
+        return this.mysql.query(query);
+    }
 }

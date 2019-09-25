@@ -512,4 +512,9 @@ export default class IngenioController {
         }
         
     }
+
+    async getClientsList(req:Request,res:Response){
+        let response = await this.ingenioDao.getListOfClients();
+        res.status(200).send(response);
+    }
 }
