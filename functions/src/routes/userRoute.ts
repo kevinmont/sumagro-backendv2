@@ -17,7 +17,7 @@ export default class UserRoute{
         this.firebase = firebase;
         this.userController= new UserController(mysql,this.firebase);
         this.sackController = new SackController(mysql);
-        this.orderController = new OrderController(mysql);
+        this.orderController = new OrderController(mysql,firebase);
         this.ingenioController = new IngenioController(mysql);
     }
 
