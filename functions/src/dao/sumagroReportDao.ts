@@ -29,7 +29,7 @@ export default class SumagroReportDao{
                 if(i!=clientes.length-1){
                 queryIngenioIds+=` a.ingenioid='${clientes[i]}' or `;
                 }else{
-                    queryIngenioIds+=` a.ingeniod='${clientes[i]}' )`;
+                    queryIngenioIds+=` a.ingenioid='${clientes[i]}' )`;
                 }
             };
             

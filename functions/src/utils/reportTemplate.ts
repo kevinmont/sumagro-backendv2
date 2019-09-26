@@ -345,8 +345,9 @@ export class ReportTemplate{
                  </tr>
                  `;
                  totalByProduct+=object[item]['productos'][producto].count;
-                 totalGeneral+=totalByProduct;
+                
              }
+             totalGeneral+=totalByProduct;
              body+=`
              
              <tr >
@@ -387,8 +388,9 @@ export class ReportTemplate{
                     </tr>
                     `;
                     totalByOrder+=object[item][orden].count;
-                    totalGeneral+=totalByOrder;
+                    
                 }
+                totalGeneral+=totalByOrder;
                 body+=`
                 
                 <tr >
