@@ -24,6 +24,8 @@ import * as pdf from 'html-pdf';
 import { Request, Response } from 'express';
 import Mysql from '../utils/mysql';
 import * as log4js from 'log4js';
+import Firebase from '../utils/firebase';
+import UserDao from '../dao/userDao';
 
 
 
@@ -43,7 +45,9 @@ export default class OrderController {
     public sumagroIntransit: SumagroIntransit;
     public sumagroOutputDao: sumagroOutputDao;
     public entranceDao: EntranceDao;
-    constructor(mysql: Mysql) {
+    public firebase: Firebase;
+    public userDao: UserDao;
+    constructor(mysql: Mysql,firebase:Firebase) {
         this.intransitDao = new IntransitDao(mysql);
         this.outputDao = new OutputDao(mysql);
         this.entranceDao = new EntranceDao(mysql);
@@ -56,6 +60,8 @@ export default class OrderController {
         this.subOrdersDao = new SubOrdersDao(mysql);
         this.inventoryDao = new InventoryDao(mysql);
         this.pdfHelper = new PdfHelper();
+        this.userDao= new UserDao(mysql);
+        this.firebase= firebase;
     }
 
     async deleteOrderByOrderId(req: Request, res: Response) {
@@ -76,7 +82,10 @@ export default class OrderController {
         if (!subOrders || !subOrders.length) throw res.status(400).send({ msg: 'subOrders is required' });
         if (!ingenioid) throw res.status(400).send({ msg: 'ingenioId is required' });
 
-
+        let userCapturista:any = await this.userDao.getByRol("CAPTURIST");
+        for(let usersCap of userCapturista){
+            this.firebase.notification(usersCap.token,{title: "Nueva orden creada",body:'Se ha registrado una nueva orden'});
+        }
         let addressid: any = await this.addressDao.getIdAddresByAttributes(address);
         logger.info(`id address: ${addressid[0].id}`);
         if (!addressid) res.status(400).send('Error in parameters');

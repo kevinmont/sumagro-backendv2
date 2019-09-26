@@ -226,6 +226,30 @@ export default class UserController {
         let updateRequest = req.body;
         logger.info("El status: " + updateRequest.status);
         if(updateRequest.status=="CAPTURED"){
+            let userAdminAlmacen:any = await this.userDao.getByRol('WAREHOUSE');
+            for(let userAlmacen of userAdminAlmacen){
+                this.firebase.notification(userAlmacen.token,{title:'Orden capturada',body:'Se ha capturado una orden'});
+            }
+            await this.orderDao.updateOrderByOrderIdAndIngenioId(orderId,ingenioId,updateRequest);
+            res.status(200).send();
+        }else if(updateRequest.status=="TRANSIT" || updateRequest.status=="DELIVERED"){
+            let order:any = await this.orderDao.orderById(orderId)
+            let userAdminAlmacen:any = await this.userDao.getByRolandIngenioId('INGENIO_ADMIN',order.ingenioid);
+            let notification={};
+                if(updateRequest.status=="TRANSIT"){
+                notification = {
+                    title:'Orden en camino',
+                    body:`Orden ${order.remissionnumber} está en camino`
+                }
+            }else{
+                notification = {
+                    title:'Orden entregada',
+                    body:`Orden ${order.remissionnumber} ha sido entregada`
+                }
+                }
+            for(let userAlmacen of userAdminAlmacen){
+                this.firebase.notification(userAlmacen.token,notification);
+            }
             await this.orderDao.updateOrderByOrderIdAndIngenioId(orderId,ingenioId,updateRequest);
             res.status(200).send();
         }else{

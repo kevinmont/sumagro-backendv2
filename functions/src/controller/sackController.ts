@@ -170,12 +170,9 @@ export default class SackController{
         }
         let table = req.query.table;
         let producto = req.query.producto;
-        let page = req.query.page;
-        let peer_page = req.query.peer_page;
-        if(page==1){
-            page=0;
-        }
-        peer_page=(page+1)*peer_page;
+        let page = +req.query.page;
+        let peer_page = +req.query.peer_page;
+        
         page=page*peer_page;
         let response =await this.sackDao.getIds(+ingenioId,table,producto,page,peer_page);
         res.status(200).send(response);

@@ -78,9 +78,9 @@ export default class SackDao{
         logger.info(`Dao: Method getIds Startting`);
         let sql="";
         if(ingenioId!=-1){
-        sql= `select id from ${table}  WHERE ingenioid=${ingenioId} and description='${producto}' LIMIT ${peer_page} OFFSET ${page};`;
+        sql= `select id from ${table}  WHERE ingenioid=${ingenioId} and description='${producto}' LIMIT ${page},${peer_page};`;
         }else{
-            sql= `select id from ${table}  WHERE and description='${producto}' LIMIT ${peer_page} OFFSET ${page};`;
+            sql= `select id from ${table}  WHERE  description='${producto}' LIMIT ${page},${peer_page};`;
         }
         logger.debug(`Dao: Method getIds Ending`);
         return await this.mysql.query(sql);

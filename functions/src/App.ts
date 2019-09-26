@@ -32,7 +32,7 @@ class App{
         this.userRoute = new UserRoute(this.mysql,this.firebase);
         this.orderRoute = new OrderRoute(this.mysql,this.firebase);
         this.ingenioRoute = new IngenioRoute(this.mysql,this.firebase);
-        this.sumagroReportRouter = new SumagroReportRouter(this.mysql);
+        this.sumagroReportRouter = new SumagroReportRouter(this.mysql,this.firebase);
         this.databaseRoute = new DatabaseRoute(this.mysql);
         this.sackRoute = new SackRoute(this.mysql,this.firebase);
         this.config();

@@ -11,6 +11,7 @@ import * as Log4js from 'log4js';
 
 import SumagroReportDao from '../dao/sumagroReportDao';
 import ingenioDao from '../dao/ingenioDao';
+import UserDao from '../dao/userDao';
 
 
 const logger =  Log4js .getLogger('Sumagro Report Controller');
@@ -25,13 +26,16 @@ export default class SumagroReportController{
     
     private sumagroReportDao: SumagroReportDao;
     private ingenioDao : ingenioDao;
+    private userDao:UserDao;
     constructor( mysql: Mysql){
+
         // this.aplicatedDao = new AplicatedDao(mysql);
         // this.intransitDao= new IntransitDao(mysql);
         // this.inventoryDao = new InventoryDao(mysql);
         // //this.entranceDao = new EntranceDao(mysql);
         // this.outputDao = new OutputDao(mysql);
         // this.sumagroOutputDao= new SumagroOutputDao(mysql);
+        this.userDao=new UserDao(mysql);
         this.ingenioDao = new ingenioDao(mysql);
         this.sumagroReportDao= new SumagroReportDao(mysql);
         
@@ -44,7 +48,26 @@ export default class SumagroReportController{
         if(!req.body.dateStart) throw res.status(400).send("Missing dateStart parameter");
         if(!req.body.dateEnd) throw res.status(400).send("Missing dateEnd parameter");
         if(!req.body.ingenioId) throw res.status(400).send("Missing ingenioId parameter");
-        
+        let rol = "";
+        if(req.headers.email){
+            
+            let user:any = await this.userDao.getUserByEmail(req.headers.email);
+            let rolSearched = user[0].rol;
+            switch(rolSearched){
+                case 'INGENIO_ADMIN':
+                    rol = "ADMIN. INGENIO";
+                    break;
+                case 'WAREHOUSE':
+                    rol = "ADMIN. ALMACEN"
+                    break;
+                case 'SUPERADMIN':
+                    rol="SUPER USUARIO";
+                    break;
+                default:
+                    rol="INVITADO";
+                    break;
+            }
+        }
         let {tableName,productos,dateStart,dateEnd,ingenioId} = req.body;
         
         let ingenioName:any = await this.ingenioDao.getIngenioDetails(+ingenioId);
@@ -80,7 +103,7 @@ export default class SumagroReportController{
             footer:{
                 contents:`
                 <table style="width: 100%;">
-        <tr><td><span style="text-align: left">Usuario: jose</span></td><td><span style="text-align: center">Fecha y hora: ${new Intl.DateTimeFormat("es-MX",options).format(new Date())}</span></td><td><span style="text-align: right">Pág: {{page}}/{{pages}}</span></td></tr>
+        <tr><td><span style="text-align: left">Usuario: ${rol}</span></td><td><span style="text-align: center">Fecha y hora: ${new Intl.DateTimeFormat("es-MX",options).format(new Date())}</span></td><td><span style="text-align: right">Pág: {{page}}/{{pages}}</span></td></tr>
     </table>`
             }
         }).toStream((err:any,stream:any)=>{
@@ -93,7 +116,7 @@ export default class SumagroReportController{
         })
     }
 
-    async getReportByType(req: express.Request, res: express.Response) {
+    async getReportByType(req: any, res: express.Response) {
 
         logger.info('CONTROLLER: Method getDataForProductFilter Startting');
         if(!req.body.type) throw res.status(400).send("Missing type parameter");
@@ -102,10 +125,32 @@ export default class SumagroReportController{
         if(!req.body.dateEnd) throw res.status(400).send("Missing dateEnd parameter");
        
         if(!req.body.ordenes) throw res.status(400).send("Missing ordenes parameter");
-        let { tableName,type,dateStart,dateEnd,productos,ordenes,clientes} = req.body;
-        let ingenios = [];
-        if(req.body.ingenios) {
-           ingenios = req.body.ingenios;
+
+        let rol = "";
+        if(req.headers.email){
+            console.log(req.headers.email);
+            let user:any = await this.userDao.getUserByEmail(req.headers.email);
+            console.log(JSON.stringify(user));
+            let rolSearched = user[0].rol;
+            switch(rolSearched){
+                case 'INGENIO_ADMIN':
+                    rol = "ADMIN. INGENIO";
+                    break;
+                case 'WAREHOUSE':
+                    rol = "ADMIN. ALMACEN"
+                    break;
+                case 'SUPERADMIN':
+                    rol="SUPER USUARIO";
+                    break;
+                default:
+                    rol="INVITADO";
+                    break;
+            }
+        }
+        let { tableName,type,dateStart,dateEnd,productos,ordenes} = req.body;
+        let clientes = [];
+        if(req.body.clientes) {
+           clientes = req.body.clientes;
         }
         let ingenioName:any =[{
             name: "ALMACEN"
@@ -121,7 +166,9 @@ export default class SumagroReportController{
             case 'orden':
             case 'producto':
                     try{
-                    data = await this.sumagroReportDao.getDataOfWarehouse(tableName,dateStart,dateEnd,ingenios,productos,ordenes,clientes);
+                    console.log("INGRESANDO A METODO DE DESCARGA");
+                    data = await this.sumagroReportDao.getDataOfWarehouse(tableName,dateStart,dateEnd,productos,ordenes,clientes);
+                    console.log("DATOS OBTENIDOS",JSON.stringify(data));
                     dataToReport= await this.sumagroReportDao.getReportInfo(tableName,type,dateStart,dateEnd,data,ingenioName[0].name);
                     console.log("terminado",JSON.stringify(data));
                     }catch(err){
@@ -149,7 +196,7 @@ export default class SumagroReportController{
             footer:{
                 contents:`
                 <table style="width: 100%;">
-        <tr><td><span style="text-align: left">Usuario: jose</span></td><td><span style="text-align: center">Fecha y hora: ${new Intl.DateTimeFormat("es-MX",options).format(new Date())}</span></td><td><span style="text-align: right">Pág: {{page}}/{{pages}}</span></td></tr>
+        <tr><td><span style="text-align: left">Usuario: ${rol}</span></td><td><span style="text-align: center">Fecha y hora: ${new Intl.DateTimeFormat("es-MX",options).format(new Date())}</span></td><td><span style="text-align: right">Pág: {{page}}/{{pages}}</span></td></tr>
     </table>`
                 
             }
@@ -164,7 +211,7 @@ export default class SumagroReportController{
 
     }
 
-    async generateReportAplicated(req:express.Request,res:express.Response){
+    async generateReportAplicated(req:any,res:express.Response){
         
         if(!req.body.ingenioId) throw res.status(400).send("Missin ingenioId parameter");
         
@@ -176,6 +223,26 @@ export default class SumagroReportController{
         if(!req.body.subType) throw res.status(400).send("Missin subType parameter");
         if(!req.body.dateStart) throw res.status(400).send("Missin dateStart parameter");
         if(!req.body.dateEnd) throw res.status(400).send("Missin dateEnd parameter");
+        let rol = "";
+        if(req.headers.email){
+            
+            let user:any = await this.userDao.getUserByEmail(req.headers.email);
+            let rolSearched = user[0].rol;
+            switch(rolSearched){
+                case 'INGENIO_ADMIN':
+                    rol = "ADMIN. INGENIO";
+                    break;
+                case 'WAREHOUSE':
+                    rol = "ADMIN. ALMACEN"
+                    break;
+                case 'SUPERADMIN':
+                    rol="SUPER USUARIO";
+                    break;
+                default:
+                    rol="INVITADO";
+                    break;
+            }
+        }
         let { ingenioId,zonas,ejidos,productos,parcelas,type,dateStart,dateEnd,subType} = req.body;
         let ingenioName:any="";
         ingenioName=await this.ingenioDao.getIngenioDetails(ingenioId);
@@ -227,7 +294,7 @@ export default class SumagroReportController{
             footer:{
                 contents:`
                 <table style="width: 100%;">
-        <tr><td><span style="text-align: left">Usuario: jose</span></td><td><span style="text-align: center">Fecha y hora: ${new Intl.DateTimeFormat("es-MX",options).format(new Date())}</span></td><td><span style="text-align: right">Pág: {{page}}/{{pages}}</span></td></tr>
+        <tr><td><span style="text-align: left">Usuario: ${rol}</span></td><td><span style="text-align: center">Fecha y hora: ${new Intl.DateTimeFormat("es-MX",options).format(new Date())}</span></td><td><span style="text-align: right">Pág: {{page}}/{{pages}}</span></td></tr>
     </table>`
                 
             }

@@ -95,4 +95,19 @@ export default class UserDao{
         return await this.mysql.query(sql);
     }
 
+    async getByRol(rol:string){
+        logger.info(`Dao: Method getUserByEmail startting`);
+        let sql:string = `SELECT * FROM users where rol = "${rol}"`;
+        logger.debug('DAO: Method getUserByEmail Ending');
+        return await this.mysql.query(sql);
+    }
+
+    async getByRolandIngenioId(rol:string,ingenioId:number){
+        logger.info(`Dao: Method getByRolandIngenioId startting`);
+        let sql:string = `SELECT * FROM users where rol = "${rol}" and ingenioid=${ingenioId}`;
+        logger.debug('DAO: Method getByRolandIngenioId Ending');
+        return await this.mysql.query(sql);
+    }
+
+
 }

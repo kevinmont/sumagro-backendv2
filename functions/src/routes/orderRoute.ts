@@ -10,7 +10,7 @@ export default class OrderRoute{
     public firebase: Firebase
 
     constructor(mysql: Mysql,firebase: Firebase){
-        this.orderController = new OrderController(mysql);
+        this.orderController = new OrderController(mysql,firebase);
         this.firebase = firebase;
     }
     addRoutes(app: express.Application){

@@ -17,7 +17,7 @@ export default class SumagroReportDao{
 
 
 
-    async getDataOfWarehouse(tableName:string,dateStart:string,dateEnd:string,ingenios:any,productos:any,ordenes:any,clientes:any){
+    async getDataOfWarehouse(tableName:string,dateStart:string,dateEnd:string,productos:any,ordenes:any,clientes:any){
         logger.info("DAO: sumagroReportDAO Method getDataOfWarehouse Starting");
         let queryIngenioIds = "";
         let orderIds = "";
