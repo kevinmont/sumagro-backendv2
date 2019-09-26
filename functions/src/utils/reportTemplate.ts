@@ -232,13 +232,16 @@ export class ReportTemplate{
             for(let item of data){
                 if(object[item.name]){
                     if(object[item.name][item.orderid]){
-                        if(object[item.name][item.orderid][item.description]){
-                            if(object[item.name][item.orderid][item.description].date<item.date){
-                                object[item.name][item.orderid][item.description].date = item.date;
+                        if(object[item.name][item.orderid]['productos'][item.description]){
+                            if(object[item.name][item.orderid]['productos'][item.description].date<item.date){
+                                object[item.name][item.orderid]['productos'][item.description].date = item.date;
+                                
                             }
-                            object[item.name][item.orderid][item.description].count +=1;
+                            object[item.name][item.orderid]['productos'][item.description].count +=1;
+                            
                         }else{
-                            object[item.name][item.orderid][item.description]= {
+                            
+                            object[item.name][item.orderid]['productos'][item.description]= {
                                 date: item.date,
                                 count: 1
                             }
@@ -274,7 +277,7 @@ export class ReportTemplate{
             let totalByOrder = 0;
         body+=`
              <tr class="border">
-                 <td colspan="4" style="text-align:left"><label class="items">${type.charAt(0).toUpperCase()+type.slice(1,type.length)}: ${item}</label></td>
+                 <td colspan="5" style="text-align:left"><label class="items">${type.charAt(0).toUpperCase()+type.slice(1,type.length)}: ${item}</label></td>
                  
              </tr>
              <tr class="border">
@@ -296,14 +299,15 @@ export class ReportTemplate{
                  <td><label class="items">${object[item][orden]['productos'][formula].count}</label></td>
                  </tr>`;
                  totalByOrder+=object[item][orden]['productos'][formula].count;
-                 totalGeneral+=totalByOrder;
+                 
                  }
              }
+             totalGeneral+=totalByOrder;
              body+=`
              
              <tr >
-             <td colspan="3"></td>
-             <td  style="text-align:center"><label class="items">Sub-total</label></td>
+             
+             <td colspan="4" style="text-align:right;"><label class="items">Sub-total</label></td>
              <td class="border"><label class="items">${totalByOrder}</label></td>
              </tr>
              `;

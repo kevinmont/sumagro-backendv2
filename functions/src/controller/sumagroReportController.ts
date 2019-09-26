@@ -102,7 +102,7 @@ export default class SumagroReportController{
         if(!req.body.dateEnd) throw res.status(400).send("Missing dateEnd parameter");
        
         if(!req.body.ordenes) throw res.status(400).send("Missing ordenes parameter");
-        let { tableName,type,dateStart,dateEnd,productos,ordenes} = req.body;
+        let { tableName,type,dateStart,dateEnd,productos,ordenes,clientes} = req.body;
         let ingenios = [];
         if(req.body.ingenios) {
            ingenios = req.body.ingenios;
@@ -121,9 +121,9 @@ export default class SumagroReportController{
             case 'orden':
             case 'producto':
                     try{
-                    data = await this.sumagroReportDao.getDataOfWarehouse(tableName,dateStart,dateEnd,ingenios,productos,ordenes);
+                    data = await this.sumagroReportDao.getDataOfWarehouse(tableName,dateStart,dateEnd,ingenios,productos,ordenes,clientes);
                     dataToReport= await this.sumagroReportDao.getReportInfo(tableName,type,dateStart,dateEnd,data,ingenioName[0].name);
-                    console.log("terminado");
+                    console.log("terminado",JSON.stringify(data));
                     }catch(err){
                        throw res.status(500).send(err); 
                     }

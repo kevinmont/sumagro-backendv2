@@ -164,7 +164,10 @@ export default class SackController{
     }
 
     async getSacksIds(req:Request,res:Response){
-        let ingenioId= req.query.ingenioId;
+        let ingenioId:any="-1";
+        if(req.query.ingenioId){
+         ingenioId= req.query.ingenioId;
+        }
         let table = req.query.table;
         let producto = req.query.producto;
         let page = req.query.page;

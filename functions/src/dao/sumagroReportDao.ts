@@ -17,42 +17,22 @@ export default class SumagroReportDao{
 
 
 
-    async getDataOfWarehouse(tableName:string,dateStart:string,dateEnd:string,ingenios:any,productos:any,ordenes:any){
+    async getDataOfWarehouse(tableName:string,dateStart:string,dateEnd:string,ingenios:any,productos:any,ordenes:any,clientes:any){
         logger.info("DAO: sumagroReportDAO Method getDataOfWarehouse Starting");
         let queryIngenioIds = "";
         let orderIds = "";
         let productosIds ="";
-        
-        if(ingenios.length){
-            queryIngenioIds =" (";
-        for(let i=0;i<ingenios.length;i++){
+
+        if(clientes.length){
+            queryIngenioIds=" ( ";
+            for(let i=0;i<clientes.length;i++){
+                if(i!=clientes.length-1){
+                queryIngenioIds+=` a.ingenioid='${clientes[i]}' or `;
+                }else{
+                    queryIngenioIds+=` a.ingeniod='${clientes[i]}' )`;
+                }
+            };
             
-            if(i!=ingenios.length-1){
-            queryIngenioIds+= `a.ingenioid=${ingenios[i].ingenioId} or `;
-            ingenios[i].ordenes.forEach((orden:string) => {
-                if(orderIds==""){
-                    orderIds+=" ( ";
-                }
-                orderIds+=` a.orderid=${orden} or`;    
-            });
-                
-            }else{
-                queryIngenioIds+= `a.ingenioid=${ingenios[i].ingenioId} ) `;
-                for(let index=0;index<ingenios[i].ordenes.length;index++){
-                    if(index!=ingenios[i].ordenes.length-1){
-                        if(orderIds==""){
-                            orderIds+=" ( ";
-                        }
-                    orderIds+=` a.orderid=${ingenios[i].ordenes[index]} or`;
-                    }else{
-                        if(orderIds==""){
-                            orderIds+=" ( ";
-                        }
-                    orderIds+=` a.orderid=${ingenios[i].ordenes[index]} )`;
-                    }
-                }
-            }
-        }
         }
 
         if(ordenes.length){
