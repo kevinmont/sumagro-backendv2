@@ -15,6 +15,7 @@ import PingController from './controller/pingController';
 import { PingDao } from './dao/pingDao';
 import { PingRoute } from './routes/pingRoute';
 import PingRouteImpl from './routes/impl/pingRouteImpl';
+import log4jsInitializer from './utils/log4jsInitializer';
 //import errorMiddleware from './exceptions/error.middleware';
 const json2xls = require('json2xls');
 class App {
@@ -34,6 +35,8 @@ class App {
     private databaseRoute: DatabaseRoute;
     private sackRoute: SackRoute;
     constructor() {
+        log4jsInitializer();
+
         this.mysql = new Mysql();
         this.firebase = new Firebase(config);
         this.app = express()
