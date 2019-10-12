@@ -10,11 +10,11 @@ import DatabaseRoute from './routes/databaseRoute';
 import SackRoute from './routes/sackRote';
 import Firebase from './utils/firebase';
 import config from './models/config';
-import PingDaoImpl from './dao/impl/pingDaoImpl';
-import PingController from './controller/pingController';
+import { PingController } from './controller/pingController';
 import { PingDao } from './dao/pingDao';
-import { PingRoute } from './routes/pingRoute';
-import PingRouteImpl from './routes/impl/pingRouteImpl';
+import { PingDaoImpl } from './dao/impl/pingDaoImpl';
+import { PingRouter } from './routes/pingRouter';
+import { PingRouterImpl } from './routes/impl/pingRouterImpl';
 import log4jsInitializer from './utils/log4jsInitializer';
 //import errorMiddleware from './exceptions/error.middleware';
 const json2xls = require('json2xls');
@@ -25,9 +25,9 @@ class App {
     // daos properties
     private pingDao: PingDao;
     // controllers properties
-    public pingController: PingController
+    private pingController: PingController
     // route properties
-    public pingRoute: PingRoute
+    private pingRoute: PingRouter
     private userRoute: UserRoute;
     private orderRoute: OrderRoute;
     private ingenioRoute: IngenioRoute;
@@ -45,7 +45,8 @@ class App {
         // 2.- Add controller dependencies
         this.pingController = new PingController(this.pingDao)
         // 3- Add Routes
-        this.pingRoute = new PingRouteImpl(this.app, this.pingController)
+        this.pingRoute = new PingRouterImpl(this.pingController)
+
         this.userRoute = new UserRoute(this.mysql, this.firebase);
         this.orderRoute = new OrderRoute(this.mysql, this.firebase);
         this.ingenioRoute = new IngenioRoute(this.mysql, this.firebase);
@@ -59,6 +60,8 @@ class App {
         this.sumagroReportRouter.addRoutes(this.app);
         this.databaseRoute.addRoutes(this.app);
         this.sackRoute.addRoutes(this.app);
+
+        this.app.use(this.pingRoute.router)
     }
     config() {
         this.app.use(function (req, res, next) {

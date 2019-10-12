@@ -1,12 +1,11 @@
 import * as log4js from 'log4js';
-import AbstractDao from '../abstractDao';
+import { AbstractDao } from '../abstractDao';
 import Mysql from '../../utils/mysql';
 import { PingDao } from '../pingDao';
 
-const logger = log4js.getLogger("PingDaoImpl");
-logger.level = 'debug';
+const logger = log4js.getLogger("sumagro.dao.impl.PingDaoImpl");
 
-export default class PingDaoImpl extends AbstractDao implements PingDao {
+export class PingDaoImpl extends AbstractDao implements PingDao {
     constructor(protected db: Mysql) {
         super(db)
     }

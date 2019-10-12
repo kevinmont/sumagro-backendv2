@@ -1,5 +1,5 @@
 import Mysql from "../utils/mysql";
 
-export default abstract class AbstractDao {
+export abstract class AbstractDao {
     constructor(protected db: Mysql) { }
 };
