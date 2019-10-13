@@ -11,7 +11,8 @@ import * as Log4js from 'log4js';
 
 import SumagroReportDao from '../dao/sumagroReportDao';
 import ingenioDao from '../dao/ingenioDao';
-import UserDao from '../dao/userDao';
+import { UserDao } from '../dao/userDao';
+import { UserDaoImpl } from '../dao/impl/userDaoImpl';
 
 
 const logger =  Log4js .getLogger('Sumagro Report Controller');
@@ -35,7 +36,7 @@ export default class SumagroReportController{
         // //this.entranceDao = new EntranceDao(mysql);
         // this.outputDao = new OutputDao(mysql);
         // this.sumagroOutputDao= new SumagroOutputDao(mysql);
-        this.userDao=new UserDao(mysql);
+        this.userDao=new UserDaoImpl(mysql);
         this.ingenioDao = new ingenioDao(mysql);
         this.sumagroReportDao= new SumagroReportDao(mysql);
         

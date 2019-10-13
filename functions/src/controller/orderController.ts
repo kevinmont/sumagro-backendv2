@@ -25,7 +25,8 @@ import { Request, Response } from 'express';
 import Mysql from '../utils/mysql';
 import * as log4js from 'log4js';
 import Firebase from '../utils/firebase';
-import UserDao from '../dao/userDao';
+import { UserDao } from '../dao/userDao';
+import { UserDaoImpl } from '../dao/impl/userDaoImpl';
 
 
 
@@ -60,7 +61,7 @@ export default class OrderController {
         this.subOrdersDao = new SubOrdersDao(mysql);
         this.inventoryDao = new InventoryDao(mysql);
         this.pdfHelper = new PdfHelper();
-        this.userDao= new UserDao(mysql);
+        this.userDao= new UserDaoImpl(mysql);
         this.firebase= firebase;
     }
 
