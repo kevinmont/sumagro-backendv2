@@ -1,68 +1,34 @@
 //import Dao's
 import AddressDao from '../dao/addressDao';
-import OrderDao from '../dao/orderDao';
-import InventoryDao from '../dao/inventoryDao';
-import AplicatedDao from '../dao/aplicatedDao';
+import { OrderDao } from '../dao/orderDao';
 import SubOrdersDao from '../dao/subOrdersDao';
 import IngenioDao from '../dao/ingenioDao';
 import SumagroIntransit from '../dao/intransitDao';
-
 import sumagroOutputDao from '../dao/sumagroOutputDao';
-import OutputDao from '../dao/outputDao';
-import EntranceDao from '../dao/entranceDao';
-import IntransitDao from '../dao/intransitDao';
-
-
 //import models
 import { TYPEINGENIO } from '../models/Order';
-
 //import helpers
 import PdfHelper from '../utils/Pdf-Helper';
 import * as pdf from 'html-pdf';
-
 // import dependencies
 import { Request, Response } from 'express';
-import Mysql from '../utils/mysql';
 import * as log4js from 'log4js';
 import Firebase from '../utils/firebase';
 import { UserDao } from '../dao/userDao';
-import { UserDaoImpl } from '../dao/impl/userDaoImpl';
 
+const logger = log4js.getLogger("sumagro.controller.OrderController");
+export class OrderController {
 
-
-const logger = log4js.getLogger();
-logger.level = 'debug';
-
-export default class OrderController {
-    public intransitDao: IntransitDao;
-    public outputDao: OutputDao;
-    public aplicatedDao: AplicatedDao;
-    public orderDao: OrderDao;
-    public ingenioDao: IngenioDao;
-    public pdfHelper: PdfHelper;
-    public addressDao: AddressDao;
-    public inventoryDao: InventoryDao;
-    public subOrdersDao: SubOrdersDao;
-    public sumagroIntransit: SumagroIntransit;
-    public sumagroOutputDao: sumagroOutputDao;
-    public entranceDao: EntranceDao;
-    public firebase: Firebase;
-    public userDao: UserDao;
-    constructor(mysql: Mysql,firebase:Firebase) {
-        this.intransitDao = new IntransitDao(mysql);
-        this.outputDao = new OutputDao(mysql);
-        this.entranceDao = new EntranceDao(mysql);
-        this.aplicatedDao = new AplicatedDao(mysql);
-        this.sumagroOutputDao = new sumagroOutputDao(mysql);
-        this.sumagroIntransit = new SumagroIntransit(mysql);
-        this.orderDao = new OrderDao(mysql);
-        this.ingenioDao = new IngenioDao(mysql);
-        this.addressDao = new AddressDao(mysql);
-        this.subOrdersDao = new SubOrdersDao(mysql);
-        this.inventoryDao = new InventoryDao(mysql);
-        this.pdfHelper = new PdfHelper();
-        this.userDao= new UserDaoImpl(mysql);
-        this.firebase= firebase;
+    constructor(private firebase: Firebase,
+        private sumagroOutputDao: sumagroOutputDao,
+        private sumagroIntransit: SumagroIntransit,
+        private orderDao: OrderDao,
+        private ingenioDao: IngenioDao,
+        private addressDao: AddressDao,
+        private subOrdersDao: SubOrdersDao,
+        private pdfHelper: PdfHelper,
+        private userDao: UserDao,
+        ) {
     }
 
     async deleteOrderByOrderId(req: Request, res: Response) {

@@ -7,7 +7,7 @@ import { Nodemailers } from '../utils/Nodemailer-helper';
 import Firebase from '../utils/firebase';
 import * as log4js from 'log4js';
 import { roles } from '../models/rol';
-import OrderDao from '../dao/orderDao';
+import { OrderDao } from '../dao/orderDao';
 
 const logger = log4js.getLogger('sumagro.controller.UserController');
 

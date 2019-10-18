@@ -1,6 +1,6 @@
 import {Request, Response} from 'express';
 import SackDao from '../dao/sackDao';
-import OrderDao from '../dao/orderDao';
+import { OrderDao } from '../dao/orderDao';
 import IngenioDao from '../dao/ingenioDao';
 import { UserDao } from '../dao/userDao';
 import SubOrderDao from '../dao/subOrdersDao';
@@ -15,6 +15,7 @@ import DatabaseDao from '../dao/databaseDao';
 import GeolocationDistance from '../utils/GeolocationDistance';
 import { SackType } from '../models/sackType';
 import { UserDaoImpl } from '../dao/impl/userDaoImpl';
+import { OrderDaoImpl } from '../dao/impl/orderDaoImpl';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -32,7 +33,7 @@ export default class SackController{
     public geolocationDistance: GeolocationDistance;
     constructor(mysql: Mysql){
         this.sackDao = new SackDao(mysql);
-        this.orderDao = new OrderDao(mysql);
+        this.orderDao = new OrderDaoImpl(mysql);
         this.ingenioDao = new IngenioDao(mysql);
         this.userDao = new UserDaoImpl(mysql);
         this.subOrderDao= new SubOrderDao(mysql);

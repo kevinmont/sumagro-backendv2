@@ -3,7 +3,7 @@ import { UserController } from "../../controller/userController";
 import { Request, Response } from 'express'
 import Firebase from "../../utils/firebase";
 import SackController from "../../controller/sackController";
-import OrderController from "../../controller/orderController";
+import { OrderController } from "../../controller/orderController";
 import * as log4js from 'log4js';
 
 const logger = log4js.getLogger('sumagro.routes.impl.UserRouterImpl')

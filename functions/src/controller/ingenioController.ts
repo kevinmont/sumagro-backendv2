@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import IngenioDao from '../dao/ingenioDao';
 import AddressDao from '../dao/addressDao';
-import OrderDao from '../dao/orderDao';
+import { OrderDao } from '../dao/orderDao';
 import SubOrdersDao from '../dao/subOrdersDao';
 import {Ingenio, types, arrtypes} from '../models/ingenio';
 import {Address} from '../models/address';
@@ -12,6 +12,7 @@ import Config from '../models/config';
 import * as pdf from 'html-pdf';
 import * as log4js from 'log4js';
 import Mysql from '../utils/mysql';
+import { OrderDaoImpl } from '../dao/impl/orderDaoImpl';
 const logger = log4js.getLogger();
 logger.level = 'debug';
 
@@ -29,7 +30,7 @@ export default class IngenioController {
         this.ingenioDao = new IngenioDao(mysql);
         this.addressDao = new AddressDao(mysql);
         this.coordenatesDao = new CoordenatesDao(mysql);
-        this.orderDao = new OrderDao(mysql);
+        this.orderDao = new OrderDaoImpl(mysql);
         this.subOrdersDao = new SubOrdersDao(mysql);
         this.pdfHelper = new PdfHelper();
         this.nodemailers = new Nodemailers(this.config);
