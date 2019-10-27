@@ -1,27 +1,27 @@
 //import Dao's
-import AddressDao from '../dao/addressDao';
-import { OrderDao } from '../dao/orderDao';
-import SubOrdersDao from '../dao/subOrdersDao';
-import IngenioDao from '../dao/ingenioDao';
-import SumagroIntransit from '../dao/intransitDao';
-import sumagroOutputDao from '../dao/sumagroOutputDao';
-//import models
-import { TYPEINGENIO } from '../models/Order';
-//import helpers
-import PdfHelper from '../utils/Pdf-Helper';
-import * as pdf from 'html-pdf';
 // import dependencies
 import { Request, Response } from 'express';
+import * as pdf from 'html-pdf';
 import * as log4js from 'log4js';
-import Firebase from '../utils/firebase';
+import { AddressDao } from '../dao/addressDao';
+import { IngenioDao } from '../dao/ingenioDao';
+import { IntransitDao } from '../dao/intransitDao';
+import { OrderDao } from '../dao/orderDao';
+import { SubOrdersDao } from '../dao/subOrdersDao';
+import { SumagroOutputDao } from '../dao/sumagroOutputDao';
 import { UserDao } from '../dao/userDao';
+//import models
+import { TYPEINGENIO } from '../models/Order';
+import Firebase from '../utils/firebase';
+//import helpers
+import PdfHelper from '../utils/Pdf-Helper';
 
 const logger = log4js.getLogger("sumagro.controller.OrderController");
 export class OrderController {
 
     constructor(private firebase: Firebase,
-        private sumagroOutputDao: sumagroOutputDao,
-        private sumagroIntransit: SumagroIntransit,
+        private sumagroOutputDao: SumagroOutputDao,
+        private sumagroIntransit: IntransitDao,
         private orderDao: OrderDao,
         private ingenioDao: IngenioDao,
         private addressDao: AddressDao,

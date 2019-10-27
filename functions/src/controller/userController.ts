@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import { UserDao } from '../dao/userDao';
-import IngenioDao from '../dao/ingenioDao';
-import AddressDao from '../dao/addressDao';
-import { User } from '../models/user';
-import { Nodemailers } from '../utils/Nodemailer-helper';
-import Firebase from '../utils/firebase';
 import * as log4js from 'log4js';
-import { roles } from '../models/rol';
+import { AddressDao } from '../dao/addressDao';
+import { IngenioDao } from '../dao/ingenioDao';
 import { OrderDao } from '../dao/orderDao';
+import { UserDao } from '../dao/userDao';
+import { roles } from '../models/rol';
+import { User } from '../models/user';
+import Firebase from '../utils/firebase';
+import { Nodemailers } from '../utils/Nodemailer-helper';
 
 const logger = log4js.getLogger('sumagro.controller.UserController');
 

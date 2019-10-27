@@ -1,15 +1,19 @@
-import {Request, Response} from 'express';
-import AddressDao from '../dao/addressDao';
-import CoordenatesDao from '../dao/coordenatesDao';
-import * as log4js from 'log4js';
+import { Request, Response } from 'express';
 import * as pdf from 'html-pdf';
-import DatabaseDao from '../dao/databaseDao';
-import Mysql from '../utils/mysql';
-import AplicatedDao from '../dao/aplicatedDao';
-import PdfHelper from '../utils/Pdf-Helper';
+import * as log4js from 'log4js';
+import { AddressDao } from '../dao/addressDao';
+import { AplicatedDao } from '../dao/aplicatedDao';
+import { CoordenatesDao } from '../dao/coordenatesDao';
+import { DatabaseDao } from '../dao/databaseDao';
+import { AddressDaoImpl } from '../dao/impl/addressDaoImpl';
+import { AplicatedDaoImpl } from '../dao/impl/aplicatedDaoImpl';
+import { CoordenatesDaoImpl } from '../dao/impl/coordenatesDaoImpl';
+import { DatabaseDaoImpl } from '../dao/impl/databaseDaoImpl';
 import { PropertiesUpdatables } from '../models/database';
-const logger= log4js.getLogger();
-logger.level ='debug';
+import Mysql from '../utils/mysql';
+import PdfHelper from '../utils/Pdf-Helper';
+
+const logger = log4js.getLogger('sumagro.controller.DatabaseController');
 export default class DatabaseController{
     public databaseDao: DatabaseDao;
     public addressDao: AddressDao; 
@@ -18,12 +22,12 @@ export default class DatabaseController{
     public pdfHelper: PdfHelper;
     public mysql: Mysql;
     constructor (mysql: Mysql){
-        this.coordenatesDao= new CoordenatesDao(mysql);
-        this.addressDao= new AddressDao(mysql);
-        this.databaseDao = new DatabaseDao();
-        this.aplicatedDao = new AplicatedDao(mysql);
-        this.pdfHelper = new PdfHelper();
         this.mysql=mysql;
+        this.coordenatesDao= new CoordenatesDaoImpl(this.mysql);
+        this.addressDao= new AddressDaoImpl(this.mysql);
+        this.databaseDao = new DatabaseDaoImpl(this.mysql);
+        this.aplicatedDao = new AplicatedDaoImpl(this.mysql, this.coordenatesDao);
+        this.pdfHelper = new PdfHelper();
     }
 
     async uploadDatabaseIngenio (req:Request, res:Response){

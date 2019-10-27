@@ -1,37 +1,42 @@
-import * as functions from 'firebase-functions';
-import * as express from 'express';
 import * as bodyparser from 'body-parser';
-import { OrderRouter } from './routes/orderRouter';
-import IngenioRoute from './routes/ingenioRoute';
-import Mysql from './utils/mysql';
-import SumagroReportRouter from './routes/sumagroReportRouter';
-import DatabaseRoute from './routes/databaseRoute';
-import SackRoute from './routes/sackRote';
-import Firebase from './utils/firebase';
-import config from './models/config';
-import { PingController } from './controller/pingController';
-import { PingDao } from './dao/pingDao';
-import { PingDaoImpl } from './dao/impl/pingDaoImpl';
-import { PingRouter } from './routes/pingRouter';
-import { PingRouterImpl } from './routes/impl/pingRouterImpl';
-import { UserDao } from './dao/userDao';
-import { UserDaoImpl } from './dao/impl/userDaoImpl';
-import { UserController } from './controller/userController';
-import AddressDao from './dao/addressDao';
-import { OrderDao } from './dao/orderDao';
-import { Nodemailers } from './utils/Nodemailer-helper';
-import ingenioDao from './dao/ingenioDao';
-import log4jsInitializer from './utils/log4jsInitializer';
-import { UserRouterImpl } from './routes/impl/userRouterImpl';
-import SackController from './controller/sackController';
+import * as express from 'express';
+import * as functions from 'firebase-functions';
 import { OrderController } from './controller/orderController';
-import { UserRouter } from './routes/userRouter';
+import { PingController } from './controller/pingController';
+import SackController from './controller/sackController';
+import { UserController } from './controller/userController';
+import { AddressDao } from './dao/addressDao';
+import { AddressDaoImpl } from './dao/impl/addressDaoImpl';
+import { IngenioDaoImpl } from './dao/impl/ingenioDaoImpl';
+import { IntransitDaoImpl } from './dao/impl/intransitDaoImpl';
 import { OrderDaoImpl } from './dao/impl/orderDaoImpl';
-import SumagroOutputDao from './dao/sumagroOutputDao';
-import IntransitDao from './dao/intransitDao';
-import SubOrdersDao from './dao/subOrdersDao';
-import PdfHelper from './utils/Pdf-Helper';
+import { PingDaoImpl } from './dao/impl/pingDaoImpl';
+import { SubOrdersDaoImpl } from './dao/impl/subOrdersDaoImpl';
+import { SumagroOutputDaoImpl } from './dao/impl/sumagroOutputDaoImpl';
+import { UserDaoImpl } from './dao/impl/userDaoImpl';
+import { IngenioDao } from './dao/ingenioDao';
+import { IntransitDao } from './dao/intransitDao';
+import { OrderDao } from './dao/orderDao';
+import { PingDao } from './dao/pingDao';
+import { SubOrdersDao } from './dao/subOrdersDao';
+import { SumagroOutputDao } from './dao/sumagroOutputDao';
+import { UserDao } from './dao/userDao';
+import config from './models/config';
+import DatabaseRoute from './routes/databaseRoute';
 import { OrderRouterImpl } from './routes/impl/orderRouterImpl';
+import { PingRouterImpl } from './routes/impl/pingRouterImpl';
+import { UserRouterImpl } from './routes/impl/userRouterImpl';
+import IngenioRoute from './routes/ingenioRoute';
+import { OrderRouter } from './routes/orderRouter';
+import { PingRouter } from './routes/pingRouter';
+import SackRoute from './routes/sackRote';
+import SumagroReportRouter from './routes/sumagroReportRouter';
+import { UserRouter } from './routes/userRouter';
+import Firebase from './utils/firebase';
+import log4jsInitializer from './utils/log4jsInitializer';
+import Mysql from './utils/mysql';
+import { Nodemailers } from './utils/Nodemailer-helper';
+import PdfHelper from './utils/Pdf-Helper';
 //import errorMiddleware from './exceptions/error.middleware';
 const json2xls = require('json2xls');
 class App {
@@ -44,7 +49,7 @@ class App {
     private userDao: UserDao;
     private addressDao: AddressDao;
     private orderDao: OrderDao;
-    private ingenioDao: ingenioDao;
+    private ingenioDao: IngenioDao;
     private sumagroOutputDao: SumagroOutputDao;
     private intransitDao: IntransitDao;
     private subOrdersDao: SubOrdersDao;
@@ -79,14 +84,14 @@ class App {
         this.pdfHelper = new PdfHelper()
 
         // 3.- dao dependencies
-        this.addressDao = new AddressDao(this.mysql);
-        this.ingenioDao = new ingenioDao(this.mysql);
+        this.addressDao = new AddressDaoImpl(this.mysql);
+        this.ingenioDao = new IngenioDaoImpl(this.mysql);
         this.pingDao = new PingDaoImpl(this.mysql);
         this.orderDao = new OrderDaoImpl(this.mysql);
         this.userDao = new UserDaoImpl(this.mysql);
-        this.sumagroOutputDao = new SumagroOutputDao(this.mysql);
-        this.intransitDao = new IntransitDao(this.mysql);
-        this.subOrdersDao = new SubOrdersDao(this.mysql);
+        this.sumagroOutputDao = new SumagroOutputDaoImpl(this.mysql);
+        this.intransitDao = new IntransitDaoImpl(this.mysql);
+        this.subOrdersDao = new SubOrdersDaoImpl(this.mysql);
         // 4.- controller dependencies
         this.pingController = new PingController(this.pingDao)
         this.userController = new UserController(this.userDao, this.ingenioDao, this.addressDao, this.orderDao, this.nodemailers, this.firebase)
@@ -98,7 +103,7 @@ class App {
         this.userRouter = new UserRouterImpl(this.firebase, this.userController, this.sackController, this.orderController)
         this.orderRouter = new OrderRouterImpl(this.firebase, this.orderController);
 
-        this.ingenioRouter= new IngenioRoute(this.mysql, this.firebase);
+        this.ingenioRouter = new IngenioRoute(this.mysql, this.firebase);
         this.sumagroReportRouter = new SumagroReportRouter(this.mysql, this.firebase);
         this.databaseRouter = new DatabaseRoute(this.mysql);
         this.sackRouter = new SackRoute(this.mysql, this.firebase);

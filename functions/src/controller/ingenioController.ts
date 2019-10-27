@@ -1,20 +1,24 @@
-import {Request, Response} from 'express';
-import IngenioDao from '../dao/ingenioDao';
-import AddressDao from '../dao/addressDao';
-import { OrderDao } from '../dao/orderDao';
-import SubOrdersDao from '../dao/subOrdersDao';
-import {Ingenio, types, arrtypes} from '../models/ingenio';
-import {Address} from '../models/address';
-import CoordenatesDao from '../dao/coordenatesDao';
-import PdfHelper from '../utils/Pdf-Helper';
-import {Nodemailers} from '../utils/Nodemailer-helper';
-import Config from '../models/config';
+import { Request, Response } from 'express';
 import * as pdf from 'html-pdf';
 import * as log4js from 'log4js';
-import Mysql from '../utils/mysql';
+import { AddressDao } from '../dao/addressDao';
+import { CoordenatesDao } from '../dao/coordenatesDao';
+import { AddressDaoImpl } from '../dao/impl/addressDaoImpl';
+import { CoordenatesDaoImpl } from '../dao/impl/coordenatesDaoImpl';
+import { IngenioDaoImpl } from '../dao/impl/ingenioDaoImpl';
 import { OrderDaoImpl } from '../dao/impl/orderDaoImpl';
-const logger = log4js.getLogger();
-logger.level = 'debug';
+import { SubOrdersDaoImpl } from '../dao/impl/subOrdersDaoImpl';
+import { IngenioDao } from '../dao/ingenioDao';
+import { OrderDao } from '../dao/orderDao';
+import { SubOrdersDao } from '../dao/subOrdersDao';
+import { Address } from '../models/address';
+import Config from '../models/config';
+import { arrtypes, Ingenio, types } from '../models/ingenio';
+import Mysql from '../utils/mysql';
+import { Nodemailers } from '../utils/Nodemailer-helper';
+import PdfHelper from '../utils/Pdf-Helper';
+
+const logger = log4js.getLogger('sumagro.controller.IngenioController');
 
 export default class IngenioController {
     public coordenatesDao : CoordenatesDao;
@@ -27,11 +31,11 @@ export default class IngenioController {
     public config : any;
     constructor(mysql : Mysql) {
         this.config = Config;
-        this.ingenioDao = new IngenioDao(mysql);
-        this.addressDao = new AddressDao(mysql);
-        this.coordenatesDao = new CoordenatesDao(mysql);
+        this.ingenioDao = new IngenioDaoImpl(mysql);
+        this.addressDao = new AddressDaoImpl(mysql);
+        this.coordenatesDao = new CoordenatesDaoImpl(mysql);
         this.orderDao = new OrderDaoImpl(mysql);
-        this.subOrdersDao = new SubOrdersDao(mysql);
+        this.subOrdersDao = new SubOrdersDaoImpl(mysql);
         this.pdfHelper = new PdfHelper();
         this.nodemailers = new Nodemailers(this.config);
     }

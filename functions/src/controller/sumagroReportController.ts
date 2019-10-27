@@ -1,22 +1,22 @@
-import Mysql from '../utils/mysql';
 import * as express from 'express';
 import * as pdfH from 'html-pdf';
 import * as Log4js from 'log4js';
+import { IngenioDaoImpl } from '../dao/impl/ingenioDaoImpl';
+import { SumagroReportDaoImpl } from '../dao/impl/sumagroReportDaoImpl';
+import { UserDaoImpl } from '../dao/impl/userDaoImpl';
+import { IngenioDao } from '../dao/ingenioDao';
 // import InventoryDao from '../dao/inventoryDao';
 // import IntransitDao from '../dao/intransitDao';
 // import OutputDao from '../dao/outputDao';
 // import SumagroOutputDao from '../dao/sumagroOutputDao';
 // import AplicatedDao from '../dao/aplicatedDao';
 //import EntranceDao from '../dao/entranceDao';
-
-import SumagroReportDao from '../dao/sumagroReportDao';
-import ingenioDao from '../dao/ingenioDao';
+import { SumagroReportDao } from '../dao/sumagroReportDao';
 import { UserDao } from '../dao/userDao';
-import { UserDaoImpl } from '../dao/impl/userDaoImpl';
+import Mysql from '../utils/mysql';
 
 
-const logger =  Log4js .getLogger('Sumagro Report Controller');
-logger.level = 'info';
+const logger =  Log4js .getLogger('sumagro.controller.SumagroReportController');
 export default class SumagroReportController{
     // private inventoryDao: InventoryDao;
     // private intransitDao: IntransitDao;
@@ -26,7 +26,7 @@ export default class SumagroReportController{
     //private entranceDao: EntranceDao;
     
     private sumagroReportDao: SumagroReportDao;
-    private ingenioDao : ingenioDao;
+    private ingenioDao : IngenioDao;
     private userDao:UserDao;
     constructor( mysql: Mysql){
 
@@ -37,8 +37,8 @@ export default class SumagroReportController{
         // this.outputDao = new OutputDao(mysql);
         // this.sumagroOutputDao= new SumagroOutputDao(mysql);
         this.userDao=new UserDaoImpl(mysql);
-        this.ingenioDao = new ingenioDao(mysql);
-        this.sumagroReportDao= new SumagroReportDao(mysql);
+        this.ingenioDao = new IngenioDaoImpl(mysql);
+        this.sumagroReportDao= new SumagroReportDaoImpl(mysql);
         
     }
 

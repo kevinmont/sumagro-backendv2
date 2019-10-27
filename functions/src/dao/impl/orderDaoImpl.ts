@@ -1,11 +1,11 @@
-import { AbstractDao } from "../abstractDao";
-import Mysql from "../../utils/mysql";
-import { OrderDao } from "../orderDao";
 import * as log4js from "log4js";
+import Mysql from "../../utils/mysql";
+import { AbstractDao } from "../abstractDao";
+import { OrderDao } from "../orderDao";
 
 const logger = log4js.getLogger("sumagro.dao.impl.OrderDaoImpl");
 
-export class OrderDaoImpl extends AbstractDao implements OrderDao{
+export class OrderDaoImpl extends AbstractDao implements OrderDao {
 
     constructor(db: Mysql){
         super(db);

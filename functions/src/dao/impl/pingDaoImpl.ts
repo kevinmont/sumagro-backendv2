@@ -1,6 +1,6 @@
 import * as log4js from 'log4js';
-import { AbstractDao } from '../abstractDao';
 import Mysql from '../../utils/mysql';
+import { AbstractDao } from '../abstractDao';
 import { PingDao } from '../pingDao';
 
 const logger = log4js.getLogger("sumagro.dao.impl.PingDaoImpl");

@@ -1,47 +1,54 @@
-import {Request, Response} from 'express';
-import SackDao from '../dao/sackDao';
-import { OrderDao } from '../dao/orderDao';
-import IngenioDao from '../dao/ingenioDao';
-import { UserDao } from '../dao/userDao';
-import SubOrderDao from '../dao/subOrdersDao';
-import CoordenatesDao from '../dao/coordenatesDao';
-
+import { Request, Response } from 'express';
 import * as log4js from 'log4js';
-import Mysql from '../utils/mysql';
-import QrdataDao from '../dao/qrdataDao';
-import Output from '../dao/sumagroOutputDao';
-import AplicatedDao from '../dao/aplicatedDao';
-import DatabaseDao from '../dao/databaseDao';
-import GeolocationDistance from '../utils/GeolocationDistance';
-import { SackType } from '../models/sackType';
-import { UserDaoImpl } from '../dao/impl/userDaoImpl';
+import { AplicatedDao } from '../dao/aplicatedDao';
+import { CoordenatesDao } from '../dao/coordenatesDao';
+import { DatabaseDao } from '../dao/databaseDao';
+import { AplicatedDaoImpl } from '../dao/impl/aplicatedDaoImpl';
+import { CoordenatesDaoImpl } from '../dao/impl/coordenatesDaoImpl';
+import { DatabaseDaoImpl } from '../dao/impl/databaseDaoImpl';
+import { IngenioDaoImpl } from '../dao/impl/ingenioDaoImpl';
 import { OrderDaoImpl } from '../dao/impl/orderDaoImpl';
-const logger = log4js.getLogger();
-logger.level = 'debug';
+import { QrdataDaoImpl } from '../dao/impl/qrdataDaoImpl';
+import { SackDaoImpl } from '../dao/impl/sackDaoImpl';
+import { SubOrdersDaoImpl } from '../dao/impl/subOrdersDaoImpl';
+import { SumagroOutputDaoImpl } from '../dao/impl/sumagroOutputDaoImpl';
+import { UserDaoImpl } from '../dao/impl/userDaoImpl';
+import { IngenioDao } from '../dao/ingenioDao';
+import { OrderDao } from '../dao/orderDao';
+import { QrdataDao } from '../dao/qrdataDao';
+import { SackDao } from '../dao/sackDao';
+import { SubOrdersDao } from '../dao/subOrdersDao';
+import { SumagroOutputDao } from '../dao/sumagroOutputDao';
+import { UserDao } from '../dao/userDao';
+import { SackType } from '../models/sackType';
+import GeolocationDistance from '../utils/GeolocationDistance';
+import Mysql from '../utils/mysql';
+
+const logger = log4js.getLogger('sumagro.controller.SackController');
 
 export default class SackController{
     public sackDao: SackDao;
     public ingenioDao: IngenioDao;
     public orderDao: OrderDao;
     public userDao: UserDao;
-    public subOrderDao: SubOrderDao;
+    public subOrderDao: SubOrdersDao;
     public coordenateDao : CoordenatesDao;
     public qrdataDao: QrdataDao
-    public outputDao: Output
+    public outputDao: SumagroOutputDao
     public aplicatedDao: AplicatedDao;
     public databaseDao: DatabaseDao;
     public geolocationDistance: GeolocationDistance;
     constructor(mysql: Mysql){
-        this.sackDao = new SackDao(mysql);
+        this.sackDao = new SackDaoImpl(mysql);
         this.orderDao = new OrderDaoImpl(mysql);
-        this.ingenioDao = new IngenioDao(mysql);
+        this.ingenioDao = new IngenioDaoImpl(mysql);
         this.userDao = new UserDaoImpl(mysql);
-        this.subOrderDao= new SubOrderDao(mysql);
-        this.coordenateDao = new CoordenatesDao(mysql);
-        this.qrdataDao = new QrdataDao(mysql);
-        this.outputDao = new Output(mysql);
-        this.aplicatedDao = new AplicatedDao(mysql);
-        this.databaseDao = new DatabaseDao();
+        this.subOrderDao= new SubOrdersDaoImpl(mysql);
+        this.coordenateDao = new CoordenatesDaoImpl(mysql);
+        this.qrdataDao = new QrdataDaoImpl(mysql);
+        this.outputDao = new SumagroOutputDaoImpl(mysql);
+        this.aplicatedDao = new AplicatedDaoImpl(mysql, this.coordenateDao);
+        this.databaseDao = new DatabaseDaoImpl(mysql);
         this.geolocationDistance = new GeolocationDistance();
     }
 

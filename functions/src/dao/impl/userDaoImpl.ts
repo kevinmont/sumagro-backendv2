@@ -1,7 +1,7 @@
-import { UserDao } from "../userDao";
 import * as log4js from 'log4js';
 import Mysql from "../../utils/mysql";
 import { AbstractDao } from "../abstractDao";
+import { UserDao } from "../userDao";
 
 const logger = log4js.getLogger('sumagro.dao.impl.UserDaoImpl');
 

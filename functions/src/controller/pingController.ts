@@ -1,7 +1,7 @@
-import { PingDao } from '../dao/pingDao';
 import * as log4js from 'log4js';
+import { PingDao } from '../dao/pingDao';
 
-const logger = log4js.getLogger("sumagro.controller.impl.PingController")
+const logger = log4js.getLogger("sumagro.controller.PingController")
 
 export class PingController {
     // - Dependencies
